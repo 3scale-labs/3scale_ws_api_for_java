@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="threescale" default="jar" basedir=".">
+
+	<property name="src.home" value="${basedir}/src" />
+	<property name="test.home" value="${basedir}/test" />
+
+	<property name="build.home" value="${basedir}/build" />
+	<property name="build.classes" value="${build.home}/classes" />
+	<property name="build.report" value="${build.home}/report" />
+	<property name="build.dist" value="${basedir}/dist" />
+	<property name="build.javadoc" value="${basedir}/dist/docs" />
+
+	<property name="build.lib" value="${basedir}/lib" />
+
+	<property name="jar.file" value="${build.dist}/${ant.project.name}-api.jar" />
+
+
+	<path id="build.classpath">
+		<fileset dir="${build.lib}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+	<target name="jar" depends="clean, compile" description="Builds jar file">
+		<jar destfile="${jar.file}">
+			<fileset dir="${build.classes}" excludes="**/ApiTest*.class, **/Example.class" includes="**/*.class" />
+		</jar>
+	</target>
+
+	<target name="unittest" depends="compile" description="Runs unit tests">
+		<junit fork="true">
+			<classpath>
+				<path path="${build.classes}" />
+				<path refid="build.classpath" />
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="yes" todir="${build.report}">
+				<fileset dir="${build.classes}">
+					<include name="**/*Test*.class" />
+					<exclude name="**/*$*.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${build.report}">
+			<fileset dir="${build.report}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${build.report}/html" />
+		</junitreport>
+
+		<echo message="Report root is: ${build.report}/html/index.html" />
+	</target>
+
+	<target name="clean" description="Delete build directories">
+		<delete dir="${build.home}" />
+	</target>
+
+	<target name="compile" depends="setup" description="Compile the code">
+		<javac destdir="${build.classes}" classpathref="build.classpath" debug="on">
+			<src path="${src.home}" />
+			<src path="${test.home}" />
+			<include name="**/*.java" />
+		</javac>
+	</target>
+
+	<target name="setup" depends="clean">
+		<mkdir dir="${build.home}" />
+		<mkdir dir="${build.classes}" />
+		<mkdir dir="${build.report}" />
+		<mkdir dir="${build.dist}" />
+		<mkdir dir="${build.javadoc}" />
+	</target>
+
+	<target name="javadoc" description="Create the Javadoc">
+		<javadoc author="off" destdir="${build.javadoc}">
+			<sourcepath path="${src.home}" />
+		</javadoc>
+	</target>
+
+	<target name="tarball">
+		<tar destfile="${basedir}/threescale-api.tar.gz" compression="gzip">
+			<fileset dir="${basedir}">
+				<include name="build.xml" />
+				<include name=".classpath" />
+				<include name=".project" />
+				<include name="src/**/*"/>
+				<include name="test/**/*"/>
+				<include name="dist/**/*"/>
+				<include name="lib/**/*"/>
+			</fileset>
+		</tar>
+	</target>
+</project>
+
