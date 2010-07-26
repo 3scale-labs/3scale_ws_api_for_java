@@ -97,9 +97,25 @@ public class ApiImpl implements Api {
 	public int cancel(String transactionId) throws ApiException {
 		return sender.sendDeleteToServer(createDeleteUrl(transactionId));
 	}
-	
-	
-	private String buildPostData(String user_contract_key,
+
+    /**
+     * Sends an authorize message to the server and get the response
+     *
+     * @param user_contract_key
+     * @return The respone from the authorize request
+     * @throws ApiException
+     *          if the request fails. Contains the cause information for the error
+     */
+    public ApiAuthorizeResponse authorize(String user_contract_key) throws ApiException {
+        return buildAuthorizeResponse(sender.sendGetToServer(createAuthorizeUrl(user_contract_key)));
+    }
+
+    private ApiAuthorizeResponse buildAuthorizeResponse(String responseFromServer) throws ApiException {
+        return new ApiAuthorizeResponse(responseFromServer); 
+    }
+
+
+    private String buildPostData(String user_contract_key,
 			Map<String, String> metrics) {
 		StringBuffer postData = new StringBuffer();
 
@@ -134,4 +150,8 @@ public class ApiImpl implements Api {
 	private String createStartUrl() {
 		return host + "/transactions.xml";
 	}
+
+    private String createAuthorizeUrl(String user_key) {
+        return host + "/transactions/authorize.xml?user_key=" + user_key + "&provider_key=" + provider_private_key;
+    }
 }

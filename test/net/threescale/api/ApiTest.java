@@ -304,4 +304,43 @@ public class ApiTest {
 			assertEquals("Internal Server Error", ex.getMessage());
 		}
 	}
+
+    @Test
+    public void test_authorize_should_return_data_for_valid_request() throws ApiException {
+        when(sender.sendGetToServer(
+            "http://server.3scale.net/transactions/authorize.xml?" +
+                    "user_key=" + USER_KEY +
+                    "&provider_key=" + GOOD_PROVIDER_KEY))
+        .thenReturn(authorizeResponseXml);
+
+        ApiAuthorizeResponse response = api.authorize(USER_KEY);
+
+        assertEquals("Pro", response.getPlan());
+//        assertEquals(3, response.getUsages().length);
+
+    }
+
+
+    String authorizeResponseXml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+        "<status>" +
+        "  <plan>Pro</plan>" +
+        "    <usage metric=\"hits\" period=\"month\">" +
+        "      <period_start>2009-08-01 00:00:00</period_start>" +
+        "      <period_end>2009-08-31 23:59:59</period_end>" +
+        "      <current_value>17344</current_value>" +
+        "      <max_value>20000</max_value>" +
+        "    </usage>" +
+        "    <usage metric=\"hits\" period=\"day\">" +
+        "      <period_start>2009-08-19 00:00:00</period_start>" +
+        "      <period_end>2009-08-19 23:59:59</period_end>" +
+        "      <current_value>732</current_value>" +
+        "      <max_value>1000</max_value>" +
+        "    </usage>" +
+        "    <usage metric=\"hits\" period=\"hour\"> " +
+        "      <period_start>2009-08-19 22:00:00</period_start>" +
+        "      <period_end>2009-08-19 22:59:59</period_end>"+
+        "      <current_value>26</current_value>" +
+        "      <max_value>100</max_value>" +
+        "    </usage>" +
+        "  </status>";
 }

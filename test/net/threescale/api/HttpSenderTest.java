@@ -88,4 +88,42 @@ public class HttpSenderTest {
 		}
 
 	}	
+    @Test
+    public void testResponseForGet() throws ApiException, IOException {
+
+        when(factory.openConnection(anyString())).thenReturn(con);
+        when(con.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+        when(con.getInputStream()).thenReturn(new StringBufferInputStream(authorizeResponseXml));
+        when(con.getResponseCode()).thenReturn(200);
+
+        String response = sender.sendGetToServer("host1");
+
+        verify(con).setRequestMethod("GET");
+
+        assertEquals(authorizeResponseXml, response);
+    }
+
+    String authorizeResponseXml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+        "<status>" +
+        "  <plan>Pro</plan>" +
+        "    <usage metric=\"hits\" period=\"month\">" +
+        "      <period_start>2009-08-01 00:00:00</period_start>" +
+        "      <period_end>2009-08-31 23:59:59</period_end>" +
+        "      <current_value>17344</current_value>" +
+        "      <max_value>20000</max_value>" +
+        "    </usage>" +
+        "    <usage metric=\"hits\" period=\"day\">" +
+        "      <period_start>2009-08-19 00:00:00</period_start>" +
+        "      <period_end>2009-08-19 23:59:59</period_end>" +
+        "      <current_value>732</current_value>" +
+        "      <max_value>1000</max_value>" +
+        "    </usage>" +
+        "    <usage metric=\"hits\" period=\"hour\"> " +
+        "      <period_start>2009-08-19 22:00:00</period_start>" +
+        "      <period_end>2009-08-19 22:59:59</period_end>"+
+        "      <current_value>26</current_value>" +
+        "      <max_value>100</max_value>" +
+        "    </usage>" +
+        "  </status>";
+
 }

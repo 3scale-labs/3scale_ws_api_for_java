@@ -48,5 +48,14 @@ public interface Api {
 	 * @throws ApiException On error. Contains the cause information for the error.
 	 */
 	public int cancel(String transactionId) throws ApiException;
-	
+
+
+    /**
+     * Sends an authorize message to the server and get the response
+     * @param user_contract_key
+     * @return The respone from the authorize request
+     * @throws ApiException if the request fails. Contains the cause information for the error
+     */
+    public ApiAuthorizeResponse authorize(String user_contract_key) throws ApiException;
+
 }

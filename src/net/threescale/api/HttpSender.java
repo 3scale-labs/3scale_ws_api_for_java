@@ -1,5 +1,7 @@
 package net.threescale.api;
 
+import java.io.IOException;
+
 /**
  * Interface used to send Http Requests to the server. 
  *
@@ -22,4 +24,13 @@ public interface HttpSender {
 	 * @throws ApiException Error Information.
 	 */
 	public int sendDeleteToServer(String hostUrl) throws ApiException;
+
+
+    /**
+     * Send a Get message to the server
+     * @param hostUrl
+     * @return Response from Server for successful action
+     * @throws ApiException Error information if request fails
+     */
+    public String sendGetToServer(String hostUrl) throws ApiException;
 }
