@@ -1,16 +1,26 @@
 package net.threescale.api;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
+import java.util.logging.*;
+
+import org.w3c.dom.html.*;
 
 /**
  * Sends requests to a server using Http.
  */
 public class HttpSenderImpl implements HttpSender {
+	
+	private Logger log = LogFactory.getLogger(this);
+	private HttpConnectionFactory factory;
+	
+	public HttpSenderImpl() {
+		this.factory = new HttpConnectionFactoryImpl();
+	}
+
+	public HttpSenderImpl(HttpConnectionFactory factory) {
+		this.factory = factory;
+	}
 
 	/**
 	 * Send a POST message.
@@ -22,12 +32,12 @@ public class HttpSenderImpl implements HttpSender {
 	public ApiStartResponse sendPostToServer(String hostUrl, String postData)
 			throws ApiException {
 		HttpURLConnection con = null;
-
 		try {
-			URL url = new URL(hostUrl);
-			con = (HttpURLConnection) url.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
+			log.info("Connecting to: " + hostUrl);
+
+			con = factory.openConnection(hostUrl);
+			log.info("Connected");
+			
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Content-Type",
 					"application/x-www-form-urlencoded");
@@ -36,10 +46,14 @@ public class HttpSenderImpl implements HttpSender {
 					.getOutputStream());
 			out.write(postData.toString());
 			out.close();
-
-			return new ApiStartResponse(extractContent(con), con
-					.getResponseCode());
-		} catch (Exception ex) {
+			log.info("Written Post data");
+			
+			return new ApiStartResponse(extractContent(con), con.getResponseCode());
+		}
+		catch (ApiException ex) {
+			throw ex;
+		}
+		catch (Exception ex) {
 			if (con != null) {
 				try {
 					throw new ApiException(con.getResponseCode(),
@@ -88,27 +102,45 @@ public class HttpSenderImpl implements HttpSender {
 	
 	
 	private String extractContent(HttpURLConnection con) throws IOException {
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(con
-				.getInputStream()));
+		assert(con != null);
+		InputStream inputStream = con.getInputStream();
+		assert(inputStream != null);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line = null;
 		StringBuffer response = new StringBuffer();
 
 		while ((line = reader.readLine()) != null) {
 			response.append(line);
 		}
+		reader.close();
 		return response.toString();
 	}
 
 	private String getErrorMessage(HttpURLConnection con) throws IOException {
+		assert(con != null);
+		
 		StringBuffer errStream = new StringBuffer();
-		BufferedReader in = new BufferedReader(new InputStreamReader(con
-				.getErrorStream()));
+		InputStream errorStream = con.getErrorStream();
+		assert(errorStream != null);
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(errorStream));
 		String errres;
 		while ((errres = in.readLine()) != null) {
 			errStream.append(errres);
 		}
+		in.close();
 		return (errStream.toString());
 	}
 
+	private class HttpConnectionFactoryImpl implements HttpConnectionFactory {
+
+		public HttpURLConnection openConnection(String hostUrl) throws MalformedURLException, IOException {
+			URL url = new URL(hostUrl);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			return con;
+		}
+		
+	}
 }

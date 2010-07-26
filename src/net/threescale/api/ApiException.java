@@ -1,13 +1,14 @@
 package net.threescale.api;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
 /**
  * Contains the reason information returned when an Api call fails.
  * 
  */
 public class ApiException extends Exception {
+
+	private static final long serialVersionUID = 2909145065587168842L;
 
 	private int responseCode;
 	private String errorId;
@@ -16,18 +17,20 @@ public class ApiException extends Exception {
 	public ApiException(int responseCode, String xmlMessage) {
 		this.responseCode = responseCode;
 
-		XPathFactory xPathFactory = XPathFactory.newInstance();
-		XPath xpath = xPathFactory.newXPath();
+		try {
+			// XPathFactory xPathFactory = XPathFactory.newInstance();
+			XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+			XPath xpath = xPathFactory.newXPath();
 
-		errorId = XmlHelper.extractNode(xpath, "//@id", xmlMessage);
-		errorMessage = XmlHelper.extractNode(xpath, "/error", xmlMessage);
+			errorId = XmlHelper.extractNode(xpath, "//@id", xmlMessage);
+			errorMessage = XmlHelper.extractNode(xpath, "/error", xmlMessage);
+		} catch (Exception e) {
+			errorId = "999";
+			errorMessage = "xml error parsing response from server";
+			e.printStackTrace();
+		}
 	}
 
-	public ApiException(int responseCode, String errorId, String message) {
-		this.responseCode = responseCode;
-		this.errorId = errorId;
-		this.errorMessage = message;
-	}
 
 	/**
 	 * The response code from the underlaying Http call.

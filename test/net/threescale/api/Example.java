@@ -6,7 +6,7 @@ import java.util.Map;
 public class Example {
 	
 	public void example() {
-		Api api = ApiFactory.createApi("http://beta.3scale.net", "My Provider Key");
+		Api api = ApiFactory.createApi("http://server.3scale.net", "My Provider Key");
 		
 		
 		try {

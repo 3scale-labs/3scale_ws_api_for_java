@@ -1,11 +1,10 @@
 package net.threescale.api;
 
-import java.io.StringReader;
+import java.io.*;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.*;
 
-import org.xml.sax.InputSource;
+import org.xml.sax.*;
 
 /**
  * Common methods used on XML.

@@ -1,6 +1,6 @@
 package net.threescale.api;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * Public interface for the 3scale API.
@@ -42,7 +42,7 @@ public interface Api {
 	public int confirm(String transactionId, Map<String, String> metrics) throws ApiException;
 
 	/**
-	 * Sends a cancel mesage to the server and aborts the transaction. 
+	 * Sends a cancel message to the server and aborts the transaction. 
 	 * @param transactionId The transactionId returned from the start operation.
 	 * @return 200 on success.
 	 * @throws ApiException On error. Contains the cause information for the error.

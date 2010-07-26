@@ -1,16 +1,12 @@
 package net.threescale.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.mockito.*;
 
 public class ApiTest {
 
@@ -21,23 +17,23 @@ public class ApiTest {
 	private Api api;
 	private Map<String, String> metrics = new HashMap<String, String>();
 
-	private Mockery context = new Mockery();
+	@Mock
 	private HttpSender sender;
 
 	@Before
 	public void setUp() throws Exception {
-		sender = context.mock(HttpSender.class);
-		api = ApiFactory.createApi("http://beta.3scale.net", GOOD_PROVIDER_KEY,
+		MockitoAnnotations.initMocks(this);
+		
+		api = ApiFactory.createApi("http://server.3scale.net", GOOD_PROVIDER_KEY,
 				sender);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		context.assertIsSatisfied();
 	}
 
 	@Test
-	public void test_creation_of_ApiStartResponse_from_xml() {
+	public void test_creation_of_ApiStartResponse_from_xml()  throws Exception{
 		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n"
 				+ "    <transaction>\n"
 				+ "        <id>42</id>\n"
@@ -65,7 +61,7 @@ public class ApiTest {
 	}
 
 	@Test
-	public void test_missing_values_in_ApiStartResponse_from_xml() {
+	public void test_missing_values_in_ApiStartResponse_from_xml() throws Exception{
 		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n"
 				+ "    <transaction>\n" + "    </transaction> ";
 
@@ -80,16 +76,11 @@ public class ApiTest {
 	public void test_start_should_raise_exception_on_403_forbidden() {
 
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender).sendPostToServer(
-							with("http://beta.3scale.net/transactions.xml"),
-							with("user_key=invalid_key&provider_key="
-									+ GOOD_PROVIDER_KEY));
-					will(throwException(new ApiException(403,
-							"<error id=\"user.invalid_key\">user_key is invalid</error>")));
-				}
-			});
+			when(sender.sendPostToServer(
+					"http://server.3scale.net/transactions.xml",
+					"user_key=invalid_key&provider_key=" + GOOD_PROVIDER_KEY))
+			.thenThrow(new ApiException(403,
+							"<error id=\"user.invalid_key\">user_key is invalid</error>"));
 
 			api.start("invalid_key");
 			fail("Should have thrown an exception");
@@ -104,16 +95,12 @@ public class ApiTest {
 		try {
 			metrics.put("clicksy", "1");
 
-			context.checking(new Expectations() {
-				{
-					allowing(sender).sendPostToServer(
-							with("http://beta.3scale.net/transactions.xml"),
-							with("user_key=" + USER_KEY + "&provider_key="
-									+ GOOD_PROVIDER_KEY + "&usage[clicksy]=1"));
-					will(throwException(new ApiException(404,
-							"<error id=\"provider.invalid_metric\">metric does not exist</error>")));
-				}
-			});
+			when(sender.sendPostToServer(
+					"http://server.3scale.net/transactions.xml",
+					"user_key=" + USER_KEY + "&provider_key="
+									+ GOOD_PROVIDER_KEY + "&usage[clicksy]=1"))
+					.thenThrow(new ApiException(404,
+							"<error id=\"provider.invalid_metric\">metric does not exist</error>"));
 
 			api.start(USER_KEY, metrics);
 			fail("Should have thrown an exception");
@@ -128,19 +115,14 @@ public class ApiTest {
 
 		metrics.put("requests", "1");
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender)
-							.sendPostToServer(
-									with("http://beta.3scale.net/transactions.xml"),
-									with("user_key=" + USER_KEY
-											+ "&provider_key="
-											+ GOOD_PROVIDER_KEY
-											+ "&usage[requests]=1"));
-					will(throwException(new ApiException(500,
-							"<error id=\"system.other\">Internal Server Error</error>")));
-				}
-			});
+			when(sender.sendPostToServer(
+					"http://server.3scale.net/transactions.xml",
+					"user_key=" + USER_KEY
+						+ "&provider_key="
+						+ GOOD_PROVIDER_KEY
+						+ "&usage[requests]=1"))
+			.thenThrow(new ApiException(500,
+							"<error id=\"system.other\">Internal Server Error</error>"));
 
 			api.start(USER_KEY, metrics);
 
@@ -157,16 +139,12 @@ public class ApiTest {
 
 		metrics.put("requests", "1");
 
-		context.checking(new Expectations() {
-			{
-				allowing(sender).sendPostToServer(
-						with("http://beta.3scale.net/transactions.xml"),
-						with("user_key=" + USER_KEY + "&provider_key="
-								+ GOOD_PROVIDER_KEY + "&usage[requests]=1"));
-				will(returnValue(new ApiStartResponse("42", "test",
-						"provider_private_key", 200)));
-			}
-		});
+		when(sender.sendPostToServer(
+				"http://server.3scale.net/transactions.xml",
+				"user_key=" + USER_KEY + "&provider_key="
+					+ GOOD_PROVIDER_KEY + "&usage[requests]=1"))
+		.thenReturn(new ApiStartResponse("42", "test",
+						"provider_private_key", 200));
 
 		ApiStartResponse response = api.start(USER_KEY, metrics);
 		assertEquals(200, response.getResponseCode());
@@ -182,18 +160,12 @@ public class ApiTest {
 		metrics.put("requests", "1");
 
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender)
-							.sendPostToServer(
-									with("http://beta.3scale.net/transactions/11111111-1111111/confirm.xml"),
-									with("provider_key=" + GOOD_PROVIDER_KEY
-											+ "&usage[requests]=1"));
-					will(throwException(new ApiException(
-							404,
-							"<error id=\"provider.invalid_transaction_id\">transaction does not exist</error>")));
-				}
-			});
+			when(sender.sendPostToServer(
+					"http://server.3scale.net/transactions/11111111-1111111/confirm.xml",
+					"provider_key=" + GOOD_PROVIDER_KEY
+						+ "&usage[requests]=1"))
+			.thenThrow(new ApiException(404,
+							"<error id=\"provider.invalid_transaction_id\">transaction does not exist</error>"));
 
 			api.confirm("11111111-1111111", metrics);
 			fail("Should have thrown an exception");
@@ -206,24 +178,18 @@ public class ApiTest {
 
 	@Test
 	public void test_confirm_should_raise_exception_on_403_forbidden() {
-		api = ApiFactory.createApi("http://beta.3scale.net", BAD_PROVIDER_KEY,
+		api = ApiFactory.createApi("http://server.3scale.net", BAD_PROVIDER_KEY,
 				sender);
 
 		metrics.put("requests", "1");
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender)
-							.sendPostToServer(
-									with("http://beta.3scale.net/transactions/1/confirm.xml"),
-									with("provider_key=" + BAD_PROVIDER_KEY
-											+ "&usage[requests]=1"));
-					will(throwException(new ApiException(
-							403,
-							"<error id=\"provider.invalid_key\">provider authentication key is invalid</error>")));
-				}
-			});
-
+			when(sender.sendPostToServer(
+				"http://server.3scale.net/transactions/1/confirm.xml",
+				"provider_key=" + BAD_PROVIDER_KEY
+					+ "&usage[requests]=1"))
+			.thenThrow(new ApiException(403,
+					"<error id=\"provider.invalid_key\">provider authentication key is invalid</error>"));
+	
 			api.confirm("1", metrics);
 			fail("Should have thrown an exception");
 		} catch (ApiException ex) {
@@ -238,17 +204,12 @@ public class ApiTest {
 	public void test_confirm_should_raise_exception_on_400_bad_request() {
 		metrics.put("requestsyy", "1");
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender)
-							.sendPostToServer(
-									with("http://beta.3scale.net/transactions/1/confirm.xml"),
-									with("provider_key=" + GOOD_PROVIDER_KEY
-											+ "&usage[requestsyy]=1"));
-					will(throwException(new ApiException(400,
-							"<error id=\"provider.invalid_metric\">metric does not exist</error>")));
-				}
-			});
+			when(sender.sendPostToServer(
+				"http://server.3scale.net/transactions/1/confirm.xml",
+				"provider_key=" + GOOD_PROVIDER_KEY
+											+ "&usage[requestsyy]=1"))
+			.thenThrow(new ApiException(400,
+				"<error id=\"provider.invalid_metric\">metric does not exist</error>"));
 
 			api.confirm("1", metrics);
 			fail("Should have thrown an exception");
@@ -261,16 +222,11 @@ public class ApiTest {
 
 	@Test
 	public void test_confirm_should_return_true_on_200_ok() throws ApiException {
-		context.checking(new Expectations() {
-			{
-				allowing(sender)
-						.sendPostToServer(
-								with("http://beta.3scale.net/transactions/1/confirm.xml"),
-								with("provider_key=" + GOOD_PROVIDER_KEY
-										+ "&usage[requests]=1"));
-				will(returnValue(new ApiStartResponse("", "", "", 200)));
-			}
-		});
+		when(sender.sendPostToServer(
+			"http://server.3scale.net/transactions/1/confirm.xml",
+			"provider_key=" + GOOD_PROVIDER_KEY
+										+ "&usage[requests]=1"))
+		.thenReturn(new ApiStartResponse("", "", "", 200));
 
 		metrics.put("requests", "1");
 
@@ -281,17 +237,11 @@ public class ApiTest {
 	@Test
 	public void test_cancel_should_raise_exception_on_404_not_found() {
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender)
-							.sendDeleteToServer(
-									with("http://beta.3scale.net/transactions/11111111-111111.xml?provider_key="
-											+ GOOD_PROVIDER_KEY));
-					will(throwException(new ApiException(
-							404,
-							"<error id=\"provider.invalid_transaction_id\">transaction does not exist</error>")));
-				}
-			});
+			when(sender.sendDeleteToServer(
+				"http://server.3scale.net/transactions/11111111-111111.xml?provider_key="
+											+ GOOD_PROVIDER_KEY))
+			.thenThrow(new ApiException(404,
+				"<error id=\"provider.invalid_transaction_id\">transaction does not exist</error>"));
 
 			api.cancel("11111111-111111");
 			fail("Should have thrown an exception");
@@ -304,25 +254,20 @@ public class ApiTest {
 
 	@Test
 	public void test_cancel_should_raise_exception_on_403_forbidden() {
-		api = ApiFactory.createApi("http://beta.3scale.net", BAD_PROVIDER_KEY,
+		api = ApiFactory.createApi("http://server.3scale.net", BAD_PROVIDER_KEY,
 				sender);
 
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender)
-							.sendDeleteToServer(
-									with("http://beta.3scale.net/transactions/1.xml?provider_key="
-											+ BAD_PROVIDER_KEY));
-					will(throwException(new ApiException(
-							403,
-							"<error id=\"provider.invalid_key\">provider authentication key is invalid</error>")));
-				}
-			});
+			when(sender.sendDeleteToServer(
+				"http://server.3scale.net/transactions/1.xml?provider_key="
+											+ BAD_PROVIDER_KEY))
+			.thenThrow(new ApiException(403,
+							"<error id=\"provider.invalid_key\">provider authentication key is invalid</error>"));
 
 			api.cancel("1");
 			fail("Should have thrown an exception");
-		} catch (ApiException ex) {
+		} 
+		catch (ApiException ex) {
 			assertEquals(403, ex.getResponseCode());
 			assertEquals("provider.invalid_key", ex.getErrorId());
 			assertEquals("provider authentication key is invalid", ex
@@ -333,15 +278,10 @@ public class ApiTest {
 	@Test
 	public void test_cancel_should_return_true_on_200_ok() throws ApiException {
 
-		context.checking(new Expectations() {
-			{
-				allowing(sender)
-						.sendDeleteToServer(
-								with("http://beta.3scale.net/transactions/1.xml?provider_key="
-										+ GOOD_PROVIDER_KEY));
-				will(returnValue(200));
-			}
-		});
+		when(sender.sendDeleteToServer(
+			"http://server.3scale.net/transactions/1.xml?provider_key="
+										+ GOOD_PROVIDER_KEY))
+		.thenReturn(200);
 
 		int response = api.cancel("1");
 		assertEquals(200, response);
@@ -350,16 +290,11 @@ public class ApiTest {
 	@Test
 	public void test_cancel_should_raise_exception_on_unexpected_response() {
 		try {
-			context.checking(new Expectations() {
-				{
-					allowing(sender)
-							.sendDeleteToServer(
-									with("http://beta.3scale.net/transactions/1.xml?provider_key="
-											+ GOOD_PROVIDER_KEY));
-					will(throwException(new ApiException(500,
-							"<error id=\"system.other\">Internal Server Error</error>")));
-				}
-			});
+			when(sender.sendDeleteToServer(
+				"http://server.3scale.net/transactions/1.xml?provider_key="
+											+ GOOD_PROVIDER_KEY))
+			.thenThrow(new ApiException(500,
+							"<error id=\"system.other\">Internal Server Error</error>"));
 
 			api.cancel("1");
 

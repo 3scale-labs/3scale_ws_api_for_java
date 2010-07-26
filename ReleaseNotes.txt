@@ -1,0 +1,9 @@
+Release Notes
+
+V1.0.2
+
+Api.startTransaction now throws an APIException on failure.  Previously it returned a numeric code.
+
+Changed java doc and examples to use the latest production URL.
+
+ 

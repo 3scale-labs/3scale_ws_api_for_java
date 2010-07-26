@@ -23,7 +23,7 @@
 	</path>
 
 
-	<target name="jar" depends="clean, compile" description="Builds jar file">
+	<target name="jar" depends="clean, compile, unittest" description="Builds jar file">
 		<jar destfile="${jar.file}">
 			<fileset dir="${build.classes}" excludes="**/ApiTest*.class, **/Example.class" includes="**/*.class" />
 		</jar>
@@ -82,12 +82,13 @@
 		</javadoc>
 	</target>
 
-	<target name="tarball">
+	<target name="tarball" depends="clean,jar,javadoc">
 		<tar destfile="${basedir}/threescale-api.tar.gz" compression="gzip">
 			<fileset dir="${basedir}">
 				<include name="build.xml" />
 				<include name=".classpath" />
 				<include name=".project" />
+				<include name="ReleaseNotes.txt"/>
 				<include name="src/**/*"/>
 				<include name="test/**/*"/>
 				<include name="dist/**/*"/>

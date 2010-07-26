@@ -1,33 +1,37 @@
 package net.threescale.api;
 
-import java.util.Map;
+import java.util.*;
+import java.util.logging.*;
 
 /**
  * Concrete implementation of the Api. 
  */
 public class ApiImpl implements Api {
 
+	private Logger log = LogFactory.getLogger(this);
+
 	private String host;
 	private String provider_private_key;
 
-	private HttpSender sender = new HttpSenderImpl();
+	private HttpSender sender;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param url URL of the server to connect to. e.g. http://beta.3scale.net.
+	 * @param url URL of the server to connect to. e.g. http://server.3scale.net.
 	 * @param provider_private_key The Providers private key obtained from 3scale.
 	 */
 	ApiImpl(String url, String provider_private_key) {
 
 		this.host = url;
 		this.provider_private_key = provider_private_key;
+		sender = new HttpSenderImpl();
 	}
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param url URL of the server to connect to. e.g. http://beta.3scale.net.
+	 * @param url URL of the server to connect to. e.g. http://server.3scale.net.
 	 * @param provider_private_key The Providers private key obtained from 3scale.
 	 * @param sender to use for  communications with the server.
 	 */
@@ -62,6 +66,7 @@ public class ApiImpl implements Api {
 	public ApiStartResponse start(String user_contract_key, Map<String, String> metrics)
 			throws ApiException {
 
+		log.info("transaction start for user_key: " + user_contract_key);
 		return sender.sendPostToServer(createStartUrl(), buildPostData(user_contract_key, metrics));
 
 	}
@@ -84,7 +89,7 @@ public class ApiImpl implements Api {
 
 	
 	/**
-	 * Sends a cancel mesage to the server and aborts the transaction. 
+	 * Sends a cancel message to the server and aborts the transaction. 
 	 * @param transactionId The transactionId returned from the start operation.
 	 * @return 200 on success.
 	 * @throws ApiException On error. Contains the cause information for the error.
@@ -108,12 +113,11 @@ public class ApiImpl implements Api {
 		postData.append(provider_private_key);
 
 		if (metrics != null) {
-			for (String metric : metrics.keySet()) {
-				String value = metrics.get(metric);
+			for (Map.Entry<String, String> metric : metrics.entrySet()) {
 				postData.append("&usage[");
-				postData.append(metric);
+				postData.append(metric.getKey());
 				postData.append("]=");
-				postData.append(value);
+				postData.append(metric.getValue());
 			}
 		}
 		return postData.toString();

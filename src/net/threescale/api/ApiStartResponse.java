@@ -1,17 +1,15 @@
 package net.threescale.api;
 
-import java.io.StringReader;
+import java.util.logging.*;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.xml.sax.InputSource;
+import javax.xml.xpath.*;
 
 /**
  * Contains the transaction information returned from a successful start operation.
  */
 public class ApiStartResponse {
+
+	private Logger log = LogFactory.getLogger(this);
 
 	private String transactionId = "";
 	private String contractName = "";
@@ -23,20 +21,37 @@ public class ApiStartResponse {
 	 * @param xmlString XML returned from the server.
 	 * @param responseCode Http Response code from the Http response.
 	 */
-	public ApiStartResponse(String xmlString, int responseCode) {
-
-		this.responseCode = responseCode;
-
-		XPathFactory xPathFactory = XPathFactory.newInstance();
-		XPath xpath = xPathFactory.newXPath();
-
-		if (xmlString != null && xmlString.trim().length() != 0) {
-			transactionId = XmlHelper.extractNode(xpath, "/transaction/id", xmlString);
-			contractName = XmlHelper.extractNode(xpath, "/transaction/contract_name",
-					xmlString);
-			providerVerificationKey = XmlHelper.extractNode(xpath,
-					"/transaction/provider_verification_key", xmlString);
+	public ApiStartResponse(String xmlString, int responseCode) throws ApiException {
+		log.info("Response code was: " + responseCode);
+		
+		if (responseCode == 200) {
+			this.responseCode = responseCode;
+			// XPathFactory xPathFactory = XPathFactory.newInstance();
+			XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+			XPath xpath = xPathFactory.newXPath();
+	
+			if (xmlString != null && xmlString.trim().length() != 0) {
+				log.info("Extracting transaction info");
+				transactionId = XmlHelper.extractNode(xpath, "/transaction/id", xmlString);
+				contractName = XmlHelper.extractNode(xpath, "/transaction/contract_name",
+						xmlString);
+				providerVerificationKey = XmlHelper.extractNode(xpath,
+						"/transaction/provider_verification_key", xmlString);
+				log.info("tid: " + transactionId);
+				log.info("contractName: " + contractName);
+			} else {
+				log.info("Xml string was empty");
+				throw new ApiException(999, null);
+				
+			}
 		}
+		else {
+			log.info("Throwing ApiException");
+			log.info("responseCode: " + responseCode);
+			log.info("xml: " + xmlString);
+			throw new ApiException(responseCode, xmlString);
+		}
+		
 	}
 
 
