@@ -327,13 +327,13 @@ public class ApiTest {
         assertApiUsage("hits",  "hour", "2009-08-19 22:00:00", "2009-08-19 22:59:59",    "26",   "100", response.getUsages()[2]);
     }
 
-    private void assertApiUsage(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue, ApiUsage apiUsage) throws ParseException {
-        assertEquals("metric", metric, apiUsage.getMetric());
-        assertEquals("period", period, apiUsage.getPeriod());
-        assertEquals("periodStart", stringToDate(periodStart), apiUsage.getPeriodStart());
-        assertEquals("periodEnd", stringToDate(periodEnd), apiUsage.getPeriodEnd());
-        assertEquals("currentValue", currentValue, apiUsage.getCurrentValue());
-        assertEquals("maxValue", maxValue, apiUsage.getMaxValue());
+    private void assertApiUsage(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue, ApiUsageMetric apiUsageMetric) throws ParseException {
+        assertEquals("metric", metric, apiUsageMetric.getMetric());
+        assertEquals("period", period, apiUsageMetric.getPeriod());
+        assertEquals("periodStart", stringToDate(periodStart), apiUsageMetric.getPeriodStart());
+        assertEquals("periodEnd", stringToDate(periodEnd), apiUsageMetric.getPeriodEnd());
+        assertEquals("currentValue", currentValue, apiUsageMetric.getCurrentValue());
+        assertEquals("maxValue", maxValue, apiUsageMetric.getMaxValue());
     }
 
     private Date stringToDate(String value) throws ParseException {

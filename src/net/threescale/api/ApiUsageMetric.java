@@ -8,12 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 26-Jul-2010
- * Time: 10:36:59
+ * DTO for API Usage Metrics
  */
-public class ApiUsage {
+public class ApiUsageMetric {
     
     private static DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
@@ -26,7 +23,7 @@ public class ApiUsage {
     private final String currentValue;
     private final String maxValue;
 
-    public ApiUsage(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue) {
+    public ApiUsageMetric(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue) {
         this.metric = metric;
         this.period = period;
         this.periodStart = stringToDate(periodStart);
@@ -35,18 +32,30 @@ public class ApiUsage {
         this.maxValue = maxValue;
     }
 
+    /**
+     * @return The period start date and time for this usage
+     */
     public Date getPeriodStart() {
         return periodStart;
     }
 
+    /**
+     * @return The period end date and time for this usage
+     */
     public Date getPeriodEnd() {
         return periodEnd;
     }
 
+    /**
+     * @return The current value for this usage
+     */
     public String getCurrentValue() {
         return currentValue;
     }
 
+    /**
+     * @return The maximum value for this usage
+     */
     public String getMaxValue() {
         return maxValue;
     }
@@ -60,10 +69,17 @@ public class ApiUsage {
         }
     }
 
+
+    /**
+     * @return The name of this metric
+     */
     public String getMetric() {
         return metric;
     }
 
+    /**
+     * @return The period for this metric
+     */
     public String getPeriod() {
         return period;
     }

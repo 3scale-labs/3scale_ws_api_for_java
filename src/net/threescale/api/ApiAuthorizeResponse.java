@@ -6,23 +6,19 @@ import org.w3c.dom.NodeList;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.util.logging.Level.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 26-Jul-2010
- * Time: 09:50:02
+ * Response returned by server to authorize message.
  */
 public class ApiAuthorizeResponse {
 
     private Logger log = LogFactory.getLogger(this);
 
     private String plan = "";
-    private ApiUsage[] usages = null;
+    private ApiUsageMetric[] usages = null;
 
     public ApiAuthorizeResponse(String responseFromServer) throws ApiException {
 
@@ -44,9 +40,9 @@ public class ApiAuthorizeResponse {
        return XmlHelper.extractNode(xpath, "/status/plan", responseFromServer);
     }
 
-    private ApiUsage[] extractUsages(String responseFromServer, XPath xpath) {
+    private ApiUsageMetric[] extractUsages(String responseFromServer, XPath xpath) {
 
-        ArrayList<ApiUsage> results = new ArrayList<ApiUsage>();
+        ArrayList<ApiUsageMetric> results = new ArrayList<ApiUsageMetric>();
 
         try {
             NodeList nodes = XmlHelper.extractNodeList(xpath, "/status/usage", responseFromServer);
@@ -62,10 +58,10 @@ public class ApiAuthorizeResponse {
         catch (Exception ex) {
           log.log(WARNING, ex.getMessage(), ex);
         }
-        return results.toArray(new ApiUsage[0]);
+        return results.toArray(new ApiUsageMetric[0]);
     }
 
-    private ApiUsage extractApiUsage(String metric, String period,NodeList childNodes) throws Exception {
+    private ApiUsageMetric extractApiUsage(String metric, String period,NodeList childNodes) throws Exception {
         String periodStart = null;
         String periodEnd = null;
         String currentValue = null;
@@ -95,14 +91,20 @@ public class ApiAuthorizeResponse {
             }
         }
 
-        return new ApiUsage(metric, period, periodStart, periodEnd, currentValue, maxValue);
+        return new ApiUsageMetric(metric, period, periodStart, periodEnd, currentValue, maxValue);
     }
 
+    /**
+     * @return Plan name for this user key
+     */
     public String getPlan() {
         return plan;
     }
 
-    public ApiUsage[] getUsages() {
+    /**
+     * @return Current Api usage. A zero length array is returnd if there is no usage information.
+     */
+    public ApiUsageMetric[] getUsages() {
         return usages;
     }
 }
