@@ -21,7 +21,7 @@ public class ApiTest {
 	private Map<String, String> metrics = new HashMap<String, String>();
 
 	@Mock
-	private HttpSender sender;
+	private HttpSender sender = null;
 
 	@Before
 	public void setUp() throws Exception {
@@ -326,6 +326,55 @@ public class ApiTest {
         assertApiUsage("hits",   "day", "2009-08-19 00:00:00", "2009-08-19 23:59:59",   "732",  "1000", response.getUsages()[1]);
         assertApiUsage("hits",  "hour", "2009-08-19 22:00:00", "2009-08-19 22:59:59",    "26",   "100", response.getUsages()[2]);
     }
+
+    @Test
+    public void test_authorize_should_raise_exception_on_403_forbidden() {
+        api = ApiFactory.createApi("http://server.3scale.net", BAD_PROVIDER_KEY,
+                sender);
+
+        try {
+            when(sender.sendGetToServer(
+                "http://server.3scale.net/transactions/authorize.xml?user_key=1&provider_key="
+                                            + BAD_PROVIDER_KEY))
+            .thenThrow(new ApiException(403,
+                            "<error id=\"provider.invalid_key\">provider authentication key is invalid</error>"));
+
+            api.authorize("1");
+            fail("Should have thrown an exception");
+        }
+        catch (ApiException ex) {
+            assertEquals(403, ex.getResponseCode());
+            assertEquals("provider.invalid_key", ex.getErrorId());
+            assertEquals("provider authentication key is invalid", ex
+                    .getMessage());
+        }
+    }
+
+    @Test
+    public void test_authorize_should_raise_exception_on_500() {
+        api = ApiFactory.createApi("http://server.3scale.net", BAD_PROVIDER_KEY,
+                sender);
+
+        try {
+            when(sender.sendGetToServer(
+                "http://server.3scale.net/transactions/authorize.xml?" +
+                        "user_key=" + USER_KEY +
+                        "&provider_key=" + GOOD_PROVIDER_KEY))
+            .thenReturn("");
+
+            api.authorize(USER_KEY);
+            fail("Should have thrown an exception");
+        }
+        catch (ApiException ex) {
+            assertEquals(500, ex.getResponseCode());
+            assertEquals("provider.other", ex.getErrorId());
+            assertEquals("Result was empty", ex
+                    .getMessage());
+        }
+    }
+
+
+
 
     private void assertApiUsage(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue, ApiUsageMetric apiUsageMetric) throws ParseException {
         assertEquals("metric", metric, apiUsageMetric.getMetric());

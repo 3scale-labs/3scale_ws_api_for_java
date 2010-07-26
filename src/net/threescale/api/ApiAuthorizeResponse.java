@@ -22,16 +22,18 @@ public class ApiAuthorizeResponse {
 
     public ApiAuthorizeResponse(String responseFromServer) throws ApiException {
 
-        XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
-        XPath xpath = xPathFactory.newXPath();
 
         if (responseFromServer != null && responseFromServer.trim().length() != 0) {
+
+            XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+            XPath xpath = xPathFactory.newXPath();
+
             log.info("Extracting usage info");
             plan = extractPlan(responseFromServer, xpath);
             usages = extractUsages(responseFromServer, xpath);
         } else {
-            log.info("Xml string was empty");
-            throw new ApiException(999, null);
+            log.info("Result was empty");
+            throw new ApiException(500, "provider.other", "Result was empty");
         }
     }
 

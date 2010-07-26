@@ -55,17 +55,9 @@ public class HttpSenderImpl implements HttpSender {
             throw ex;
         }
         catch (Exception ex) {
-            if (con != null) {
-                try {
-                    throw new ApiException(con.getResponseCode(),
-                            getErrorMessage(con));
-                } catch (IOException e) {
-                    throw new ApiException(999, e.getMessage());
-                }
-            } else {
-                throw new ApiException(999, "Error connecting to server");
-            }
+            handleErrors(con);
         }
+        return null;
     }
 
     /**
@@ -88,16 +80,9 @@ public class HttpSenderImpl implements HttpSender {
             return con.getResponseCode();
         }
         catch (Exception ex) {
-            if (con != null) {
-                try {
-                    throw new ApiException(con.getResponseCode(), getErrorMessage(con));
-                } catch (IOException e) {
-                    throw new ApiException(999, e.getMessage());
-                }
-            } else {
-                throw new ApiException(999, "Error connecting to server");
-            }
+            handleErrors(con);
         }
+        return -1;
     }
 
     /**
@@ -121,23 +106,25 @@ public class HttpSenderImpl implements HttpSender {
                 return extractContent(con);
             }
             else {
-                throw new ApiException(con.getResponseCode(),
-                        getErrorMessage(con));
+                throw new ApiException(con.getResponseCode(), getErrorMessage(con));
             }
         }
         catch (Exception ex) {
-            if (con != null) {
-                try {
-                    throw new ApiException(con.getResponseCode(),
-                            getErrorMessage(con));
-                } catch (IOException e) {
-                    throw new ApiException(999, e.getMessage());
-                }
-            } else {
-                throw new ApiException(999, "Error connecting to server");
-            }
+            handleErrors(con);
         }
+        return "";
+    }
 
+    private void handleErrors(HttpURLConnection con) throws ApiException {
+        if (con != null) {
+            try {
+                throw new ApiException(con.getResponseCode(), getErrorMessage(con));
+            } catch (IOException e) {
+                throw new ApiException(500, "provider.other",  e.getMessage());
+            }
+        } else {
+            throw new ApiException(500, "provider.other", "Error connecting to server");
+        }
     }
 
 

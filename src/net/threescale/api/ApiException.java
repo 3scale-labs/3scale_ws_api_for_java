@@ -14,7 +14,14 @@ public class ApiException extends Exception {
 	private String errorId;
 	private String errorMessage;
 	
-	public ApiException(int responseCode, String xmlMessage) {
+    public ApiException(int responseCode, String errorId, String errorMessage) {
+
+        this.responseCode = responseCode;
+        this.errorId = errorId;
+        this.errorMessage = errorMessage;
+    }
+
+    public ApiException(int responseCode, String xmlMessage) {
 		this.responseCode = responseCode;
 
 		try {
@@ -22,10 +29,16 @@ public class ApiException extends Exception {
 			XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
 			XPath xpath = xPathFactory.newXPath();
 
-			errorId = XmlHelper.extractNode(xpath, "//@id", xmlMessage);
-			errorMessage = XmlHelper.extractNode(xpath, "/error", xmlMessage);
+            if (xmlMessage != null && xmlMessage.length() > 0) {
+			    errorId = XmlHelper.extractNode(xpath, "//@id", xmlMessage);
+			    errorMessage = XmlHelper.extractNode(xpath, "/error", xmlMessage);
+            } else {
+                errorId = "500";
+                errorMessage = "xml error parsing response from server";
+            }
+
 		} catch (Exception e) {
-			errorId = "999";
+			errorId = "500";
 			errorMessage = "xml error parsing response from server";
 			e.printStackTrace();
 		}
