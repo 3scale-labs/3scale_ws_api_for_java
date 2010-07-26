@@ -4,6 +4,7 @@ import java.io.*;
 
 import javax.xml.xpath.*;
 
+import org.w3c.dom.NodeList;
 import org.xml.sax.*;
 
 /**
@@ -18,14 +19,25 @@ public class XmlHelper {
 	 * @param xmlString Xml string object to extract the data from
 	 * @return The requested data, or "" if not found.
 	 */
-	public static String extractNode(XPath xpath, String nodePath, String xmlString) {
-		InputSource inputSource = new InputSource(new StringReader(xmlString));
+    public static String extractNode(XPath xpath, String nodePath, String xmlString) {
+        InputSource inputSource = new InputSource(new StringReader(xmlString));
 
-		try {
-			return xpath.evaluate(nodePath, inputSource);
-		} catch (XPathExpressionException e) {
-			return "";
-		}
-	}
+        try {
+            return xpath.evaluate(nodePath, inputSource);
+        } catch (XPathExpressionException e) {
+            return "";
+        }
+    }
+
+    public static NodeList extractNodeList(XPath xpath, String nodePath, String xmlString) {
+        InputSource inputSource = new InputSource(new StringReader(xmlString));
+
+        try {
+            return (NodeList) xpath.evaluate(nodePath, inputSource, XPathConstants.NODESET);
+        } catch (XPathExpressionException e) {
+            return null;
+        }
+    }
 
 }
+

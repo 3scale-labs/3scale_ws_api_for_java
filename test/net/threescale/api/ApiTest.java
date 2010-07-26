@@ -3,6 +3,9 @@ package net.threescale.api;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.junit.*;
@@ -306,7 +309,7 @@ public class ApiTest {
 	}
 
     @Test
-    public void test_authorize_should_return_data_for_valid_request() throws ApiException {
+    public void test_authorize_should_return_data_for_valid_request() throws ApiException, ParseException {
         when(sender.sendGetToServer(
             "http://server.3scale.net/transactions/authorize.xml?" +
                     "user_key=" + USER_KEY +
@@ -316,8 +319,26 @@ public class ApiTest {
         ApiAuthorizeResponse response = api.authorize(USER_KEY);
 
         assertEquals("Pro", response.getPlan());
-//        assertEquals(3, response.getUsages().length);
 
+        assertEquals(3, response.getUsages().length);
+
+        assertApiUsage("hits", "month", "2009-08-01 00:00:00", "2009-08-31 23:59:59", "17344", "20000", response.getUsages()[0]);
+        assertApiUsage("hits",   "day", "2009-08-19 00:00:00", "2009-08-19 23:59:59",   "732",  "1000", response.getUsages()[1]);
+        assertApiUsage("hits",  "hour", "2009-08-19 22:00:00", "2009-08-19 22:59:59",    "26",   "100", response.getUsages()[2]);
+    }
+
+    private void assertApiUsage(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue, ApiUsage apiUsage) throws ParseException {
+        assertEquals("metric", metric, apiUsage.getMetric());
+        assertEquals("period", period, apiUsage.getPeriod());
+        assertEquals("periodStart", stringToDate(periodStart), apiUsage.getPeriodStart());
+        assertEquals("periodEnd", stringToDate(periodEnd), apiUsage.getPeriodEnd());
+        assertEquals("currentValue", currentValue, apiUsage.getCurrentValue());
+        assertEquals("maxValue", maxValue, apiUsage.getMaxValue());
+    }
+
+    private Date stringToDate(String value) throws ParseException {
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormatter.parse(value);
     }
 
 
