@@ -426,7 +426,7 @@ public class ApiTest {
 
         ApiBatchMetric[] metrics = new ApiBatchMetric[2];
         metrics[0] = new ApiBatchMetric(USER_KEY, m0, d0);
-        metrics[1] = new ApiBatchMetric(USER_KEY, m1, null);  // Test optional date
+        metrics[1] = new ApiBatchMetric(USER_KEY, m1);  // Test optional date
         return metrics;
     }
 

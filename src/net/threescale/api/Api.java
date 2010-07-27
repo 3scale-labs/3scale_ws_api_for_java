@@ -59,6 +59,12 @@ public interface Api {
     public ApiAuthorizeResponse authorize(String user_contract_key) throws ApiException;
 
 
+    /**
+     * Send a set of Usage metrics to the server
+     * @param batchMetrics  Array of user_key / metrics
+     * @return  Code 201 if successful,
+     * @throws ApiException Thrown if any error.  Use getErrors() to investigate the problems.
+     */
     public int batch(ApiBatchMetric [] batchMetrics) throws ApiException;
 
 }

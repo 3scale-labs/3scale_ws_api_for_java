@@ -115,6 +115,12 @@ public class ApiImpl implements Api {
         return buildAuthorizeResponse(sender.sendGetToServer(createAuthorizeUrl(user_contract_key)));
     }
 
+    /**
+     * Send a set of Usage metrics to the server
+     * @param batchMetrics  Array of user_key / metrics
+     * @return  Code 201 if successful,
+     * @throws ApiException Thrown if any error.  Use getErrors() to investigate the problems.
+     */
     public int batch(ApiBatchMetric[] batchMetrics) throws ApiException {
         log.info("batch start: for " + batchMetrics.length + " transactions");
         ApiHttpResponse response = sender.sendPostToServer(createBatchUrl(), buildBatchData(batchMetrics));
@@ -129,6 +135,7 @@ public class ApiImpl implements Api {
     }
 
 
+    /** This method is only public for testing, do not call in your code */
     public String buildBatchData(ApiBatchMetric[] batchMetrics) {
         StringBuffer response = new StringBuffer();
         response.append("provider_key=");

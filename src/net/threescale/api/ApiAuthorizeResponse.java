@@ -104,7 +104,7 @@ public class ApiAuthorizeResponse {
     }
 
     /**
-     * @return Current Api usage. A zero length array is returnd if there is no usage information.
+     * @return Current Api usage. A zero length array is returned if there is no usage information.
      */
     public ApiUsageMetric[] getUsages() {
         return usages;
