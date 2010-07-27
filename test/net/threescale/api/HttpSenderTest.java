@@ -28,11 +28,11 @@ public class HttpSenderTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testResponse200ReturnCorrectResponse() throws ApiException, MalformedURLException, IOException {
-		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n"
-			+ "    <transaction>\n"
-			+ "        <id>42</id>\n"
-			+ "        <contract_name>pro</contract_name>\n"
-			+ "        <provider_verification_key>bc43a3e00565d95c297f5ea5028e64e5</provider_verification_key>\n"
+		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>"
+			+ "    <transaction>"
+			+ "        <id>42</id>"
+			+ "        <contract_name>pro</contract_name>"
+			+ "        <provider_verification_key>bc43a3e00565d95c297f5ea5028e64e5</provider_verification_key>"
 			+ "    </transaction> ";
 		
 		when(factory.openConnection(anyString())).thenReturn(con);
@@ -40,11 +40,9 @@ public class HttpSenderTest {
 		when(con.getInputStream()).thenReturn(new StringBufferInputStream(xml));
 		when(con.getResponseCode()).thenReturn(200);
 		
-		ApiStartResponse response = sender.sendPostToServer("host1", "some data");
+        ApiHttpResponse response = sender.sendPostToServer("host1", "some data");
 		assertEquals(200, response.getResponseCode());
-		assertEquals("42", response.getTransactionId());
-		assertEquals("pro", response.getContractName());
-		assertEquals("bc43a3e00565d95c297f5ea5028e64e5", response.getProviderVerificationKey());
+		assertEquals(xml, response.getResponseText());
 
 		verify(con).setRequestMethod("POST");
 		verify(con).setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -58,7 +56,7 @@ public class HttpSenderTest {
 		
 		when(factory.openConnection(anyString())).thenReturn(con);
 		when(con.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-		when(con.getInputStream()).thenReturn(new StringBufferInputStream(""));
+		when(con.getInputStream()).thenReturn(new StringBufferInputStream(error500XmlResponse));
 		when(con.getResponseCode()).thenReturn(500);
 		try {
 			sender.sendPostToServer("host1", "some data") ;
@@ -66,7 +64,7 @@ public class HttpSenderTest {
 		}
 		catch(ApiException ex) {
 			assertEquals(500, ex.getResponseCode());
-			assertEquals("", ex.getMessage());
+			assertEquals("System Failure", ex.getMessage());
 		}
 	}
 	
@@ -83,7 +81,7 @@ public class HttpSenderTest {
 			fail("Expected exception");
 		}
 		catch(ApiException ex) {
-			assertEquals(999, ex.getResponseCode());
+			assertEquals(500, ex.getResponseCode());
 			assertEquals("xml error parsing response from server", ex.getMessage());
 		}
 
@@ -102,6 +100,11 @@ public class HttpSenderTest {
 
         assertEquals(authorizeResponseXml, response);
     }
+
+    String error500XmlResponse =
+    "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+    "<error id=\"provider.other\">System Failure</error>";
+
 
     String authorizeResponseXml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
         "<status>" +

@@ -58,4 +58,7 @@ public interface Api {
      */
     public ApiAuthorizeResponse authorize(String user_contract_key) throws ApiException;
 
+
+    public int batch(ApiBatchMetric [] batchMetrics) throws ApiException;
+
 }

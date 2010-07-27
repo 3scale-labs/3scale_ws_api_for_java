@@ -13,7 +13,7 @@ import org.mockito.*;
 
 public class ApiTest {
 
-	private static final String USER_KEY = "52edc747dc99abd99b4d3ffdf51d12ce";
+	private static final String USER_KEY = "3scale-bce4c8f4b6578e6c3491e6d941b5b522";
 	private static final String GOOD_PROVIDER_KEY = "goodf621b66acb7ec8ceabed4b7aff278";
 	private static final String BAD_PROVIDER_KEY = "badfeeeee6acb7eeeeeeeeeed4b7aee160";
 
@@ -146,13 +146,12 @@ public class ApiTest {
 				"http://server.3scale.net/transactions.xml",
 				"user_key=" + USER_KEY + "&provider_key="
 					+ GOOD_PROVIDER_KEY + "&usage[requests]=1"))
-		.thenReturn(new ApiStartResponse("42", "test",
-						"provider_private_key", 200));
+		.thenReturn(new ApiHttpResponse(200, startResponseXml, ""));
 
 		ApiStartResponse response = api.start(USER_KEY, metrics);
 		assertEquals(200, response.getResponseCode());
 		assertEquals("test", response.getContractName());
-		assertEquals("provider_private_key", response
+		assertEquals("3scale-bc43a3e00565d95c297f5ea5028e64e5", response
 				.getProviderVerificationKey());
 		assertEquals("42", response.getTransactionId());
 	}
@@ -229,7 +228,7 @@ public class ApiTest {
 			"http://server.3scale.net/transactions/1/confirm.xml",
 			"provider_key=" + GOOD_PROVIDER_KEY
 										+ "&usage[requests]=1"))
-		.thenReturn(new ApiStartResponse("", "", "", 200));
+		.thenReturn(new ApiHttpResponse(200, "", ""));
 
 		metrics.put("requests", "1");
 
@@ -373,7 +372,40 @@ public class ApiTest {
         }
     }
 
+    @Test
+    public void test_buildBatch_formats_the_data_correctly() throws Exception {
+        ApiBatchMetric[] metrics = buildBatchTestMetrics();
+        String result = ((ApiImpl)api).buildBatchData(metrics);
+        assertEquals(batchPostData, result);
+    }
 
+    @Test
+    public void test_batch_returns_ok() throws Exception {
+        when(sender.sendPostToServer(
+            "http://server.3scale.net/transactions.xml", batchPostData))
+                .thenReturn(new ApiHttpResponse(201, "", ""));
+
+        ApiBatchMetric[] metrics = buildBatchTestMetrics();
+        int response = api.batch(metrics);
+        assertEquals(201, response);
+    }
+
+    private ApiBatchMetric[] buildBatchTestMetrics() throws ParseException {
+        Map<String, String> m0 = new HashMap<String, String>();
+        m0.put("hits", "1");
+        m0.put("transfer", "4500");
+        Date d0 = stringToDate("2009-01-01 14:23:08");
+
+        Map<String, String> m1 = new HashMap<String, String>();
+        m1.put("hits", "1");
+        m1.put("transfer", "2840");
+        Date d1 = stringToDate("2009-01-01 18:11:59");
+
+        ApiBatchMetric[] metrics = new ApiBatchMetric[2];
+        metrics[0] = new ApiBatchMetric(USER_KEY, m0, d0);
+        metrics[1] = new ApiBatchMetric(USER_KEY, m1, d1);
+        return metrics;
+    }
 
 
     private void assertApiUsage(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue, ApiUsageMetric apiUsageMetric) throws ParseException {
@@ -386,9 +418,17 @@ public class ApiTest {
     }
 
     private Date stringToDate(String value) throws ParseException {
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormatter.parse(value);
+        return  ApiUtil.getDataFormatter().parse(value);
     }
+
+
+    String startResponseXml =
+    "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+    "<transaction>" +
+    "  <id>42</id>" +
+    "  <contract_name>test</contract_name>" +
+    "  <provider_verification_key>3scale-bc43a3e00565d95c297f5ea5028e64e5</provider_verification_key>" +
+    "</transaction>";
 
 
     String authorizeResponseXml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
@@ -413,4 +453,15 @@ public class ApiTest {
         "      <max_value>100</max_value>" +
         "    </usage>" +
         "  </status>";
+
+    String batchPostData =
+        "provider_key=" + GOOD_PROVIDER_KEY + "&" +
+        "transactions[0][user_key]=3scale-bce4c8f4b6578e6c3491e6d941b5b522&" +
+        "transactions[0][usage][transfer]=4500&" +
+        "transactions[0][usage][hits]=1&" +
+        "transactions[0][timestamp]=2009-01-01%2014:23:08&" +
+        "transactions[1][user_key]=3scale-bce4c8f4b6578e6c3491e6d941b5b522&" +
+        "transactions[1][usage][transfer]=2840&" +
+        "transactions[1][usage][hits]=1&" +
+        "transactions[1][timestamp]=2009-01-01%2018:11:59";
 }

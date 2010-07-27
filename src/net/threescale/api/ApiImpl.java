@@ -1,5 +1,9 @@
 package net.threescale.api;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.*;
 
@@ -67,7 +71,8 @@ public class ApiImpl implements Api {
 			throws ApiException {
 
 		log.info("transaction start for user_key: " + user_contract_key);
-		return sender.sendPostToServer(createStartUrl(), buildPostData(user_contract_key, metrics));
+		ApiHttpResponse response = sender.sendPostToServer(createStartUrl(), buildPostData(user_contract_key, metrics));
+        return new ApiStartResponse(response.getResponseText(), response.getResponseCode());
 
 	}
 
@@ -83,7 +88,7 @@ public class ApiImpl implements Api {
 	 * @throws ApiException On error. Contains the cause information for the error.
 	 */
 	public int confirm(String transactionId, Map<String, String> metrics) throws ApiException {
-		ApiStartResponse response = sender.sendPostToServer(createConfirmUrl(transactionId) , buildPostData(null, metrics));
+		ApiHttpResponse response = sender.sendPostToServer(createConfirmUrl(transactionId) , buildPostData(null, metrics));
 		return response.getResponseCode();
 	}
 
@@ -110,10 +115,54 @@ public class ApiImpl implements Api {
         return buildAuthorizeResponse(sender.sendGetToServer(createAuthorizeUrl(user_contract_key)));
     }
 
+    public int batch(ApiBatchMetric[] batchMetrics) throws ApiException {
+        log.info("batch start: for " + batchMetrics.length + " transactions");
+        ApiHttpResponse response = sender.sendPostToServer(createBatchUrl(), buildBatchData(batchMetrics));
+        return response.getResponseCode();
+    }
+
     private ApiAuthorizeResponse buildAuthorizeResponse(String responseFromServer) throws ApiException {
         return new ApiAuthorizeResponse(responseFromServer); 
     }
 
+
+    public String buildBatchData(ApiBatchMetric[] batchMetrics) {
+        StringBuffer response = new StringBuffer();
+        response.append("provider_key=");
+        response.append(provider_private_key);
+        int index = 0;
+        for (ApiBatchMetric metric : batchMetrics) {
+            response.append("&").append(buildMetricItem(metric, index++));
+        }
+        return response.toString().replaceAll(" ", "%20");
+    }
+
+    private String buildMetricItem(ApiBatchMetric metric,int index) {
+        String prefix = "transactions[" + index + "]" ;
+        StringBuffer b = new StringBuffer();
+        b.append(prefix).append("[user_key]=").append(metric.getUser_key()).append("&");
+
+        Set<String> keySet = metric.getMetrics().keySet();
+        for (String key : keySet) {
+            b.append(buildIndividualMetric(prefix, key, metric.getMetrics()));
+        }
+        b.append(prefix).append("[timestamp]=").append(buildTimestampString(metric.getTransactionTime()));
+
+        return b.toString();
+    }
+
+    private String buildTimestampString(Date transactionTime) {
+        return ApiUtil.getDataFormatter().format(transactionTime);
+    }
+
+    private String buildIndividualMetric(String prefix, String key, Map<String, String> metrics) {
+        StringBuffer b = new StringBuffer();
+        b.append(prefix);
+        b.append("[usage][").append(key).append("]=");
+        b.append(metrics.get(key));
+        b.append("&");
+        return b.toString();
+    }
 
     private String buildPostData(String user_contract_key,
 			Map<String, String> metrics) {
@@ -138,6 +187,10 @@ public class ApiImpl implements Api {
 		}
 		return postData.toString();
 	}
+
+    private String createBatchUrl() {
+        return host + "/transactions.xml";
+    }
 
 	private String createConfirmUrl(String transactionId) {
 		return host + "/transactions/" + transactionId + "/confirm.xml";

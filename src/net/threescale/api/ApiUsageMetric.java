@@ -12,8 +12,6 @@ import java.util.logging.Logger;
  */
 public class ApiUsageMetric {
     
-    private static DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    
     private Logger log = LogFactory.getLogger(this);
 
     private final String metric;
@@ -62,7 +60,7 @@ public class ApiUsageMetric {
 
     private Date stringToDate(String value) {
         try {
-            return dateFormatter.parse(value);
+            return ApiUtil.getDataFormatter().parse(value);
         } catch (ParseException e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return new Date();

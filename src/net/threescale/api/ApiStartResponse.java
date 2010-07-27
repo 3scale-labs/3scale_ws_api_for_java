@@ -26,14 +26,15 @@ public class ApiStartResponse {
 		
 		if (responseCode == 200) {
 			this.responseCode = responseCode;
-			// XPathFactory xPathFactory = XPathFactory.newInstance();
-			XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
-			XPath xpath = xPathFactory.newXPath();
 	
 			if (xmlString != null && xmlString.trim().length() != 0) {
+
+                XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+                XPath xpath = xPathFactory.newXPath();
+
 				log.info("Extracting transaction info");
-				transactionId = XmlHelper.extractNode(xpath, "/transaction/id", xmlString);
-				contractName = XmlHelper.extractNode(xpath, "/transaction/contract_name",
+				transactionId = XmlHelper.extractNode(xpath, "//transaction/id", xmlString);
+				contractName = XmlHelper.extractNode(xpath, "//transaction/contract_name",
 						xmlString);
 				providerVerificationKey = XmlHelper.extractNode(xpath,
 						"/transaction/provider_verification_key", xmlString);
@@ -41,7 +42,7 @@ public class ApiStartResponse {
 				log.info("contractName: " + contractName);
 			} else {
 				log.info("Xml string was empty");
-				throw new ApiException(999, null);
+				throw new ApiException(500, "provider.other", "Xml response was empty");
 				
 			}
 		}

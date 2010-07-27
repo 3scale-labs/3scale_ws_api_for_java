@@ -23,7 +23,7 @@ public class XmlHelper {
         InputSource inputSource = new InputSource(new StringReader(xmlString));
 
         try {
-            return xpath.evaluate(nodePath, inputSource);
+            return (String) xpath.evaluate(nodePath, inputSource, XPathConstants.STRING);
         } catch (XPathExpressionException e) {
             return "";
         }

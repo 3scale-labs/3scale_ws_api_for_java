@@ -30,7 +30,7 @@ public class HttpSenderImpl implements HttpSender {
      * @return Transaction data returned from the server.
      * @throws ApiException Error information.
      */
-    public ApiStartResponse sendPostToServer(String hostUrl, String postData)
+    public ApiHttpResponse sendPostToServer(String hostUrl, String postData)
             throws ApiException {
         HttpURLConnection con = null;
         try {
@@ -48,13 +48,16 @@ public class HttpSenderImpl implements HttpSender {
             out.write(postData.toString());
             out.close();
             log.info("Written Post data");
-
-            return new ApiStartResponse(extractContent(con), con.getResponseCode());
+            String content = extractContent(con);
+            if (con.getResponseCode() == 200 && content.length() > 0) {
+                return new ApiHttpResponse(con.getResponseCode(), content, con.getContentType());
+            } else if (con.getResponseCode() == 201)
+                return new ApiHttpResponse(201, "", "");
+            else {
+                throw new ApiException(con.getResponseCode(), content);
+            }
         }
-        catch (ApiException ex) {
-            throw ex;
-        }
-        catch (Exception ex) {
+        catch (IOException ex) {
             handleErrors(con);
         }
         return null;

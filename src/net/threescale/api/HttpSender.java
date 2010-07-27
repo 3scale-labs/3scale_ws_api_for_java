@@ -15,7 +15,7 @@ public interface HttpSender {
 	 * @return	Transaction data returned from the server.
 	 * @throws ApiException Error information.
 	 */
-	public ApiStartResponse sendPostToServer(String hostUrl, String postData) throws ApiException ;
+	public ApiHttpResponse sendPostToServer(String hostUrl, String postData) throws ApiException ;
 	
 	/**
 	 * Send a DELETE message to the server.

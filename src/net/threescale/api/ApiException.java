@@ -33,7 +33,8 @@ public class ApiException extends Exception {
 			    errorId = XmlHelper.extractNode(xpath, "//@id", xmlMessage);
 			    errorMessage = XmlHelper.extractNode(xpath, "/error", xmlMessage);
             } else {
-                errorId = "500";
+                errorId = "provider.other";
+                this.responseCode = 500;
                 errorMessage = "xml error parsing response from server";
             }
 
