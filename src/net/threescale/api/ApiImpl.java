@@ -118,6 +118,9 @@ public class ApiImpl implements Api {
     public int batch(ApiBatchMetric[] batchMetrics) throws ApiException {
         log.info("batch start: for " + batchMetrics.length + " transactions");
         ApiHttpResponse response = sender.sendPostToServer(createBatchUrl(), buildBatchData(batchMetrics));
+        if (response.getResponseCode() != 201) {
+            throw new ApiException(response.getResponseCode(), response.getResponseText());
+        }
         return response.getResponseCode();
     }
 

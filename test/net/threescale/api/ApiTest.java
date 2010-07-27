@@ -390,6 +390,30 @@ public class ApiTest {
         assertEquals(201, response);
     }
 
+    @Test
+    public void test_batch_returns_403() throws Exception {
+        when(sender.sendPostToServer(
+            "http://server.3scale.net/transactions.xml", batchPostData))
+                .thenReturn(new ApiHttpResponse(403, batchErrorReponse, ""));
+
+        ApiBatchMetric[] metrics = buildBatchTestMetrics();
+        try {
+            api.batch(metrics);
+            fail("Should have thrown 403 exception");
+        } catch (ApiException ex) {
+            assertEquals(403, ex.getResponseCode());
+            assertEquals(2, ex.getErrorCount());
+
+            assertEquals("user.invalid_key", ex.getErrors()[0].getId());
+            assertEquals(3, ex.getErrors()[0].getIndex());
+            assertEquals("user_key is invalid", ex.getErrors()[0].getMessage());
+
+            assertEquals("user.inactive_contract", ex.getErrors()[1].getId());
+            assertEquals(15, ex.getErrors()[1].getIndex());
+            assertEquals("contract is not active", ex.getErrors()[1].getMessage());
+        }
+    }
+
     private ApiBatchMetric[] buildBatchTestMetrics() throws ParseException {
         Map<String, String> m0 = new HashMap<String, String>();
         m0.put("hits", "1");
@@ -464,4 +488,12 @@ public class ApiTest {
         "transactions[1][usage][transfer]=2840&" +
         "transactions[1][usage][hits]=1&" +
         "transactions[1][timestamp]=2009-01-01%2018:11:59";
+
+    String batchErrorReponse =
+        "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+        "<errors>" +
+        "<error id=\"user.invalid_key\" index=\"3\">user_key is invalid</error>" +
+        "<error id=\"user.inactive_contract\" index=\"15\">contract is not active</error>" +
+        "</errors>";
+
 }
