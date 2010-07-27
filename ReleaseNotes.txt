@@ -1,7 +1,16 @@
 Release Notes
+-------------
+
+V1.0.3
+------
+Added calls to the api to support the authorize/batch async calls.
+
+Added example for async calls.
+
+
 
 V1.0.2
-
+------
 Api.startTransaction now throws an APIException on failure.  Previously it returned a numeric code.
 
 Changed java doc and examples to use the latest production URL.
