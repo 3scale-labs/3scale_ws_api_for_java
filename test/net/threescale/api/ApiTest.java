@@ -423,11 +423,10 @@ public class ApiTest {
         Map<String, String> m1 = new HashMap<String, String>();
         m1.put("hits", "1");
         m1.put("transfer", "2840");
-        Date d1 = stringToDate("2009-01-01 18:11:59");
 
         ApiBatchMetric[] metrics = new ApiBatchMetric[2];
         metrics[0] = new ApiBatchMetric(USER_KEY, m0, d0);
-        metrics[1] = new ApiBatchMetric(USER_KEY, m1, d1);
+        metrics[1] = new ApiBatchMetric(USER_KEY, m1, null);  // Test optional date
         return metrics;
     }
 
@@ -483,11 +482,10 @@ public class ApiTest {
         "transactions[0][user_key]=3scale-bce4c8f4b6578e6c3491e6d941b5b522&" +
         "transactions[0][usage][transfer]=4500&" +
         "transactions[0][usage][hits]=1&" +
-        "transactions[0][timestamp]=2009-01-01%2014:23:08&" +
+        "transactions[0][timestamp]=2009-01-01%2014:23:08%20+01:00&" +
         "transactions[1][user_key]=3scale-bce4c8f4b6578e6c3491e6d941b5b522&" +
         "transactions[1][usage][transfer]=2840&" +
-        "transactions[1][usage][hits]=1&" +
-        "transactions[1][timestamp]=2009-01-01%2018:11:59";
+        "transactions[1][usage][hits]=1";
 
     String batchErrorReponse =
         "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +

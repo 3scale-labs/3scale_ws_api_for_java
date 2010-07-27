@@ -143,19 +143,28 @@ public class ApiImpl implements Api {
     private String buildMetricItem(ApiBatchMetric metric,int index) {
         String prefix = "transactions[" + index + "]" ;
         StringBuffer b = new StringBuffer();
-        b.append(prefix).append("[user_key]=").append(metric.getUser_key()).append("&");
+        b.append(prefix).append("[user_key]=").append(metric.getUser_key());
 
         Set<String> keySet = metric.getMetrics().keySet();
         for (String key : keySet) {
-            b.append(buildIndividualMetric(prefix, key, metric.getMetrics()));
+            b.append("&").append(buildIndividualMetric(prefix, key, metric.getMetrics()));
         }
-        b.append(prefix).append("[timestamp]=").append(buildTimestampString(metric.getTransactionTime()));
+        String timeStamp = buildTimestampString(metric.getTransactionTime());
+        if (timeStamp != null) {
+            b.append("&").append(prefix).append("[timestamp]=").append(timeStamp);
+        }
 
         return b.toString();
     }
 
     private String buildTimestampString(Date transactionTime) {
-        return ApiUtil.getDataFormatter().format(transactionTime);
+        if (transactionTime != null) {
+            String dateString = ApiUtil.getDataFormatter().format(transactionTime);
+            String tzString = new SimpleDateFormat("Z").format(transactionTime);
+            return dateString + " " + (tzString.substring(0,3) + ":" + tzString.substring(3));
+        } else {
+            return null;
+        }
     }
 
     private String buildIndividualMetric(String prefix, String key, Map<String, String> metrics) {
@@ -163,7 +172,6 @@ public class ApiImpl implements Api {
         b.append(prefix);
         b.append("[usage][").append(key).append("]=");
         b.append(metrics.get(key));
-        b.append("&");
         return b.toString();
     }
 
