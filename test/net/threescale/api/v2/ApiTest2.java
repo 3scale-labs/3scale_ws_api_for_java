@@ -29,7 +29,7 @@ public class ApiTest2 {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = new Api2Impl("su1.3scale.net");
+        server = new Api2Impl("su1.3scale.net", dddddd, pppppp);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ApiTest2 {
         .thenReturn(HAPPY_PATH_RESPONSE);
 
 
-        ApiResponse response = server.authorize(APP_ID, PROVIDER_KEY, APP_KEY);
+        ApiResponse response = server.authorize(APP_KEY);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -70,7 +70,7 @@ public class ApiTest2 {
         .thenReturn(EXCEEDED_PATH_RESPONSE);
 
 
-        ApiResponse response = server.authorize(APP_ID, PROVIDER_KEY, APP_KEY);
+        ApiResponse response = server.authorize(APP_KEY);
         assertEquals(false, response.getAuthorized());
         assertEquals("Pro", response.getPlan());
         assertEquals("", response.getReason());
@@ -99,7 +99,7 @@ public class ApiTest2 {
 
         ApiResponse response = null;
         try {
-            response = server.authorize(APP_ID, PROVIDER_KEY, APP_KEY);
+            response = server.authorize(APP_KEY);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals(e.getErrorCode(), "application_not_found");
@@ -126,7 +126,7 @@ public class ApiTest2 {
         transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
         transactions[1] = new ApiTransaction( "bad7e480","2009-01-01 18:11:59", metrics1);
 
-        server.report(APP_ID, PROVIDER_KEY, transactions);
+        server.report(transactions);
     }
 
 
@@ -149,7 +149,7 @@ public class ApiTest2 {
         transactions[1] = new ApiTransaction( "bad7e480","2009-01-01 18:11:59", metrics1);
 
         try {
-            server.report(APP_ID, PROVIDER_KEY, transactions);
+            server.report(transactions);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals(e.getErrorCode(), "provider_key_invalid");

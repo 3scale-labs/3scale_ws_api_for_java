@@ -10,7 +10,7 @@ import net.threescale.api.ApiTransaction;
  */
 public interface Api2 {
     
-    ApiResponse authorize(String appId, String providerKey, String appKey) throws ApiException;
+    ApiResponse authorize(String appKey) throws ApiException;
 
-    void report(String appId, String providerKey, ApiTransaction[] transactions) throws ApiException;
+    void report(ApiTransaction[] transactions) throws ApiException;
 }
