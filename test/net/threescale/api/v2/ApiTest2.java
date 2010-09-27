@@ -29,7 +29,7 @@ public class ApiTest2 {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = new Api2Impl("su1.3scale.net", dddddd, pppppp);
+        server = new Api2Impl("su1.3scale.net", APP_ID, PROVIDER_KEY);
     }
 
     @Test
