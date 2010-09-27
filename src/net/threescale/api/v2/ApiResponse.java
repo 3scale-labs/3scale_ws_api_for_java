@@ -19,6 +19,7 @@ public class ApiResponse {
     private Logger log = LogFactory.getLogger(this);
 
     private Boolean authorized = new Boolean(false);
+    private String plan = "";
 
     public ApiResponse(String xml) {
 
@@ -26,6 +27,7 @@ public class ApiResponse {
         XPath xpath = xPathFactory.newXPath();
 
         authorized = new Boolean(XmlHelper.extractNode(xpath, "//status/authorized", xml));
+        plan = XmlHelper.extractNode(xpath, "//status/plan", xml);
     }
     
     public boolean getAuthorized() {
@@ -33,7 +35,7 @@ public class ApiResponse {
     }
 
     public ArrayList<ApiUsageMetric> getUsageReports() {
-        return null;
+        return new ArrayList<ApiUsageMetric>();
     }
 
     public String getReason() {
@@ -41,6 +43,6 @@ public class ApiResponse {
     }
 
     public String getPlan() {
-        return ""; 
+        return plan; 
     }
 }

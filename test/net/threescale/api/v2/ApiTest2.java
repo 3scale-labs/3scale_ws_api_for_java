@@ -199,7 +199,7 @@ public class ApiTest2 {
         "    <usage_report metric=\"hits\" period=\"month\">" +
         "      <period_start>2010-08-01 00:00:00 +00:00</period_start>" +
         "      <period_end>2010-09-01 00:00:00 +00:00</period_end>" +
-        "      <current_value>17344<current_value>" +
+        "      <current_value>17344</current_value>" +
         "      <max_value>20000</max_value>" +
         "    </usage_report>" +
         "    <usage_report metric=\"hits\" period=\"day\">" +
@@ -208,7 +208,7 @@ public class ApiTest2 {
         "      <current_value>732</current_value>" +
         "      <max_value>1000</max_value>" +
         "    </usage_report>" +
-        "  </usage_reports/>" +
+        "  </usage_reports>" +
         "</status>";
 
     private static final String APPLICATION_ID_ERROR_RESPONSE =
