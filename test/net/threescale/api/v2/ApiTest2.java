@@ -72,7 +72,7 @@ public class ApiTest2 {
         ApiResponse response = server.authorize(APP_KEY);
         assertEquals(false, response.getAuthorized());
         assertEquals("Pro", response.getPlan());
-        assertEquals("", response.getReason());
+        assertEquals("Usage limits are exceeded", response.getReason());
         assertEquals(2, response.getUsageReports().size());
 
         assertUsageRecord(response.getUsageReports().get(0), "hits", "month",
@@ -158,13 +158,13 @@ public class ApiTest2 {
 
 
     private void assertUsageRecord(net.threescale.api.v2.ApiUsageMetric usage, String metric, String period, String period_start, String period_end, String current_value, String max_value, Boolean exceeded) {
-        assertEquals(usage.getMetric(), metric);
-        assertEquals(usage.getPeriod(), period);
-        assertEquals(usage.getPeriodStart(), period_start);
-        assertEquals(usage.getPeriodEnd(), period_end);
-        assertEquals(usage.getCurrentValue(), current_value);
-        assertEquals(usage.getMaxValue(), max_value);
-        assertEquals(usage.getExceeded(), exceeded);
+        assertEquals(metric, usage.getMetric());
+        assertEquals(period, usage.getPeriod());
+        assertEquals(period_start, usage.getPeriodStart());
+        assertEquals(period_end, usage.getPeriodEnd());
+        assertEquals(current_value, usage.getCurrentValue());
+        assertEquals(max_value, usage.getMaxValue());
+        assertEquals(exceeded, usage.getExceeded());
     }
 
 
@@ -202,7 +202,7 @@ public class ApiTest2 {
         "      <current_value>17344</current_value>" +
         "      <max_value>20000</max_value>" +
         "    </usage_report>" +
-        "    <usage_report metric=\"hits\" period=\"day\">" +
+        "    <usage_report metric=\"hits\" period=\"day\" exceeded=\"true\">" +
         "      <period_start>2010-08-04 00:00:00 +00:00</period_start>" +
         "      <period_end>2010-08-05 00:00:00 +00:00</period_end>" +
         "      <current_value>732</current_value>" +
