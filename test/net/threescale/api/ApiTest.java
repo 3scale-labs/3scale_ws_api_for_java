@@ -3,9 +3,7 @@ package net.threescale.api;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.junit.*;
@@ -146,7 +144,7 @@ public class ApiTest {
 				"http://server.3scale.net/transactions.xml",
 				"user_key=" + USER_KEY + "&provider_key="
 					+ GOOD_PROVIDER_KEY + "&usage[requests]=1"))
-		.thenReturn(new ApiHttpResponse(200, startResponseXml, ""));
+		.thenReturn(new ApiHttpResponse(200, startResponseXml));
 
 		ApiStartResponse response = api.start(USER_KEY, metrics);
 		assertEquals(200, response.getResponseCode());
@@ -228,7 +226,7 @@ public class ApiTest {
 			"http://server.3scale.net/transactions/1/confirm.xml",
 			"provider_key=" + GOOD_PROVIDER_KEY
 										+ "&usage[requests]=1"))
-		.thenReturn(new ApiHttpResponse(200, "", ""));
+		.thenReturn(new ApiHttpResponse(200, ""));
 
 		metrics.put("requests", "1");
 
@@ -383,7 +381,7 @@ public class ApiTest {
     public void test_batch_returns_ok() throws Exception {
         when(sender.sendPostToServer(
             "http://server.3scale.net/transactions.xml", batchPostData))
-                .thenReturn(new ApiHttpResponse(201, "", ""));
+                .thenReturn(new ApiHttpResponse(201, ""));
 
         ApiBatchMetric[] metrics = buildBatchTestMetrics();
         int response = api.batch(metrics);
@@ -394,7 +392,7 @@ public class ApiTest {
     public void test_batch_returns_403() throws Exception {
         when(sender.sendPostToServer(
             "http://server.3scale.net/transactions.xml", batchPostData))
-                .thenReturn(new ApiHttpResponse(403, batchErrorReponse, ""));
+                .thenReturn(new ApiHttpResponse(403, batchErrorReponse));
 
         ApiBatchMetric[] metrics = buildBatchTestMetrics();
         try {

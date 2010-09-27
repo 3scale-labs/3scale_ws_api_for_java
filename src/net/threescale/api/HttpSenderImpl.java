@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.logging.*;
 
-import org.w3c.dom.html.*;
-
 /**
  * Sends requests to a server using Http.
  */
@@ -50,9 +48,9 @@ public class HttpSenderImpl implements HttpSender {
             log.info("Written Post data");
             String content = extractContent(con);
             if (con.getResponseCode() == 200 && content.length() > 0) {
-                return new ApiHttpResponse(con.getResponseCode(), content, con.getContentType());
+                return new ApiHttpResponse(con.getResponseCode(), content);
             } else if (con.getResponseCode() == 201)
-                return new ApiHttpResponse(201, "", "");
+                return new ApiHttpResponse(201, "");
             else {
                 throw new ApiException(con.getResponseCode(), content);
             }

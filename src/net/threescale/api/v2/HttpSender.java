@@ -20,8 +20,8 @@ public interface HttpSender {
 
     /**
      * Send a Get message to the server
-     * @param hostUrl
+     * @param hostUrlWithParameters
      * @return Response from Server for successful action
      */
-    public String sendGetToServer(String hostUrl);
+    public String sendGetToServer(String hostUrlWithParameters);
 }

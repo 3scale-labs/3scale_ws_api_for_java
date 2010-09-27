@@ -1,15 +1,13 @@
-package net.threescale.api;
+package net.threescale.api.v2;
 
-import net.threescale.api.v2.Api2;
-import net.threescale.api.v2.Api2Impl;
-import net.threescale.api.v2.ApiException;
-import net.threescale.api.v2.ApiResponse;
-import net.threescale.api.v2.ApiUsageReport;
-import net.threescale.api.v2.HttpSender;
+import net.threescale.api.ApiHttpResponse;
+import net.threescale.api.ApiTransaction;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -110,10 +108,57 @@ public class ApiTest2 {
         }
     }
 
-    
+    @Test
+    public void test_report_happy_path() throws ApiException {
+
+        when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA))
+        .thenReturn(new ApiHttpResponse(202, null));
+
+        net.threescale.api.ApiTransaction[] transactions = new ApiTransaction[2];
+        HashMap<String, String> metrics0 = new HashMap<String,  String>();
+        metrics0.put("hits", "1");
+        metrics0.put("transfer", "4500");
+
+        HashMap<String, String> metrics1 = new HashMap<String,  String>();
+        metrics1.put("hits", "1");
+        metrics1.put("transfer", "2840");
+
+        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransaction( "bad7e480","2009-01-01 18:11:59", metrics1);
+
+        server.report(APP_ID, PROVIDER_KEY, transactions);
+    }
 
 
-    private void assertUsageRecord(ApiUsageReport usage, String metric, String period, String period_start, String period_end, String current_value, String max_value, Boolean exceeded) {
+    @Test
+    public void test_report_returns_provider_id_error() {
+
+        when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA))
+        .thenReturn(new ApiHttpResponse(403, REPORT_PROVIDER_ID_INVALID_RESPONSE));
+
+        net.threescale.api.ApiTransaction[] transactions = new ApiTransaction[2];
+        HashMap<String, String> metrics0 = new HashMap<String,  String>();
+        metrics0.put("hits", "1");
+        metrics0.put("transfer", "4500");
+
+        HashMap<String, String> metrics1 = new HashMap<String,  String>();
+        metrics1.put("hits", "1");
+        metrics1.put("transfer", "2840");
+
+        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransaction( "bad7e480","2009-01-01 18:11:59", metrics1);
+
+        try {
+            server.report(APP_ID, PROVIDER_KEY, transactions);
+            fail("Should have thrown ApiException");
+        } catch (ApiException e) {
+            assertEquals(e.getErrorCode(), "provider_key_invalid");
+            assertEquals(e.getErrorMessage(), "Provider key \"abcd1234\" is invalid");
+        }
+    }
+
+
+    private void assertUsageRecord(net.threescale.api.v2.ApiUsageMetric usage, String metric, String period, String period_start, String period_end, String current_value, String max_value, Boolean exceeded) {
         assertEquals(usage.getMetric(), metric);
         assertEquals(usage.getPeriod(), period);
         assertEquals(usage.getPeriodStart(), period_start);
@@ -170,6 +215,20 @@ public class ApiTest2 {
     private static final String APPLICATION_ID_ERROR_RESPONSE =
         "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
         "<error code=\"application_not_found\">Application with id=\"12345678\" was not found</error>";
+
+    private static final String RESPONSE_HAPPY_PATH_DATA =
+        "transactions[0][app_id]=bce4c8f4&\n" +
+        "transactions[0][usage][hits]=1&\n" +
+        "transactions[0][usage][transfer]=4500&\n" +
+        "transactions[0][timestamp]=2009-01-01%2014%3A23%3A08&\n" +
+        "transactions[1][app_id]=bad7e480&\n" +
+        "transactions[1][usage][hits]=1&\n" +
+        "transactions[1][usage][transfer]=2840&\n" +
+        "transactions[1][timestamp]=2009-01-01%2018%3A11%3A59";
+
+    private static final String REPORT_PROVIDER_ID_INVALID_RESPONSE =
+        "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+        "<error code=\"provider_key_invalid\">Provider key \"abcd1234\" is invalid</error>";
 
 }
 

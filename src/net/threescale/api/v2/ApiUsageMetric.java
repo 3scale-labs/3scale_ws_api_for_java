@@ -6,7 +6,7 @@ package net.threescale.api.v2;
  * Date: 27-Sep-2010
  * Time: 14:50:04
  */
-public class ApiUsageReport {
+public class ApiUsageMetric {
 
     private String metric;
     private String period;
@@ -16,7 +16,7 @@ public class ApiUsageReport {
     private String max_value;
     private Boolean exceeded;
 
-    public ApiUsageReport(String metric, String period, String period_start, String period_end, String max_value, String current_value, String exceeded) {
+    public ApiUsageMetric(String metric, String period, String period_start, String period_end, String max_value, String current_value, String exceeded) {
         this.metric = metric;
         this.period = period;
         this.period_start = period_start;

@@ -14,7 +14,7 @@ public class ApiResponse {
         return false;
     }
 
-    public ArrayList<ApiUsageReport> getUsageReports() {
+    public ArrayList<ApiUsageMetric> getUsageReports() {
         return null;
     }
 
