@@ -1,6 +1,5 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.ApiTransaction;
 
 /**
  * Created by IntelliJ IDEA.

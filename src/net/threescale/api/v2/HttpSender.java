@@ -1,7 +1,5 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.ApiException;
-import net.threescale.api.ApiHttpResponse;
 
 /**
  * Interface used to send Http Requests to the server. 
@@ -23,5 +21,5 @@ public interface HttpSender {
      * @param hostUrlWithParameters
      * @return Response from Server for successful action
      */
-    public String sendGetToServer(String hostUrlWithParameters);
+    public ApiHttpResponse sendGetToServer(String hostUrlWithParameters);
 }

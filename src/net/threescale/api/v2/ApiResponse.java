@@ -1,6 +1,12 @@
 package net.threescale.api.v2;
 
+import net.threescale.api.LogFactory;
+import net.threescale.api.XmlHelper;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,9 +15,21 @@ import java.util.ArrayList;
  * Time: 22:51:11
  */
 public class ApiResponse {
+
+    private Logger log = LogFactory.getLogger(this);
+
+    private Boolean authorized = new Boolean(false);
+
+    public ApiResponse(String xml) {
+
+        XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+        XPath xpath = xPathFactory.newXPath();
+
+        authorized = new Boolean(XmlHelper.extractNode(xpath, "//status/authorized", xml));
+    }
     
     public boolean getAuthorized() {
-        return false;
+        return authorized;
     }
 
     public ArrayList<ApiUsageMetric> getUsageReports() {

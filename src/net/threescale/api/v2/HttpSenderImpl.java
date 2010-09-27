@@ -1,6 +1,5 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.ApiHttpResponse;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,7 +25,7 @@ public class HttpSenderImpl implements HttpSender {
      * @param hostUrlWithParameters
      * @return Response from Server for successful action
      */
-    public String sendGetToServer(String hostUrlWithParameters) {
+    public ApiHttpResponse sendGetToServer(String hostUrlWithParameters) {
         return null;
     }
 }

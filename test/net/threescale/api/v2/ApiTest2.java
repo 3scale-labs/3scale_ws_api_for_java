@@ -1,7 +1,5 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.ApiHttpResponse;
-import net.threescale.api.ApiTransaction;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -30,6 +28,7 @@ public class ApiTest2 {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         server = new Api2Impl("su1.3scale.net", APP_ID, PROVIDER_KEY);
+        ((Api2Impl)server).setHttpSender(sender);
     }
 
     @Test
@@ -39,7 +38,7 @@ public class ApiTest2 {
                                     "?app_id=" + APP_ID +
                                     "&provider_key=" + PROVIDER_KEY +
                                     "&app_key=" + APP_KEY))
-        .thenReturn(HAPPY_PATH_RESPONSE);
+        .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
         ApiResponse response = server.authorize(APP_KEY);
@@ -67,7 +66,7 @@ public class ApiTest2 {
                                     "?app_id=" + APP_ID +
                                     "&provider_key=" + PROVIDER_KEY +
                                     "&app_key=" + APP_KEY))
-        .thenReturn(EXCEEDED_PATH_RESPONSE);
+        .thenReturn(new ApiHttpResponse(200, EXCEEDED_PATH_RESPONSE));
 
 
         ApiResponse response = server.authorize(APP_KEY);
@@ -94,7 +93,7 @@ public class ApiTest2 {
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
                                     "?app_id=" + APP_ID +
                                     "&provider_key=" + PROVIDER_KEY))
-        .thenReturn(APPLICATION_ID_ERROR_RESPONSE);
+        .thenReturn(new ApiHttpResponse(403, APPLICATION_ID_ERROR_RESPONSE));
 
 
         ApiResponse response = null;
@@ -114,7 +113,7 @@ public class ApiTest2 {
         when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA))
         .thenReturn(new ApiHttpResponse(202, null));
 
-        net.threescale.api.ApiTransaction[] transactions = new ApiTransaction[2];
+        ApiTransaction[] transactions = new ApiTransaction[2];
         HashMap<String, String> metrics0 = new HashMap<String,  String>();
         metrics0.put("hits", "1");
         metrics0.put("transfer", "4500");
@@ -136,7 +135,7 @@ public class ApiTest2 {
         when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA))
         .thenReturn(new ApiHttpResponse(403, REPORT_PROVIDER_ID_INVALID_RESPONSE));
 
-        net.threescale.api.ApiTransaction[] transactions = new ApiTransaction[2];
+        ApiTransaction[] transactions = new ApiTransaction[2];
         HashMap<String, String> metrics0 = new HashMap<String,  String>();
         metrics0.put("hits", "1");
         metrics0.put("transfer", "4500");
@@ -178,7 +177,7 @@ public class ApiTest2 {
         "    <usage_report metric=\"hits\" period=\"month\">" +
         "      <period_start>2010-08-01 00:00:00 +00:00</period_start>" +
         "      <period_end>2010-09-01 00:00:00 +00:00</period_end>" +
-        "      <current_value>17344<current_value>" +
+        "      <current_value>17344</current_value>" +
         "      <max_value>20000</max_value>" +
         "    </usage_report>" +
         "    <usage_report metric=\"hits\" period=\"day\">" +
@@ -187,7 +186,7 @@ public class ApiTest2 {
         "      <current_value>732</current_value>" +
         "      <max_value>1000</max_value>" +
         "    </usage_report>" +
-        "  </usage_reports/>" +
+        "  </usage_reports>" +
         "</status>";
 
     private static final String EXCEEDED_PATH_RESPONSE = 
