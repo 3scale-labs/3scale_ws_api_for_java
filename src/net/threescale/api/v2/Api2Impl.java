@@ -1,5 +1,7 @@
 package net.threescale.api.v2;
 
+import net.threescale.api.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: geoffd
@@ -12,5 +14,9 @@ public class Api2Impl implements Api2 {
 
     public ApiResponse authorize(String appId, String providerKey, String appKey) {
         return new ApiResponse();
+    }
+
+    public void report(String appId, String providerKey, net.threescale.api.ApiTransaction[] transactions) throws ApiException {
+
     }
 }
