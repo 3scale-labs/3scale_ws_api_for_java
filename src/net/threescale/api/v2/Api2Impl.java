@@ -25,7 +25,7 @@ public class Api2Impl implements Api2 {
         this.provider_key = provider_key;
     }
 
-    public ApiResponse authorize(String app_key) {
+    public ApiResponse authorize(String app_key) throws ApiException {
         StringBuffer url = new StringBuffer();
 
         url.append(host_url)
@@ -41,8 +41,11 @@ public class Api2Impl implements Api2 {
         String urlAsString = url.toString();
         log.info("Sending GET to sever with url: " + urlAsString);
         ApiHttpResponse response = sender.sendGetToServer(urlAsString);
+        log.info("reponse code was: " + response.getResponseCode());
         if (response.getResponseCode() == 200) {
             return new ApiResponse(response.getResponseText());
+        } else if (response.getResponseCode() == 403) {
+            throw new ApiException(response.getResponseText());
         }
         return null;
     }

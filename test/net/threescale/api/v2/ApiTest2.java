@@ -95,14 +95,13 @@ public class ApiTest2 {
                                     "&provider_key=" + PROVIDER_KEY))
         .thenReturn(new ApiHttpResponse(403, APPLICATION_ID_ERROR_RESPONSE));
 
-
         ApiResponse response = null;
         try {
-            response = server.authorize(APP_KEY);
+            response = server.authorize(null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
-            assertEquals(e.getErrorCode(), "application_not_found");
-            assertEquals(e.getErrorMessage(), "Application with id=\"12345678\" was not found");
+            assertEquals("application_not_found", e.getErrorCode() );
+            assertEquals("Application with id=\"12345678\" was not found", e.getErrorMessage());
 
         }
     }
@@ -122,7 +121,7 @@ public class ApiTest2 {
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 
-        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[0] = new ApiTransaction("bce4c8  f4", "2009-01-01 14:23:08", metrics0);
         transactions[1] = new ApiTransaction( "bad7e480","2009-01-01 18:11:59", metrics1);
 
         server.report(transactions);

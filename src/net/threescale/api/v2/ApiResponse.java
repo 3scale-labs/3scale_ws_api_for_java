@@ -1,9 +1,6 @@
 package net.threescale.api.v2;
 
 import net.threescale.api.LogFactory;
-import net.threescale.api.XmlHelper;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -11,13 +8,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
@@ -38,6 +31,7 @@ public class ApiResponse {
     public ApiResponse(String xml) {
 
         try {
+            log.info("Parsing response: " + xml);
             XMLReader parser = XMLReaderFactory.createXMLReader();
             parser.setContentHandler(new ResponseHandler());
             parser.parse(new InputSource(new StringReader(xml)));
