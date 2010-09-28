@@ -5,6 +5,6 @@ import java.net.*;
 
 public interface HttpConnectionFactory {
 
-	HttpURLConnection openConnection(String hostUrl) throws MalformedURLException, IOException;
+	HttpURLConnection openConnection(String hostUrl) throws IOException;
 
 }
