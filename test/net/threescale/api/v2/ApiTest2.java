@@ -121,9 +121,11 @@ public class ApiTest2 {
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 
-        transactions[0] = new ApiTransaction("bce4c8  f4", "2009-01-01 14:23:08", metrics0);
-        transactions[1] = new ApiTransaction( "bad7e480","2009-01-01 18:11:59", metrics1);
+        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
 
+        assertEquals(RESPONSE_HAPPY_PATH_DATA, ((Api2Impl)server).formatPostData(transactions).toString());
+        
         server.report(transactions);
     }
 
@@ -215,14 +217,14 @@ public class ApiTest2 {
         "<error code=\"application_not_found\">Application with id=\"12345678\" was not found</error>";
 
     private static final String RESPONSE_HAPPY_PATH_DATA =
-        "transactions[0][app_id]=bce4c8f4&\n" +
-        "transactions[0][usage][hits]=1&\n" +
-        "transactions[0][usage][transfer]=4500&\n" +
-        "transactions[0][timestamp]=2009-01-01%2014%3A23%3A08&\n" +
-        "transactions[1][app_id]=bad7e480&\n" +
-        "transactions[1][usage][hits]=1&\n" +
-        "transactions[1][usage][transfer]=2840&\n" +
-        "transactions[1][timestamp]=2009-01-01%2018%3A11%3A59";
+        "transactions[0][app_id]=bce4c8f4&" +
+        "transactions[0][usage][transfer]=4500&" +
+        "transactions[0][usage][hits]=1&" +
+        "transactions[0][timestamp]=2009-01-01+14%3A23%3A08&" +
+        "transactions[1][app_id]=bad7e480&" +
+        "transactions[1][usage][transfer]=2840&" +
+        "transactions[1][usage][hits]=1&" +
+        "transactions[1][timestamp]=2009-01-01+18%3A11%3A59";
 
     private static final String REPORT_PROVIDER_ID_INVALID_RESPONSE =
         "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
