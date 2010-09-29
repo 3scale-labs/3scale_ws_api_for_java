@@ -56,7 +56,7 @@ public class HttpSenderTest {
     public void test_get_returns_403_response() throws IOException {
         when(factory.openConnection(anyString())).thenReturn(con);
         when(con.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(con.getInputStream()).thenReturn(new java.io.StringBufferInputStream(APPLICATION_ID_ERROR_RESPONSE));
+        when(con.getErrorStream()).thenReturn(new java.io.StringBufferInputStream(APPLICATION_ID_ERROR_RESPONSE));
         when(con.getResponseCode()).thenReturn(403);
 
         ApiHttpResponse response = sender.sendGetToServer("host1");

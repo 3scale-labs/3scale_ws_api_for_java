@@ -3,16 +3,21 @@ package net.threescale.api.v2;
 import java.util.HashMap;
 
 /**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 27-Sep-2010
- * Time: 17:22:03
+ * Data to be sent for the server for a transaction
+ *
  */
 public class ApiTransaction {
     private final String app_id;
     private final String timestamp;
     private final HashMap<String, String> metrics;
 
+
+    /**
+     * Constructor
+     * @param app_id Application ID for this report
+     * @param timestamp When the transaction took place
+     * @param metrics What resources were used.
+     */
     public ApiTransaction(String app_id, String timestamp, HashMap<String, String> metrics) {
         this.app_id = app_id;
         this.timestamp = timestamp;

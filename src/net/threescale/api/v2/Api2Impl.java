@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-
+/**
+ * Concrete implementation of the Version 2 API.
+ */
 public class Api2Impl implements Api2 {
 
     private Logger log = LogFactory.getLogger(this);
@@ -17,17 +19,43 @@ public class Api2Impl implements Api2 {
     private final String host_url;
     private final String app_id;
     private final String provider_key;
-    private HttpSender sender;
+    private final HttpSender sender;
 
+    /**
+     * Normal constructor using standard HttpSender
+     *
+     * @param host_url API authorization server URL
+     * @param app_id   System supplied ID for this application
+     * @param provider_key Private API Key from contract
+     */
     public Api2Impl(String host_url, String app_id, String provider_key) {
+        this(host_url, app_id, provider_key, new HttpSenderImpl());
+    }
+
+    /**
+     * Constructor allowing injection of HttpSender (used for testing)
+     *
+     * @param host_url API authorization server URL
+     * @param app_id   System supplied ID for this application
+     * @param provider_key Private API Key from contract
+     * @param sender HttpSender to use for communications.
+     */
+    public Api2Impl(String host_url, String app_id, String provider_key, HttpSender sender) {
         this.host_url = host_url;
         this.app_id = app_id;
         this.provider_key = provider_key;
-
-        sender = new HttpSenderImpl();
+        this.sender = sender;
     }
 
-    public ApiResponse authorize(String app_key, String referrer) throws ApiException {
+    /**
+     * Fetch the current statistics for an application.
+     *
+     * @param app_key Optional Application Key (or null)
+     * @param referrer Optional referrer ip address (or null)'
+     * @return AuthorizeResponse containing the current usage metrics.
+     * @throws ApiException if there is an error connection to the server
+     */
+    public AuthorizeResponse authorize(String app_key, String referrer) throws ApiException {
 
         String url = formatGetUrl(app_key, referrer);
         log.info("Sending GET to sever with url: " + url);
@@ -37,7 +65,7 @@ public class Api2Impl implements Api2 {
         log.info("response code was: " + response.getResponseCode());
 
         if (response.getResponseCode() == 200) {
-            return new ApiResponse(response.getResponseText());
+            return new AuthorizeResponse(response.getResponseText());
         } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
             throw new ApiException(response.getResponseText());
         } else {
@@ -45,6 +73,11 @@ public class Api2Impl implements Api2 {
         }
     }
 
+    /**
+     * Send a set of usage data to the server
+     * @param transactions Usage data to be recorded
+     * @throws ApiException if there is an error connection to the server
+     */
     public void report(ApiTransaction[] transactions) throws ApiException {
 
         String post_data = formatPostData(transactions);
@@ -60,8 +93,7 @@ public class Api2Impl implements Api2 {
         }
     }
 
-
-
+// Private Methods
     private String formatGetUrl(String app_key, String referrer) {
         StringBuffer url = new StringBuffer();
 
@@ -86,10 +118,10 @@ public class Api2Impl implements Api2 {
 
     private ApiException createExceptionForUnexpectedResponse(ApiHttpResponse response) {
         log.info("Unexpected Response: " + response.getResponseCode() +
-                 " Text: " + response.getResponseText());
+                " Text: " + response.getResponseText());
         return new ApiException("Server gave unexpected response",
-                               "Response Code was \"" + response.getResponseCode()+ "\"" +
-                               "with text \"" + response.getResponseText() +"\"");
+                "Response Code was \"" + response.getResponseCode() + "\"" +
+                        "with text \"" + response.getResponseText() + "\"");
     }
 
     private String formatTransactionDataForPost(int index, ApiTransaction transaction) {
@@ -103,7 +135,7 @@ public class Api2Impl implements Api2 {
         data.append("[timestamp]=").append(urlEncodeField(transaction.getTimestamp()));
 
         return data.toString();
-     }
+    }
 
     private String urlEncodeField(String field_to_encode) {
         try {
@@ -116,21 +148,18 @@ public class Api2Impl implements Api2 {
     private String formatMetrics(String prefix, HashMap<String, String> metrics) {
         StringBuffer data = new StringBuffer();
 
-        Set<Map.Entry<String,String>> entries = metrics.entrySet();
+        Set<Map.Entry<String, String>> entries = metrics.entrySet();
 
-        for(Map.Entry<String,String> entry : entries) {
+        for (Map.Entry<String, String> entry : entries) {
             data.append("&").append(prefix).append("[usage]");
             data.append("[" + entry.getKey() + "]=" + entry.getValue());
         }
         return data.toString();
     }
 
-    /** This is only used for testing **/
-    void setHttpSender(HttpSender sender) {
-        this.sender = sender;
-    }
-
-    /** This is only public for testing **/
+    /**
+     * This is only public for testing *
+     */
     public String formatPostData(ApiTransaction[] transactions) {
         StringBuffer post_data = new StringBuffer();
         post_data.append("provider_key=" + provider_key);

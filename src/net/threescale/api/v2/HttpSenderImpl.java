@@ -11,20 +11,24 @@ import java.util.logging.Logger;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 27-Sep-2010
- * Time: 17:07:48
+ * Concrete implementation of HttpSender
  */
 public class HttpSenderImpl implements HttpSender {
 
     private Logger log = LogFactory.getLogger(this);
     private final HttpConnectionFactory factory;
 
+    /**
+     * Normal Constructor using live implementation.
+     */
     public HttpSenderImpl() {
         this.factory = new HttpConnectionFactoryImpl();
     }
 
+    /**
+     * Constructor that overrides factory.  Used for testing.
+     * @param factory
+     */
     public HttpSenderImpl(HttpConnectionFactory factory) {
         this.factory = factory;
     }
@@ -104,6 +108,12 @@ public class HttpSenderImpl implements HttpSender {
         }
     }
 
+    /**
+     * Reads error message from response and returns it as a string.
+     * @param con current connection
+     * @return String with error message contents.
+     * @throws IOException
+     */
     private String getErrorMessage(HttpURLConnection con) throws IOException {
         assert (con != null);
 
@@ -120,6 +130,12 @@ public class HttpSenderImpl implements HttpSender {
         return (errStream.toString());
     }
 
+    /**
+     * Extract data from message.
+     * @param con
+     * @return
+     * @throws IOException
+     */
     private String extractContent(HttpURLConnection con) throws IOException {
         InputStream inputStream = con.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -154,6 +170,9 @@ public class HttpSenderImpl implements HttpSender {
         "<?xml version=\"1.0\" encoding=\"utf-8\" ?> " +
         "<error code=\"server_error\">Could not connect to the server</error>";
 
+    /**
+     * Private class to get new live connection to the server.
+     */
     private class HttpConnectionFactoryImpl implements HttpConnectionFactory {
 
         public HttpURLConnection openConnection(String hostUrl) throws IOException {

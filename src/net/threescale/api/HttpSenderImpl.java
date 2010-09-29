@@ -52,7 +52,7 @@ public class HttpSenderImpl implements HttpSender {
             } else if (con.getResponseCode() == 201)
                 return new ApiHttpResponse(201, "");
             else {
-                throw new ApiException(con.getResponseCode(), content);
+                throw new ApiException(con.getResponseCode(), getErrorMessage(con));
             }
         }
         catch (IOException ex) {

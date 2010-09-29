@@ -1,5 +1,6 @@
 package net.threescale.api.v2;
 
+import net.threescale.api.ApiFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,8 +28,7 @@ public class ApiTest2 {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = new Api2Impl("su1.3scale.net", APP_ID, PROVIDER_KEY);
-        ((Api2Impl)server).setHttpSender(sender);
+        server = ApiFactory.createV2Api("su1.3scale.net", APP_ID, PROVIDER_KEY, sender);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class ApiTest2 {
         .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        ApiResponse response = server.authorize(APP_KEY, null);
+        AuthorizeResponse response = server.authorize(APP_KEY, null);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -69,7 +69,7 @@ public class ApiTest2 {
         .thenReturn(new ApiHttpResponse(200, EXCEEDED_PATH_RESPONSE));
 
 
-        ApiResponse response = server.authorize(APP_KEY, null);
+        AuthorizeResponse response = server.authorize(APP_KEY, null);
         assertEquals(false, response.getAuthorized());
         assertEquals("Pro", response.getPlan());
         assertEquals("Usage limits are exceeded", response.getReason());
@@ -98,7 +98,7 @@ public class ApiTest2 {
         .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        ApiResponse response = server.authorize(APP_KEY, REFERRER_IP);
+        AuthorizeResponse response = server.authorize(APP_KEY, REFERRER_IP);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -113,7 +113,7 @@ public class ApiTest2 {
                                     "&provider_key=" + PROVIDER_KEY))
         .thenReturn(new ApiHttpResponse(404, APPLICATION_ID_ERROR_RESPONSE));
 
-        ApiResponse response = null;
+        AuthorizeResponse response = null;
         try {
             response = server.authorize(null, null);
             fail("Should have thrown ApiException");
@@ -132,7 +132,7 @@ public class ApiTest2 {
                                     "&provider_key=" + PROVIDER_KEY))
         .thenReturn(new ApiHttpResponse(403, PROVIDER_KEY_INVALID_ERROR_RESPONSE));
 
-        ApiResponse response = null;
+        AuthorizeResponse response = null;
         try {
             response = server.authorize(null, null);
             fail("Should have thrown ApiException");

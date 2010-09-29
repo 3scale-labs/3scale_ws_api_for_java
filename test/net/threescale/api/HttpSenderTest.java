@@ -57,6 +57,7 @@ public class HttpSenderTest {
 		when(factory.openConnection(anyString())).thenReturn(con);
 		when(con.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 		when(con.getInputStream()).thenReturn(new StringBufferInputStream(error500XmlResponse));
+		when(con.getErrorStream()).thenReturn(new StringBufferInputStream(error500XmlResponse));
 		when(con.getResponseCode()).thenReturn(500);
 		try {
 			sender.sendPostToServer("host1", "some data") ;
@@ -75,6 +76,7 @@ public class HttpSenderTest {
 		when(factory.openConnection(anyString())).thenReturn(con);
 		when(con.getOutputStream()).thenReturn(new ByteArrayOutputStream());
 		when(con.getInputStream()).thenReturn(new StringBufferInputStream(""));
+		when(con.getErrorStream()).thenReturn(new StringBufferInputStream(""));
 		when(con.getResponseCode()).thenReturn(200);
 		try {
 			sender.sendPostToServer("host1", "some data") ;
@@ -86,12 +88,14 @@ public class HttpSenderTest {
 		}
 
 	}	
+    @SuppressWarnings({"deprecation"})
     @Test
     public void testResponseForGet() throws ApiException, IOException {
 
         when(factory.openConnection(anyString())).thenReturn(con);
         when(con.getOutputStream()).thenReturn(new ByteArrayOutputStream());
         when(con.getInputStream()).thenReturn(new StringBufferInputStream(authorizeResponseXml));
+        when(con.getErrorStream()).thenReturn(new StringBufferInputStream(authorizeResponseXml));
         when(con.getResponseCode()).thenReturn(200);
 
         String response = sender.sendGetToServer("host1");
