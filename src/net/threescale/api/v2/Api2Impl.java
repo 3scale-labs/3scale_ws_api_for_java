@@ -25,7 +25,7 @@ public class Api2Impl implements Api2 {
         this.provider_key = provider_key;
     }
 
-    public ApiResponse authorize(String app_key) throws ApiException {
+    public ApiResponse authorize(String app_key, String referrer) throws ApiException {
         StringBuffer url = new StringBuffer();
 
         url.append(host_url)
@@ -36,6 +36,11 @@ public class Api2Impl implements Api2 {
         if (app_key != null) {
             url.append("&app_key=")
                     .append(app_key);
+        }
+
+        if (referrer != null) {
+            url.append("&referrer=")
+                    .append(referrer);
         }
 
         String urlAsString = url.toString();

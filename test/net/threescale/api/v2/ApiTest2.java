@@ -16,8 +16,8 @@ public class ApiTest2 {
     private static final String SERVER_URL = "su1.3scale.net";
     private static final String APP_ID = "api-id-ffff";
     private static final String APP_KEY =   "3scale-dsfsdfdsfisodfsdf491e6d941b5b522";
-    private static final String USER_KEY = "3scale-bce4c8f4b6578e6c3491e6d941b5b522";
     private static final String PROVIDER_KEY = "goodf621b66acb7ec8ceabed4b7aff278";
+    private static final String REFERRER_IP = "123.456.789.001";
 
     private Api2 server;
 
@@ -41,7 +41,7 @@ public class ApiTest2 {
         .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        ApiResponse response = server.authorize(APP_KEY);
+        ApiResponse response = server.authorize(APP_KEY, null);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -69,7 +69,7 @@ public class ApiTest2 {
         .thenReturn(new ApiHttpResponse(200, EXCEEDED_PATH_RESPONSE));
 
 
-        ApiResponse response = server.authorize(APP_KEY);
+        ApiResponse response = server.authorize(APP_KEY, null);
         assertEquals(false, response.getAuthorized());
         assertEquals("Pro", response.getPlan());
         assertEquals("Usage limits are exceeded", response.getReason());
@@ -88,6 +88,24 @@ public class ApiTest2 {
     }
 
     @Test
+    public void test_referrer_is_sent_for_authorize() throws ApiException {
+
+        when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
+                                    "?app_id=" + APP_ID +
+                                    "&provider_key=" + PROVIDER_KEY +
+                                    "&app_key=" + APP_KEY +
+                                    "&referrer=" + REFERRER_IP))
+        .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
+
+
+        ApiResponse response = server.authorize(APP_KEY, REFERRER_IP);
+        assertEquals(true, response.getAuthorized());
+        assertEquals("Basic", response.getPlan());
+        assertEquals("", response.getReason());
+    }
+
+
+    @Test
     public void test_application_not_found() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
@@ -97,7 +115,7 @@ public class ApiTest2 {
 
         ApiResponse response = null;
         try {
-            response = server.authorize(null);
+            response = server.authorize(null, null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals("application_not_found", e.getErrorCode() );

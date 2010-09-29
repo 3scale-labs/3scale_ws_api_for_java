@@ -9,7 +9,7 @@ package net.threescale.api.v2;
  */
 public interface Api2 {
     
-    ApiResponse authorize(String appKey) throws ApiException;
+    ApiResponse authorize(String appKey, String referrer) throws ApiException;
 
     void report(ApiTransaction[] transactions) throws ApiException;
 }
