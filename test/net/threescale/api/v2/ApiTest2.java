@@ -106,12 +106,12 @@ public class ApiTest2 {
 
 
     @Test
-    public void test_application_not_found() throws ApiException {
+    public void test_application_not_found_on_authorize() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
                                     "?app_id=" + APP_ID +
                                     "&provider_key=" + PROVIDER_KEY))
-        .thenReturn(new ApiHttpResponse(403, APPLICATION_ID_ERROR_RESPONSE));
+        .thenReturn(new ApiHttpResponse(404, APPLICATION_ID_ERROR_RESPONSE));
 
         ApiResponse response = null;
         try {
@@ -120,6 +120,25 @@ public class ApiTest2 {
         } catch (ApiException e) {
             assertEquals("application_not_found", e.getErrorCode() );
             assertEquals("Application with id=\"12345678\" was not found", e.getErrorMessage());
+
+        }
+    }
+
+    @Test
+    public void test_provider_key_invalid_on_authorize() throws ApiException {
+
+        when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
+                                    "?app_id=" + APP_ID +
+                                    "&provider_key=" + PROVIDER_KEY))
+        .thenReturn(new ApiHttpResponse(403, PROVIDER_KEY_INVALID_ERROR_RESPONSE));
+
+        ApiResponse response = null;
+        try {
+            response = server.authorize(null, null);
+            fail("Should have thrown ApiException");
+        } catch (ApiException e) {
+            assertEquals("provider_key_invalid", e.getErrorCode() );
+            assertEquals("Provider key \"abcd1234\" is invalid", e.getErrorMessage());
 
         }
     }
@@ -152,7 +171,7 @@ public class ApiTest2 {
     public void test_report_returns_provider_id_error() {
 
         when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA))
-        .thenReturn(new ApiHttpResponse(403, REPORT_PROVIDER_ID_INVALID_RESPONSE));
+        .thenReturn(new ApiHttpResponse(403, PROVIDER_KEY_INVALID_ERROR_RESPONSE));
 
         ApiTransaction[] transactions = new ApiTransaction[2];
         HashMap<String, String> metrics0 = new HashMap<String,  String>();
@@ -244,7 +263,7 @@ public class ApiTest2 {
         "transactions[1][usage][hits]=1&" +
         "transactions[1][timestamp]=2009-01-01+18%3A11%3A59";
 
-    private static final String REPORT_PROVIDER_ID_INVALID_RESPONSE =
+    private static final String PROVIDER_KEY_INVALID_ERROR_RESPONSE =
         "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
         "<error code=\"provider_key_invalid\">Provider key \"abcd1234\" is invalid</error>";
 

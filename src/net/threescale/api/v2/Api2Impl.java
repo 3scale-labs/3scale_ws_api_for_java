@@ -36,7 +36,7 @@ public class Api2Impl implements Api2 {
 
         if (response.getResponseCode() == 200) {
             return new ApiResponse(response.getResponseText());
-        } else if (response.getResponseCode() == 403) {
+        } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
             throw new ApiException(response.getResponseText());
         } else {
             throw createExceptionForUnexpectedResponse(response);
@@ -83,6 +83,8 @@ public class Api2Impl implements Api2 {
     }
 
     private ApiException createExceptionForUnexpectedResponse(ApiHttpResponse response) {
+        log.info("Unexpected Response: " + response.getResponseCode() +
+                 " Text: " + response.getResponseText());
         return new ApiException("Server gave unexpected response",
                                "Response Code was \"" + response.getResponseCode()+ "\"" +
                                "with text \"" + response.getResponseText() +"\"");
