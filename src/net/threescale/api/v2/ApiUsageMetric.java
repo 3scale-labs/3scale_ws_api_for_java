@@ -26,6 +26,21 @@ public class ApiUsageMetric {
         this.exceeded = Boolean.valueOf(exceeded);
     }
 
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ApiUsageMetric: [");
+        builder.append("metric: \"").append(getMetric()).append("\", ");
+        builder.append("period: \"").append(getPeriod()).append("\", ");    
+        builder.append("period_start: \"").append(getPeriodStart()).append("\", ");
+        builder.append("period_end: \"").append(getPeriodEnd()).append("\", ");
+        builder.append("max_value: \"").append(getMaxValue()).append("\", ");
+        builder.append("current_value: \"").append(getCurrentValue()).append("\", ");
+        builder.append("exceeded: ").append(getExceeded()).append(", ");
+        builder.append("]");
+
+        return builder.toString();
+    }
+
     public String getMetric() {
         return metric;
     }

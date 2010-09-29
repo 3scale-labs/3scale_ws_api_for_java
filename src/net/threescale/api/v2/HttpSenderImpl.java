@@ -39,9 +39,9 @@ public class HttpSenderImpl implements HttpSender {
     public ApiHttpResponse sendPostToServer(String hostUrl, String postData) {
         HttpURLConnection con = null;
         try {
-            log.info("Connecting to: " + hostUrl);
+            log.info("Connecting to: " + hostUrl + "/transactions.xml");
 
-            con = factory.openConnection(hostUrl);
+            con = factory.openConnection(hostUrl + "/transactions.xml");
             log.info("Connected");
 
             con.setRequestMethod("POST");
@@ -52,7 +52,7 @@ public class HttpSenderImpl implements HttpSender {
                     .getOutputStream());
             out.write(postData);
             out.close();
-            log.info("Written Post data");
+            log.info("Written Post data : " + postData);
 
             if (con.getResponseCode() == 202 || con.getResponseCode() == 403) {
                 ApiHttpResponse response = new ApiHttpResponse(con.getResponseCode(), extractContent(con));
@@ -85,7 +85,7 @@ public class HttpSenderImpl implements HttpSender {
 
             con.setRequestMethod("GET");
 
-            if (con.getResponseCode() == 200 || con.getResponseCode() == 403) {
+            if (con.getResponseCode() == 200 || con.getResponseCode() == 403 || con.getResponseCode() == 404) {
                 ApiHttpResponse response = new ApiHttpResponse(con.getResponseCode(), extractContent(con));
                 log.info("Received response: " + response.getResponseCode() + " with message: " + response.getResponseText());
                 return response;

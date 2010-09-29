@@ -23,6 +23,8 @@ public class Api2Impl implements Api2 {
         this.host_url = host_url;
         this.app_id = app_id;
         this.provider_key = provider_key;
+
+        sender = new HttpSenderImpl();
     }
 
     public ApiResponse authorize(String app_key, String referrer) throws ApiException {
@@ -131,11 +133,9 @@ public class Api2Impl implements Api2 {
     /** This is only public for testing **/
     public String formatPostData(ApiTransaction[] transactions) {
         StringBuffer post_data = new StringBuffer();
-
+        post_data.append("provider_key=" + provider_key);
         for (int index = 0; index < transactions.length; index++) {
-            if (index != 0) {
-                post_data.append("&");
-            }
+            post_data.append("&");
             post_data.append(formatTransactionDataForPost(index, transactions[index]));
         }
         return post_data.toString();

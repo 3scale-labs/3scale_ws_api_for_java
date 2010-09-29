@@ -28,6 +28,22 @@ public class ApiResponse {
     private String reason = "";
     private ArrayList<ApiUsageMetric> usage_reports = new ArrayList<ApiUsageMetric>();
 
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ApiResponse: [");
+        builder.append("authorized: ").append(authorized).append(", ");
+        builder.append("plan: \"").append(plan).append("\", ");
+        builder.append("reason: \"").append(reason).append("\", ");
+        builder.append("usage_reports: [");
+        for(ApiUsageMetric metric : usage_reports) {
+            builder.append(metric.toString());
+        }
+
+        builder.append("]");
+        builder.append("]");
+        return builder.toString();        
+    }
+
     public ApiResponse(String xml) {
 
         try {

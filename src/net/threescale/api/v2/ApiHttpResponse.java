@@ -1,7 +1,7 @@
 package net.threescale.api.v2;
 
 /**
- * Reponse returned for Http Request.
+ * Response returned for Http Request.
  */
 public class ApiHttpResponse {
     

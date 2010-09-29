@@ -254,6 +254,7 @@ public class ApiTest2 {
         "<error code=\"application_not_found\">Application with id=\"12345678\" was not found</error>";
 
     private static final String RESPONSE_HAPPY_PATH_DATA =
+        "provider_key=" + PROVIDER_KEY + "&" +
         "transactions[0][app_id]=bce4c8f4&" +
         "transactions[0][usage][transfer]=4500&" +
         "transactions[0][usage][hits]=1&" +
