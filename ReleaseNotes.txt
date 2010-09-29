@@ -1,6 +1,13 @@
 Release Notes
 -------------
 
+V2.0.0
+------
+
+Added support for the new V2 API. See http://www.3scale.net/support/api-service-management-v2-0/ for
+documentation.
+
+
 V1.0.3
 ------
 Added calls to the api to support the authorize/batch async calls.
