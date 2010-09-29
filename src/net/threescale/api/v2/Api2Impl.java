@@ -26,6 +26,41 @@ public class Api2Impl implements Api2 {
     }
 
     public ApiResponse authorize(String app_key, String referrer) throws ApiException {
+
+        String url = formatGetUrl(app_key, referrer);
+        log.info("Sending GET to sever with url: " + url);
+
+        ApiHttpResponse response = sender.sendGetToServer(url);
+
+        log.info("response code was: " + response.getResponseCode());
+
+        if (response.getResponseCode() == 200) {
+            return new ApiResponse(response.getResponseText());
+        } else if (response.getResponseCode() == 403) {
+            throw new ApiException(response.getResponseText());
+        } else {
+            throw createExceptionForUnexpectedResponse(response);
+        }
+    }
+
+    public void report(ApiTransaction[] transactions) throws ApiException {
+
+        String post_data = formatPostData(transactions);
+
+        ApiHttpResponse response = sender.sendPostToServer(host_url, post_data);
+
+        if (response.getResponseCode() == 202) {
+            return;
+        } else if (response.getResponseCode() == 403) {
+            throw new ApiException(response.getResponseText());
+        } else {
+            throw createExceptionForUnexpectedResponse(response);
+        }
+    }
+
+
+
+    private String formatGetUrl(String app_key, String referrer) {
         StringBuffer url = new StringBuffer();
 
         url.append(host_url)
@@ -33,6 +68,7 @@ public class Api2Impl implements Api2 {
                 .append("?app_id=").append(app_id)
                 .append("&provider_key=")
                 .append(provider_key);
+
         if (app_key != null) {
             url.append("&app_key=")
                     .append(app_key);
@@ -43,38 +79,13 @@ public class Api2Impl implements Api2 {
                     .append(referrer);
         }
 
-        String urlAsString = url.toString();
-        log.info("Sending GET to sever with url: " + urlAsString);
-        ApiHttpResponse response = sender.sendGetToServer(urlAsString);
-        log.info("response code was: " + response.getResponseCode());
-        if (response.getResponseCode() == 200) {
-            return new ApiResponse(response.getResponseText());
-        } else if (response.getResponseCode() == 403) {
-            throw new ApiException(response.getResponseText());
-        } else {
-            throw createExceptionForUnexpectedResponse(response);
-        }
+        return url.toString();
     }
 
     private ApiException createExceptionForUnexpectedResponse(ApiHttpResponse response) {
         return new ApiException("Server gave unexpected response",
                                "Response Code was \"" + response.getResponseCode()+ "\"" +
                                "with text \"" + response.getResponseText() +"\"");
-    }
-
-    public void report(ApiTransaction[] transactions) throws ApiException {
-
-        StringBuffer post_data = formatPostData(transactions);
-
-        ApiHttpResponse response = sender.sendPostToServer(host_url, post_data.toString());
-
-        if (response.getResponseCode() == 202) {
-            return;
-        } else if (response.getResponseCode() == 403) {
-            throw new ApiException(response.getResponseText());
-        } else {
-            throw createExceptionForUnexpectedResponse(response);
-        }
     }
 
     private String formatTransactionDataForPost(int index, ApiTransaction transaction) {
@@ -115,7 +126,8 @@ public class Api2Impl implements Api2 {
         this.sender = sender;
     }
 
-    public StringBuffer formatPostData(ApiTransaction[] transactions) {
+    /** This is only public for testing **/
+    public String formatPostData(ApiTransaction[] transactions) {
         StringBuffer post_data = new StringBuffer();
 
         for (int index = 0; index < transactions.length; index++) {
@@ -124,7 +136,7 @@ public class Api2Impl implements Api2 {
             }
             post_data.append(formatTransactionDataForPost(index, transactions[index]));
         }
-        return post_data;
+        return post_data.toString();
     }
 }
 
