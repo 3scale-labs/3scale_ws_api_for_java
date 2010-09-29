@@ -12,17 +12,21 @@ import java.util.HashMap;
  */
 public class Example {
 
+    private static String app_url = "http://su1.3scale.net";
+
     // This is YOUR key from your api contract.
     private static String provider_private_key = "6d70ddea3d7e34a23753b8dcbfa12cbb";
-    private static String app_url = "http://su1.3scale.net";
     private static String app_id = "e6581720";
-    private static String invalid_app_id = "e6581744";
     private static String app_key = "3f51378261d4870669acd2fd80c0b4af";
+
+    private static String invalid_app_id = "e6581744";
+    private static String invalid_provider_private_key = "6d70ddea3d7e34a23753b8dcbfa12cdd";
 
     public static void main(String args[]) {
 
-  //      new Example().version2_happy_path_example();
-        new Example().version2_invalid_example();
+        new Example().version2_happy_path_example();
+        new Example().version2_invalid_app_id();
+        new Example().version2_invalid_provider_key();
 
     }
 
@@ -50,7 +54,7 @@ public class Example {
         }
     }
 
-    private void version2_invalid_example() {
+    private void version2_invalid_app_id() {
         Api2 server = new Api2Impl(app_url, invalid_app_id, provider_private_key);
 
         try {
@@ -70,7 +74,33 @@ public class Example {
                 server.report(transactions);
             }
         } catch (ApiException e) {
-            e.printStackTrace();
+            System.out.println("ApiException: responseCode was: " + e.getErrorCode() +
+                               " Message was : " + e.getErrorMessage()); 
+        }
+    }
+
+    private void version2_invalid_provider_key() {
+        Api2 server = new Api2Impl(app_url, app_id, invalid_provider_private_key);
+
+        try {
+            ApiResponse response = server.authorize(app_key, null);
+            System.out.println("response" + response.toString());
+
+            if ((currentDailyHits(response) + 10) < maxDailyHits(response)) {
+
+                // Process your api call here
+
+                ApiTransaction[] transactions = new ApiTransaction[1];
+                HashMap<String, String> metrics0 = new HashMap<String,  String>();
+                metrics0.put("hits", "10");
+
+                transactions[0] = new ApiTransaction(app_id, nowTimeStamp(new Date()), metrics0);
+
+                server.report(transactions);
+            }
+        } catch (ApiException e) {
+            System.out.println("ApiException: responseCode was: " + e.getErrorCode() +
+                               " Message was : " + e.getErrorMessage());
         }
     }
 

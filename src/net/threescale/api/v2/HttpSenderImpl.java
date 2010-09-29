@@ -85,8 +85,12 @@ public class HttpSenderImpl implements HttpSender {
 
             con.setRequestMethod("GET");
 
-            if (con.getResponseCode() == 200 || con.getResponseCode() == 403 || con.getResponseCode() == 404) {
+            if (con.getResponseCode() == 200) {
                 ApiHttpResponse response = new ApiHttpResponse(con.getResponseCode(), extractContent(con));
+                log.info("Received response: " + response.getResponseCode() + " with message: " + response.getResponseText());
+                return response;
+            } else  if (con.getResponseCode() == 403 || con.getResponseCode() == 404) {
+                ApiHttpResponse response = new ApiHttpResponse(con.getResponseCode(), getErrorMessage(con));
                 log.info("Received response: " + response.getResponseCode() + " with message: " + response.getResponseText());
                 return response;
             } else {
@@ -98,6 +102,22 @@ public class HttpSenderImpl implements HttpSender {
         catch (Exception ex) {
             return handleErrors(con);
         }
+    }
+
+    private String getErrorMessage(HttpURLConnection con) throws IOException {
+        assert (con != null);
+
+        StringBuffer errStream = new StringBuffer();
+        InputStream errorStream = con.getErrorStream();
+        assert (errorStream != null);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(errorStream));
+        String errres;
+        while ((errres = in.readLine()) != null) {
+            errStream.append(errres);
+        }
+        in.close();
+        return (errStream.toString());
     }
 
     private String extractContent(HttpURLConnection con) throws IOException {
