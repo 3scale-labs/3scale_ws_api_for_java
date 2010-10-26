@@ -3,6 +3,7 @@ package net.threescale.api.cache;
 import net.threescale.api.TestCommon;
 import net.threescale.api.v2.AuthorizeResponse;
 import org.junit.Test;
+import org.junit.After;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -29,4 +30,11 @@ public abstract class CacheImplTestCommon extends TestCommon {
         AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_KEY);
         assertEquals(originalResponse, authorizeResponse);
     }
+
+
+    @After
+    public void tearDown() {
+        cache.close();
+    }
+
 }

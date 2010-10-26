@@ -10,4 +10,11 @@ public class DefaultCacheImpl extends CacheImplCommon implements ApiCache {
         cache = factory.createCache();
     }
 
+
+    @Override
+     protected void finalize() throws Throwable {
+        cache.stop();
+        cache.destroy();
+        super.finalize();    //To change body of overridden methods use File | Settings | File Templates.
+    }
 }

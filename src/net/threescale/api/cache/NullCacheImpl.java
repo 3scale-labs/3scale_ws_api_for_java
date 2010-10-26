@@ -23,4 +23,8 @@ public class NullCacheImpl implements ApiCache {
     public void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse) {
         // Does nothing
     }
+
+    public void close() {
+        // Does Nothing
+    }
 }

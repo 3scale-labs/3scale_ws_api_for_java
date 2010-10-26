@@ -13,4 +13,6 @@ public interface ApiCache {
     AuthorizeResponse getAuthorizeFor(String userKey);
 
     void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse);
+
+    void close();
 }

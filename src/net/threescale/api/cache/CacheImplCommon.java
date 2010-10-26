@@ -28,4 +28,9 @@ public abstract class CacheImplCommon {
         authorizeNode.put(responseKey, authorizedResponse);
     }
 
+    public void close() {
+        cache.stop();
+        cache.destroy();
+    }
+
 }
