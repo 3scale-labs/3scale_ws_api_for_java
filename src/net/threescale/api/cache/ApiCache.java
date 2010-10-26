@@ -15,4 +15,6 @@ public interface ApiCache {
     void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse);
 
     void close();
+
+    void setExpirationInterval(long expirationTimeInMillis);
 }

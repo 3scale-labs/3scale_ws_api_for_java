@@ -27,4 +27,8 @@ public class NullCacheImpl implements ApiCache {
     public void close() {
         // Does Nothing
     }
+
+    public void setExpirationInterval(long expirationTimeInMillis) {
+        // Does Nothings
+    }
 }

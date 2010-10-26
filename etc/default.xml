@@ -5,4 +5,12 @@
    <!-- By not specifying the 'clustering' element, the cache runs in LOCAL mode. -->
    <!-- Configure the TransactionManager -->
    <transaction transactionManagerLookupClass="org.jboss.cache.transaction.GenericTransactionManagerLookup"/>
+
+   <eviction wakeUpInterval="500">
+      <default algorithmClass="org.jboss.cache.eviction.ExpirationAlgorithm">
+         <property name="maxNodes" value="-1" />
+      </default>
+   </eviction>
+
+
 </jbosscache>
