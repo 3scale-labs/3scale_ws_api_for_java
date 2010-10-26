@@ -6,9 +6,9 @@ import org.jboss.cache.CacheFactory;
 import org.jboss.cache.DefaultCacheFactory;
 
 
-public class RemoteCacheImpl extends CacheImplCommon implements ApiCache {
+public class ConfiguredCacheImpl extends CacheImplCommon implements ApiCache {
     
-    public RemoteCacheImpl(String path_to_config) {
+    public ConfiguredCacheImpl(String path_to_config) {
         CacheFactory factory = new DefaultCacheFactory();
         cache = factory.createCache(path_to_config);
     }

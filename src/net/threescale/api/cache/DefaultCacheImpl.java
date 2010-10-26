@@ -3,9 +3,9 @@ package net.threescale.api.cache;
 import org.jboss.cache.*;
 
 
-public class LocalCacheImpl  extends CacheImplCommon implements ApiCache {
+public class DefaultCacheImpl extends CacheImplCommon implements ApiCache {
 
-    public LocalCacheImpl() {
+    public DefaultCacheImpl() {
         CacheFactory factory = new DefaultCacheFactory();
         cache = factory.createCache();
     }

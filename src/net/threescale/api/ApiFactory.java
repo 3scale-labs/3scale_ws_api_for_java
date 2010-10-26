@@ -1,8 +1,8 @@
 package net.threescale.api;
 
 import net.threescale.api.cache.ApiCache;
-import net.threescale.api.cache.LocalCacheImpl;
-import net.threescale.api.cache.RemoteCacheImpl;
+import net.threescale.api.cache.ConfiguredCacheImpl;
+import net.threescale.api.cache.DefaultCacheImpl;
 import net.threescale.api.v2.*;
 
 /**
@@ -60,11 +60,11 @@ public class ApiFactory {
 
     public static Api2 createV2ApiWithLocalCache(String url, String application_id, String provider_private_key,
                                                            net.threescale.api.v2.HttpSender sender) {
-        return new Api2Impl(url, application_id, provider_private_key, sender, new LocalCacheImpl());
+        return new Api2Impl(url, application_id, provider_private_key, sender, new DefaultCacheImpl());
     }
     
     public static Api2 createV2ApiWithRemoteCache(String url, String application_id, String provider_private_key,
                                                            String path_to_config) {
-        return new Api2Impl(url, application_id, provider_private_key, new RemoteCacheImpl(path_to_config));
+        return new Api2Impl(url, application_id, provider_private_key, new ConfiguredCacheImpl(path_to_config));
     }
 }
