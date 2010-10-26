@@ -6,6 +6,6 @@ public class RemoteCacheImplTest extends CacheImplTestCommon {
 
     @Before
     public void setUp() throws Exception {
-        cache = new RemoteCacheImpl("");
+        cache = new RemoteCacheImpl("test-cache-configuration.xml");
     }
 }
