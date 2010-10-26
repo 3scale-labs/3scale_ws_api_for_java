@@ -6,6 +6,6 @@ public class DistributedCacheImplTest extends CacheImplTestCommon {
 
     @Before
     public void setUp() throws Exception {
-        cache = new ConfiguredCacheImpl("test-cache-configuration.xml");
+        cache = new ConfiguredCacheImpl("etc/test-cache-configuration.xml");
     }
 }
