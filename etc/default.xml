@@ -9,6 +9,7 @@
    <eviction wakeUpInterval="500">
       <default algorithmClass="org.jboss.cache.eviction.ExpirationAlgorithm">
          <property name="maxNodes" value="-1" />
+         <property name="expirationKeyName" value="expiration"/>
       </default>
    </eviction>
 

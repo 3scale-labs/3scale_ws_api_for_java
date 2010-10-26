@@ -4,7 +4,6 @@ import net.threescale.api.v2.AuthorizeResponse;
 import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
-import org.jboss.cache.eviction.ExpirationConfiguration;
 
 public abstract class CacheImplCommon implements ApiCache {
 
@@ -29,9 +28,9 @@ public abstract class CacheImplCommon implements ApiCache {
             authorizeNode = root.addChild(authorizeFqn);
         }
 
-        Long future = new Long(System.currentTimeMillis() + expirationTimeInMillis);
+        Long future = System.currentTimeMillis() + expirationTimeInMillis;
         authorizeNode.put(responseKey, authorizedResponse);
-        authorizeNode.put(ExpirationConfiguration.EXPIRATION_KEY, future);
+        authorizeNode.put("expiration", future);
     }
 
     public void close() {
