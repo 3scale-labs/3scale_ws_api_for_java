@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:jbosscache-core:config:3.2">
+
+   <locking lockAcquisitionTimeout="${test.property.LockAcquisitionTimeout:15000}"
+            nodeLockingScheme="${test.property.NodeLockingScheme:MVCC}"/>
+
+   <transaction syncCommitPhase="${test.property.SyncCommitPhase:true}" syncRollbackPhase="true"/>
+
+   <serialization useRegionBasedMarshalling="true"/>
+   <clustering>
+      <stateRetrieval fetchInMemoryState="false" timeout="20000"/>
+      <jgroupsConfig multiplexerStack="udp-sync" />
+      <sync replTimeout="20000"/>
+      <buddy enabled="${test.property.BuddyReplicationConfig.enabled:true}"
+             poolName="${test.property.BuddyReplicationConfig.buddyPoolName:default}" communicationTimeout="2000">
+         <dataGravitation auto="false" removeOnFind="true" searchBackupTrees="true"/>
+         <locator class="org.jboss.cache.buddyreplication.NextMemberBuddyLocator">
+            <properties>
+               ignoreColocatedBuddies = true
+               numBuddies = ${test.property.BuddyReplicationConfig.numBuddies:1}
+            </properties>
+         </locator>
+      </buddy>
+   </clustering>
+
+   <startup regionsInactiveOnStartup="true"/>
+   <eviction wakeUpInterval="5000">
+      <default algorithmClass="${test.property.EvictionPolicyConfig.policyClass:org.jboss.cache.eviction.LRUAlgorithm}">
+         <property name="maxNodes" value="${test.property.EvictionPolicyConfig.maxNodes:5000}" />
+         <property name="timeToLive" value="1000000" />
+      </default>
+   </eviction>
+   <loaders passivation="true" shared="false">
+      <preload>
+         <node fqn="/"/>
+      </preload>
+      <loader class="org.jboss.cache.loader.FileCacheLoader" async="false" fetchPersistentState="true"
+              ignoreModifications="false">
+         <properties>
+            location=${test.property.CacheLoaderConfiguration.location,java.io.tmpdir:/tmp}
+         </properties>
+      </loader>
+   </loaders>
+</jbosscache>

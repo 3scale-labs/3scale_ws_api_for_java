@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:tns="urn:jboss:jbosscache-core:config:3.0" targetNamespace="urn:jboss:jbosscache-core:config:3.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+
+   <xs:element name="jbosscache" type="tns:cacheConfigurationType"/>
+
+   <xs:complexType name="cacheConfigurationType">
+      <xs:all>
+         <xs:element name="locking" type="tns:lockingType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="transaction" type="tns:transactionType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="startup" type="tns:startupType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="shutdown" type="tns:shutdownType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="serialization" type="tns:serializationType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="jmxStatistics" type="tns:jmxStatisticsType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="listeners" type="tns:listenersType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="invocationBatching" type="tns:invocationBatchingType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="eviction" type="tns:evictionType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="loaders" type="tns:loadersType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="customInterceptors" type="tns:customInterceptorsType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="clustering" type="tns:clusteringType" minOccurs="0" maxOccurs="1"/>
+      </xs:all>
+   </xs:complexType>
+
+   <xs:complexType name="clusteringType">
+      <xs:all>         
+         <xs:element name="sync" type="tns:syncType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="async" type="tns:asyncType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="stateRetrieval" type="tns:stateRetrievalType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="buddy" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+               <xs:all minOccurs="0">
+                  <xs:element name="dataGravitation" maxOccurs="1">
+                     <xs:complexType>
+                        <xs:attribute name="auto" type="tns:booleanType"/>
+                        <xs:attribute name="removeOnFind" type="tns:booleanType"/>
+                        <xs:attribute name="searchBackupTrees" type="tns:booleanType"/>
+                     </xs:complexType>
+                  </xs:element>
+                  <xs:element name="locator" maxOccurs="1">
+                     <xs:complexType>
+                        <xs:all>
+                           <xs:element name="properties" type="xs:string" maxOccurs="1"/>
+                        </xs:all>
+                        <xs:attribute name="class" type="xs:string"/>
+                     </xs:complexType>
+                  </xs:element>
+               </xs:all>
+               <xs:attribute name="enabled" type="tns:booleanType"/>
+               <xs:attribute name="poolName" type="xs:string"/>
+               <xs:attribute name="communicationTimeout" type="xs:integer"/>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="jgroupsConfig" type="tns:jgroupsConfigType" minOccurs="0" maxOccurs="1"/>
+      </xs:all>
+      <xs:attribute name="mode">
+         <xs:simpleType>
+            <xs:restriction base="xs:string">
+               <xs:pattern
+                     value="[Rr][Ee][Pp][Ll][Ii][Cc][Aa][Tt][Ii][Oo][Nn]|[Ii][Nn][Vv][Aa][Ll][Ii][Dd][Aa][Tt][Ii][Oo][Nn]|[Rr]|[Ii]|\$\{.*\}"/>
+            </xs:restriction>
+         </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="clusterName" type="xs:string" />
+
+
+   </xs:complexType>
+   
+   <xs:complexType name="lockingType">
+      <xs:attribute name="isolationLevel">
+         <xs:simpleType>
+            <xs:restriction base="xs:string">
+               <xs:pattern
+                     value="[Ss][Ee][Rr][Ii][Aa][Ll][Ii][Zz][Aa][Bb][Ll][Ee]|[Rr][Ee][Pp][Ee][Aa][Tt][Aa][Bb][Ll][Ee]_[Rr][Ee][Aa][Dd]|[Rr][Ee][Aa][Dd]_[Cc][Oo][Mm][Mm][Ii][Tt][Tt][Ee][Dd]|[Nn][Oo][Nn][Ee]|\$\{.*\}"/>
+            </xs:restriction>
+         </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="lockParentForChildInsertRemove" type="tns:booleanType"/>
+      <xs:attribute name="lockAcquisitionTimeout" type="tns:positiveInteger"/>
+      <xs:attribute name="nodeLockingScheme">
+         <xs:simpleType>
+            <xs:restriction base="xs:string">
+               <xs:pattern
+                     value="[Mm][Vv][Cc][Cc]|[Oo][Pp][Tt][Ii][Mm][Ii][Ss][Tt][Ii][Cc]|[Pp][Ee][Ss][Ss][Ii][Mm][Ii][Ss][Tt][Ii][Cc]|\$\{.*\}"/>
+            </xs:restriction>
+         </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="writeSkewCheck" type="tns:booleanType"/>
+      <xs:attribute name="concurrencyLevel" type="xs:integer"/>
+   </xs:complexType>
+
+   <xs:complexType name="transactionType">
+      <xs:attribute name="transactionManagerLookupClass" type="xs:string"/>
+      <xs:attribute name="syncRollbackPhase" type="tns:booleanType"/>
+      <xs:attribute name="syncCommitPhase" type="tns:booleanType"/>
+   </xs:complexType>
+
+   <xs:complexType name="startupType">
+      <xs:attribute name="regionsInactiveOnStartup" type="tns:booleanType"/>
+   </xs:complexType>
+
+   <xs:complexType name="stateRetrievalType">
+      <xs:attribute name="fetchInMemoryState" type="tns:booleanType"/>
+      <xs:attribute name="timeout" type="tns:positiveInteger"/>
+   </xs:complexType>
+
+   <xs:complexType name="shutdownType">
+      <xs:attribute name="hookBehavior">
+         <xs:simpleType>
+            <xs:restriction base="xs:string">
+               <xs:pattern
+                     value="[Dd][Ee][Ff][Aa][Uu][Ll][Tt]|[Rr][Ee][Gg][Ii][Ss][Tt][Ee][Rr]|[Dd][Oo][Nn][Tt]_[Rr][Ee][Gg][Ii][Ss][Tt][Ee][Rr]|\$\{.*\}"/>
+            </xs:restriction>
+         </xs:simpleType>
+      </xs:attribute>
+   </xs:complexType>
+
+   <xs:complexType name="serializationType">
+      <xs:attribute name="objectInputStreamPoolSize" type="tns:positiveInteger"/>
+      <xs:attribute name="objectOutputStreamPoolSize" type="tns:positiveInteger"/>
+      <xs:attribute name="version" type="xs:string"/>
+      <xs:attribute name="marshallerClass" type="xs:string"/>
+      <xs:attribute name="useLazyDeserialization" type="tns:booleanType"/>
+      <xs:attribute name="useRegionBasedMarshalling" type="tns:booleanType"/>
+   </xs:complexType>
+
+   <xs:simpleType name="booleanType">
+      <xs:restriction base="xs:string">
+         <xs:pattern value="\$\{.*\}|[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="positiveInteger">
+      <xs:restriction base="xs:string">
+         <xs:pattern value="\$\{.*\}|\+?[0-9]*"/>
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:complexType name="jmxStatisticsType">
+      <xs:attribute name="enabled" type="tns:booleanType"/>
+   </xs:complexType>
+
+   <xs:complexType name="listenersType">
+      <xs:attribute name="asyncPoolSize" type="tns:positiveInteger"/>
+      <xs:attribute name="asyncQueueSize" type="tns:positiveInteger"/>
+   </xs:complexType>
+
+   <xs:complexType name="invocationBatchingType">
+      <xs:attribute name="enabled" type="tns:booleanType"/>
+   </xs:complexType>
+
+   <xs:complexType name="jgroupsConfigType">
+      <xs:sequence>
+         <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="configFile" type="xs:string"/>
+      <xs:attribute name="multiplexerStack" type="xs:string"/>
+   </xs:complexType>
+
+   <xs:complexType name="syncType">
+      <xs:attribute name="replTimeout" type="tns:positiveInteger"/>
+   </xs:complexType>
+
+   <xs:complexType name="asyncType">
+      <xs:attribute name="useReplQueue" type="tns:booleanType"/>
+      <xs:attribute name="replQueueInterval" type="tns:positiveInteger"/>
+      <xs:attribute name="replQueueMaxElements" type="tns:positiveInteger"/>
+      <xs:attribute name="serializationExecutorPoolSize" type="tns:positiveInteger"/>
+      <xs:attribute name="serializationExecutorQueueSize" type="tns:positiveInteger"/>
+   </xs:complexType>
+
+   <xs:complexType name="evictionType">
+      <xs:sequence>
+         <xs:element name="default" type="tns:evictionRegionType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="region" minOccurs="0" maxOccurs="unbounded" type="tns:evictionRegionType"/>
+      </xs:sequence>
+      <xs:attribute name="wakeUpInterval" type="tns:positiveInteger" use="required"/>
+   </xs:complexType>
+
+   <xs:complexType name="evictionRegionType">
+      <xs:sequence>
+         <xs:element name="property" minOccurs="0" maxOccurs="unbounded" type="tns:propertyType"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="algorithmClass" type="xs:string"/>
+      <xs:attribute name="actionPolicyClass" type="xs:string"/>
+      <xs:attribute name="eventQueueSize" type="tns:positiveInteger"/>
+   </xs:complexType>
+
+   <xs:complexType name="loadersType">
+      <xs:sequence>
+         <xs:element name="preload" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="node" maxOccurs="unbounded">
+                     <xs:complexType>
+                        <xs:attribute name="fqn" type="xs:string"/>
+                     </xs:complexType>
+                  </xs:element>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="loader" maxOccurs="unbounded">
+            <xs:complexType>
+               <xs:all>
+                  <xs:element name="properties"/>
+                  <xs:element name="singletonStore" minOccurs="0" maxOccurs="1">
+                     <xs:complexType>
+                        <xs:all>
+                           <xs:element name="properties" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        </xs:all>
+                        <xs:attribute name="enabled" type="tns:booleanType"/>
+                        <xs:attribute name="class" type="xs:string"/>
+                     </xs:complexType>
+                  </xs:element>
+               </xs:all>
+               <xs:attribute name="class" type="xs:string"/>
+               <xs:attribute name="async" type="tns:booleanType"/>
+               <xs:attribute name="fetchPersistentState" type="tns:booleanType"/>
+               <xs:attribute name="ignoreModifications" type="tns:booleanType"/>
+               <xs:attribute name="purgeOnStartup" type="tns:booleanType"/>
+            </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+      <xs:attribute name="passivation" type="tns:booleanType"/>
+      <xs:attribute name="shared" type="tns:booleanType"/>
+   </xs:complexType>
+
+   <xs:complexType name="customInterceptorsType">
+      <xs:sequence>
+         <xs:element name="interceptor" maxOccurs="unbounded">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="property" maxOccurs="unbounded" type="tns:propertyType" minOccurs="0"/>
+               </xs:sequence>
+               <xs:attribute name="class" type="xs:string"/>
+               <xs:attribute name="position">
+                  <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                        <xs:pattern value="[Ff][Ii][Rr][Ss][Tt]|[Ll][Aa][Ss][Tt]"/>
+                     </xs:restriction>
+                  </xs:simpleType>
+               </xs:attribute>
+               <xs:attribute name="before" type="xs:string"/>
+               <xs:attribute name="after" type="xs:string"/>
+               <xs:attribute name="index" type="tns:positiveInteger"/>
+            </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="propertyType">
+      <xs:simpleContent>
+         <xs:extension base="xs:string">
+            <xs:attribute name="name" type="xs:string"/>
+            <xs:attribute name="value" type="xs:string"/>
+         </xs:extension>
+      </xs:simpleContent>
+   </xs:complexType>
+</xs:schema>
+
