@@ -1,10 +1,11 @@
 package net.threescale.api.cache;
 
-/**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 26-Oct-2010
- * Time: 17:06:33
- */
-public class RemoteCacheImplTest {
+import org.junit.Before;
+
+public class RemoteCacheImplTest extends CacheImplTestCommon {
+
+    @Before
+    public void setUp() throws Exception {
+        cache = new RemoteCacheImpl("");
+    }
 }

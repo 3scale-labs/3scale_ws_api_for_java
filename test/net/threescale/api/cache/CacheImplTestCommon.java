@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNull;
  * Date: 26-Oct-2010
  * Time: 17:06:56
  */
-public class CacheImplCommon extends TestCommon {
+public abstract class CacheImplTestCommon extends TestCommon {
     protected ApiCache cache;
 
     @Test
