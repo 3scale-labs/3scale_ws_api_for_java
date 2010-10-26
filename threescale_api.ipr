@@ -247,6 +247,12 @@
         <root url="jar://$PROJECT_DIR$/lib/junit-dep-4.4.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hamcrest-core-1.1.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jmock-2.5.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jboss-common-core.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jbosscache-core.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jboss-logging-spi.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/commons-logging.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jgroups.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jboss-transaction-api.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
