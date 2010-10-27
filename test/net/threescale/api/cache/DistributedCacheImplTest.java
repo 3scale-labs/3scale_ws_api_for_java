@@ -13,21 +13,4 @@ public class DistributedCacheImplTest extends CacheImplTestCommon {
         cache = new ConfiguredCacheImpl("etc/test-cache-configuration.xml");
     }
 
-
-    @Test
-    public void testCacheExpiresAfter1Second() throws InterruptedException {
-        cache.setExpirationInterval(50L);
-        
-        AuthorizeResponse originalResponse = new AuthorizeResponse(HAPPY_PATH_RESPONSE);
-        cache.addAuthorizedResponse(APP_KEY, originalResponse);
-        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_KEY);
-        assertEquals(originalResponse, authorizeResponse);
-
-        Thread.sleep(500L);
-
-        authorizeResponse = cache.getAuthorizeFor(APP_KEY);
-        assertNull(authorizeResponse);
-    }
-
-
 }
