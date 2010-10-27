@@ -32,7 +32,7 @@ public abstract class CacheImplTestCommon extends TestCommon {
     }
 
     @Test
-    public void testCacheExpiresAfter1Second() throws InterruptedException {
+    public void testCacheExpiresAfter50thOfASecond() throws InterruptedException {
         cache.setExpirationInterval(50L);
 
         AuthorizeResponse originalResponse = new AuthorizeResponse(HAPPY_PATH_RESPONSE);
