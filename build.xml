@@ -83,7 +83,7 @@
 	</target>
 
 	<target name="tarball" description="Builds a distribution tarball" depends="clean,jar,javadoc">
-		<tar destfile="threescale-api-2.0.1.tar.gz" compression="gzip">
+		<tar destfile="threescale-api-2.0.2.tar.gz" compression="gzip">
 			<fileset dir="${basedir}">
 				<include name="build.xml" />
 				<include name=".classpath" />
