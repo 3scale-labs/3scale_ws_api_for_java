@@ -25,7 +25,7 @@ public class ApiBatchMetric {
 
     /**
      * User Key under which to record the metric.
-     * @return
+     * @return  The User key
      */
     public String getUser_key() {
         return user_key;
@@ -42,7 +42,7 @@ public class ApiBatchMetric {
 
     /**
      * Optional time when this metric occurred. Null if not set.
-     * @return
+     * @return The Date of the transaction
      */
     public Date getTransactionTime() {
         return transactionTime;

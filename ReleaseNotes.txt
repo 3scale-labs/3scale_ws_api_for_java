@@ -1,6 +1,13 @@
 Release Notes
 -------------
 
+v2.0.1
+------
+
+Added caching based on JBoss Cache.  This caches the authorize responses in a local cache.
+
+
+
 V2.0.0
 ------
 

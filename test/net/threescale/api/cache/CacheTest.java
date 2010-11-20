@@ -1,7 +1,7 @@
 package net.threescale.api.cache;
 
 import net.threescale.api.ApiFactory;
-import net.threescale.api.TestCommon;
+import net.threescale.api.CommonBase;
 import net.threescale.api.v2.Api2;
 import net.threescale.api.v2.ApiHttpResponse;
 import net.threescale.api.v2.AuthorizeResponse;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 
-public class CacheTest extends TestCommon {
+public class CacheTest extends CommonBase {
 
     @Mock
     private HttpSender sender;

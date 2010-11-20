@@ -1,7 +1,7 @@
 package net.threescale.api.v2;
 
 import net.threescale.api.ApiFactory;
-import net.threescale.api.TestCommon;
+import net.threescale.api.CommonBase;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 
-public class ApiTest2 extends TestCommon {
+public class ApiTest2 extends CommonBase {
 
 
     private Api2 server;
