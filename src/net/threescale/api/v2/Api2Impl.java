@@ -64,7 +64,7 @@ public class Api2Impl implements Api2 {
 
         log.info("response code was: " + response.getResponseCode());
 
-        if (response.getResponseCode() == 200) {
+        if (response.getResponseCode() == 200 || response.getResponseCode() == 409) {
             return new AuthorizeResponse(response.getResponseText());
         } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
             throw new ApiException(response.getResponseText());
