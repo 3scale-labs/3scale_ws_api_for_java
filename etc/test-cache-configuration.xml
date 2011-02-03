@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Using a local setup for testing
+
+    To enable distributed caching examine the etc/config-samples and the
+    JBoss Caching Documentation  (http://docs.jboss.org/jbosscache/3.2.1.GA/userguide_en/html_single/index.html)
+    for more information
+
+-->
+
+<jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:jbosscache-core:config:3.2">
+
+   <!-- By not specifying the 'clustering' element, the cache runs in LOCAL mode. -->
+   <!-- Configure the TransactionManager -->
+   <transaction transactionManagerLookupClass="org.jboss.cache.transaction.GenericTransactionManagerLookup"/>
+   <eviction wakeUpInterval="100">
+       <default algorithmClass="org.jboss.cache.eviction.ExpirationAlgorithm">
+          <property name="maxNodes" value="-1" />
+          <property name="expirationKeyName" value="expiration"/>
+       </default>
+   </eviction>
+
+
+</jbosscache>
+
+

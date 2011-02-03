@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:tns="urn:jboss:jbosscache-core:config:3.0"
+           xmlns:repo="urn:jboss:jbosscache-core:cache-repo:3.0"
+           targetNamespace="urn:jboss:jbosscache-core:cache-repo:3.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+   <xs:import schemaLocation="jbosscache-config-3.0.xsd" namespace="urn:jboss:jbosscache-core:config:3.0"/>
+
+   <xs:element name="cache-configs">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="cache-config" type="repo:cacheConfig" minOccurs="1" maxOccurs="unbounded"/>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name="cacheConfig">                                                                                                                                                      
+      <xs:complexContent>
+         <xs:extension base="tns:cacheConfigurationType" xml:space="default">
+            <xs:attribute name="name" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+</xs:schema>

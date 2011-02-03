@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jbosscache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:jboss:jbosscache-core:config:3.2">
+
+   <!-- By not specifying the 'clustering' element, the cache runs in LOCAL mode. -->
+   <!-- Configure the TransactionManager -->
+   <transaction transactionManagerLookupClass="org.jboss.cache.transaction.GenericTransactionManagerLookup"/>
+
+   <eviction wakeUpInterval="500">
+      <default algorithmClass="org.jboss.cache.eviction.ExpirationAlgorithm">
+         <property name="maxNodes" value="-1" />
+         <property name="expirationKeyName" value="expiration"/>
+      </default>
+   </eviction>
+
+
+</jbosscache>
