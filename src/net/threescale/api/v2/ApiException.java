@@ -29,9 +29,8 @@ public class ApiException extends Exception {
      * @param xml error xml.
      */
     public ApiException(String xml) {
-        XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+        XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xpath = xPathFactory.newXPath();
-
         NodeList nodes = XmlHelper.extractNodeList(xpath, "//error[@code]", xml);
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -51,5 +50,20 @@ public class ApiException extends Exception {
 
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public int toHttpStatusCode() {
+        if("application_not_found".equals(errorCode)) {
+            return 404;
+        }
+        //todo other errorCodes
+        return 500;
+    }
+    public String toHttpStatusMessage() {
+        if("application_not_found".equals(errorCode)) {
+            return "Application Not Found";
+        }
+        //todo other errorCodes
+        return errorCode;
     }
 }

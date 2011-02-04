@@ -25,7 +25,7 @@ public class ApiAuthorizeResponse {
 
         if (responseFromServer != null && responseFromServer.trim().length() != 0) {
 
-            XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+            XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
 
             log.info("Extracting usage info");

@@ -29,7 +29,7 @@ public class ApiStartResponse {
 	
 			if (xmlString != null && xmlString.trim().length() != 0) {
 
-                XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+                XPathFactory xPathFactory = XPathFactory.newInstance();
                 XPath xpath = xPathFactory.newXPath();
 
 				log.info("Extracting transaction info");

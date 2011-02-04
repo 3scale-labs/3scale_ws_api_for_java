@@ -26,8 +26,7 @@ public class ApiException extends Exception {
 		this.responseCode = responseCode;
 
 		try {
-			// XPathFactory xPathFactory = XPathFactory.newInstance();
-			XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+			XPathFactory xPathFactory = XPathFactory.newInstance();
 			XPath xpath = xPathFactory.newXPath();
 
             if (xmlMessage != null && xmlMessage.length() > 0) {

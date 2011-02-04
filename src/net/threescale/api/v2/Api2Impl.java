@@ -169,14 +169,14 @@ public class Api2Impl implements Api2 {
         }
     }
 
-    private String formatMetrics(String prefix, HashMap<String, String> metrics) {
+    private String formatMetrics(String prefix, Map<String, String> metrics) {
         StringBuffer data = new StringBuffer();
 
         Set<Map.Entry<String, String>> entries = metrics.entrySet();
 
         for (Map.Entry<String, String> entry : entries) {
             data.append("&").append(prefix).append("[usage]");
-            data.append("[" + entry.getKey() + "]=" + entry.getValue());
+            data.append("[").append(entry.getKey()).append("]=").append(entry.getValue());
         }
         return data.toString();
     }
@@ -186,7 +186,7 @@ public class Api2Impl implements Api2 {
      */
     public String formatPostData(ApiTransaction[] transactions) {
         StringBuffer post_data = new StringBuffer();
-        post_data.append("provider_key=" + provider_key);
+        post_data.append("provider_key=").append(provider_key);
         for (int index = 0; index < transactions.length; index++) {
             post_data.append("&");
             post_data.append(formatTransactionDataForPost(index, transactions[index]));

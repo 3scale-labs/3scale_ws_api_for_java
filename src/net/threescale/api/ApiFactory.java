@@ -9,6 +9,7 @@ import net.threescale.api.v2.*;
  * Factory class to create 3scale Api objects.
  */
 public class ApiFactory {
+    public static String DEFAULT_3SCALE_PROVIDER_API_URL = "http://su1.3scale.net";
 
 	/**
 	 * Creates a new Api object.
@@ -40,6 +41,15 @@ public class ApiFactory {
 	public static net.threescale.api.v2.Api2 createV2Api(String url, String application_id, String provider_private_key) {
 		return new Api2Impl(url, application_id, provider_private_key);
 	}
+
+    /**
+     * Creates a new Version 2 Api object using <code>DEFAULT_3SCALE_PROVIDER_API_URL</code>
+     * @param provider_private_key The Providers private key obtained from 3scale.
+     * @return A new Api object.
+     */
+    public static Api2 createV2Api(String app_id, String provider_private_key) {
+        return createV2Api(DEFAULT_3SCALE_PROVIDER_API_URL, app_id, provider_private_key);
+    }
 
 	/**
 	 * Creates a new Api object.

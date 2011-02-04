@@ -1,5 +1,7 @@
 package net.threescale.api.v2;
 
+import java.util.Date;
+
 /**
  * Created by IntelliJ IDEA.
  * User: geoffd
@@ -67,5 +69,37 @@ public class ApiUsageMetric {
 
     public Boolean getExceeded() {
         return exceeded;
+    }
+
+    public int margin() {
+        return Integer.parseInt(getMaxValue()) - Integer.parseInt(getCurrentValue());
+    }
+
+    public boolean marginFor(int allowance) {
+        return Integer.parseInt(getCurrentValue()) + allowance <= Integer.parseInt(getMaxValue());
+    }
+
+    public int getRemaining() {
+        return margin();
+    }
+
+    public Date getPeriodEndDate()  {
+        return Dates.parseDate(getPeriodEnd());
+    }
+
+
+    public long getPeriodEndEpoch() {
+        Date date = getPeriodStartDate();
+        return date == null ? 0 : (date.getTime() + 500) / 1000L;
+    }
+
+    public Date getPeriodStartDate()  {
+        return Dates.parseDate(getPeriodEnd());
+    }
+
+
+    public long getPeriodStartEpoch() {
+        Date date = getPeriodStartDate();
+        return date == null ? 0 : (date.getTime() + 500) / 1000L;
     }
 }

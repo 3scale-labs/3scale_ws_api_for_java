@@ -244,7 +244,6 @@
         <root url="jar://$PROJECT_DIR$/lib/jmock-junit4-2.5.0.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/mockito-all-1.8.0-rc2.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/junit-4.4.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/xalan.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/junit-dep-4.4.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hamcrest-core-1.1.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jmock-2.5.0.jar!/" />

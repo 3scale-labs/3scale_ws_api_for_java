@@ -135,4 +135,50 @@ public class AuthorizeResponse {
         }
     }
 
+
+    public int maxHits() {
+        ApiUsageMetric metric = firstHitsMetric();
+        return (metric != null) ? Integer.parseInt(metric.getMaxValue()) : 1;
+    }
+
+    public int currentHits() {
+        ApiUsageMetric metric = firstHitsMetric();
+        return (metric != null) ? Integer.parseInt(metric.getCurrentValue()) : 0;
+    }
+
+
+    /**
+     * Returns the first hits metric. Hits metric is the default metric used by 3scale
+     * @return returns the first hits metric or null, if the metric is not found
+     */
+    public ApiUsageMetric firstHitsMetric() {
+        return firstMetricByName("hits");
+
+    }
+
+    /**
+     * Returns the first metric which by name
+     * @param metric_key name of the metric
+     * @return returns the first hits metric or null, if the metric is not found
+     */
+    public ApiUsageMetric firstMetricByName(String metric_key) {
+
+        for (ApiUsageMetric metric : usage_reports) {
+            if (metric.getMetric().equals(metric_key)) {
+                return metric;
+            }
+        }
+        return null;
+    }
+
+    // Find a specific metric/period usage metric
+    public ApiUsageMetric findMetricForPeriod(String metric_key, String period_key) {
+        for (ApiUsageMetric metric : usage_reports) {
+            if (metric.getMetric().equals(metric_key) && metric.getPeriod().equals(period_key)) {
+                return metric;
+            }
+        }
+        return null;
+    }
+
 }
