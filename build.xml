@@ -2,8 +2,8 @@
 
 <project name="threescale" default="jar" basedir=".">
 
-	<property name="src.home" value="${basedir}/src" />
-	<property name="test.home" value="${basedir}/test" />
+	<property name="src.home" value="${basedir}/src/main/java" />
+	<property name="test.home" value="${basedir}/src/test/java" />
 
 	<property name="build.home" value="${basedir}/build" />
 	<property name="build.classes" value="${build.home}/classes" />

@@ -58,9 +58,9 @@ public class ApiFilter implements Filter {
                 ApiUsageMetric hitsMetric = apiResponse.firstHitsMetric();
                 log("API Usage: " + hitsMetric.getCurrentValue() + "/" + hitsMetric.getMaxValue());
                 /*
-                X-FeatureRateLimit-Limit Ð Number of requests allowed for that IP address per hour.
-                X-FeatureRateLimit-Remaining Ð Number of requests remaining.
-                X-FeatureRateLimit-Reset Ð Time at which your quota is reset, in Unix epoch time.
+                X-FeatureRateLimit-Limit     -> Number of requests allowed for that IP address per hour.
+                X-FeatureRateLimit-Remaining -> Number of requests remaining.
+                X-FeatureRateLimit-Reset     -> Time at which your quota is reset, in Unix epoch time.
                  */
                 response.setHeader("X-FeatureRateLimit-Limit", hitsMetric.getMaxValue());
                 response.setHeader("X-FeatureRateLimit-Remaining", String.valueOf(hitsMetric.getRemaining()));
