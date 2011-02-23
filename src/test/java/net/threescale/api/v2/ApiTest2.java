@@ -157,8 +157,8 @@ public class ApiTest2 extends CommonBase {
         transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
         transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
 
-        assertEquals(RESPONSE_HAPPY_PATH_DATA, ((Api2Impl)server).formatPostData(transactions).toString());
-        
+        assertEquals(RESPONSE_HAPPY_PATH_DATA, ApiUtil.formatPostData(PROVIDER_KEY, transactions).toString());
+
         server.report(transactions);
     }
 

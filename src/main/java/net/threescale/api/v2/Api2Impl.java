@@ -57,6 +57,9 @@ public class Api2Impl implements Api2 {
         this.provider_key = provider_key;
         this.sender = sender;
         this.cache = cache;
+        this.cache.setSender(sender);
+        this.cache.setHostUrl(host_url);
+        this.cache.setProviderKey(provider_key);
     }
 
     /**
@@ -85,10 +88,9 @@ public class Api2Impl implements Api2 {
             } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
                 throw new ApiException(response.getResponseText());
             } else {
-                throw createExceptionForUnexpectedResponse(response);
+                throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
             }
-        }
-        else {
+        } else {
             return cached_response;
         }
     }
@@ -101,17 +103,7 @@ public class Api2Impl implements Api2 {
      */
     public void report(ApiTransaction[] transactions) throws ApiException {
 
-        String post_data = formatPostData(transactions);
-
-        ApiHttpResponse response = sender.sendPostToServer(host_url, post_data);
-
-        if (response.getResponseCode() == 202) {
-            return;
-        } else if (response.getResponseCode() == 403) {
-            throw new ApiException(response.getResponseText());
-        } else {
-            throw createExceptionForUnexpectedResponse(response);
-        }
+        cache.report(transactions);
     }
 
 // Private Methods
@@ -138,60 +130,7 @@ public class Api2Impl implements Api2 {
         return url.toString();
     }
 
-    private ApiException createExceptionForUnexpectedResponse(ApiHttpResponse response) {
-        log.info("Unexpected Response: " + response.getResponseCode() +
-                " Text: " + response.getResponseText());
-        return new ApiException("Server gave unexpected response",
-                "Response Code was \"" + response.getResponseCode() + "\"" +
-                        "with text \"" + response.getResponseText() + "\"");
-    }
 
-    private String formatTransactionDataForPost(int index, ApiTransaction transaction) {
-        StringBuffer data = new StringBuffer();
-        String prefix = "transactions[" + index + "]";
 
-        data.append(prefix);
-        data.append("[app_id]=").append(transaction.getApp_id());
-        data.append(formatMetrics(prefix, transaction.getMetrics()));
-	if(transaction.getTimestamp() != null) {
-		data.append("&").append(prefix);
-	        data.append("[timestamp]=").append(urlEncodeField(transaction.getTimestamp()));
-	}
-
-        return data.toString();
-    }
-
-    private String urlEncodeField(String field_to_encode) {
-        try {
-            return URLEncoder.encode(field_to_encode, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return field_to_encode;
-        }
-    }
-
-    private String formatMetrics(String prefix, Map<String, String> metrics) {
-        StringBuffer data = new StringBuffer();
-
-        Set<Map.Entry<String, String>> entries = metrics.entrySet();
-
-        for (Map.Entry<String, String> entry : entries) {
-            data.append("&").append(prefix).append("[usage]");
-            data.append("[").append(entry.getKey()).append("]=").append(entry.getValue());
-        }
-        return data.toString();
-    }
-
-    /**
-     * This is only public for testing *
-     */
-    public String formatPostData(ApiTransaction[] transactions) {
-        StringBuffer post_data = new StringBuffer();
-        post_data.append("provider_key=").append(provider_key);
-        for (int index = 0; index < transactions.length; index++) {
-            post_data.append("&");
-            post_data.append(formatTransactionDataForPost(index, transactions[index]));
-        }
-        return post_data.toString();
-    }
 }
 

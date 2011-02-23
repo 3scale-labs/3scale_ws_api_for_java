@@ -253,9 +253,11 @@
         <root url="jar://$PROJECT_DIR$/lib/commons-logging.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jgroups.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jboss-transaction-api.jar!/" />
+        <root url="file://$PROJECT_DIR$/lib" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
     </library>
   </component>
 </project>

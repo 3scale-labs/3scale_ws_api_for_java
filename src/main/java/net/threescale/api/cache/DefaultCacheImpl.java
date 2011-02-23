@@ -1,5 +1,7 @@
 package net.threescale.api.cache;
 
+import net.threescale.api.v2.ApiException;
+import net.threescale.api.v2.ApiTransaction;
 import org.jboss.cache.*;
 
 

@@ -1,6 +1,9 @@
 package net.threescale.api.cache;
 
+import net.threescale.api.v2.ApiException;
+import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.AuthorizeResponse;
+import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
@@ -43,4 +46,19 @@ public abstract class CacheImplCommon implements ApiCache {
         this.expirationTimeInMillis = expirationTimeInMillis;
     }
 
-}
+
+    public void report(ApiTransaction[] transactions) throws ApiException {
+        throw new ApiException("Not implemented");
+    }    
+
+    public void setSender(HttpSender sender) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setHostUrl(String host_url) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setProviderKey(String providerKey) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }}
