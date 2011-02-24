@@ -22,10 +22,4 @@ public interface ApiCache {
     void setExpirationInterval(long expirationTimeInMillis);
 
     void report(ApiTransaction[] transactions) throws ApiException;
-
-    void setSender(HttpSender sender);
-
-    void setHostUrl(String host_url);
-
-    void setProviderKey(String providerKey);
 }

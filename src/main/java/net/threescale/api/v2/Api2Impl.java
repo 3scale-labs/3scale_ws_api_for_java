@@ -32,7 +32,7 @@ public class Api2Impl implements Api2 {
      * @param provider_key Private API Key from contract
      */
     public Api2Impl(String host_url, String app_id, String provider_key) {
-        this(host_url, app_id, provider_key, new HttpSenderImpl(), new NullCacheImpl());
+        this(host_url, app_id, provider_key, new HttpSenderImpl());
     }
 
     /**
@@ -44,7 +44,7 @@ public class Api2Impl implements Api2 {
      * @param sender       HttpSender to use for communications.
      */
     public Api2Impl(String host_url, String app_id, String provider_key, HttpSender sender) {
-        this(host_url, app_id, provider_key, sender, new NullCacheImpl());
+        this(host_url, app_id, provider_key, sender, new NullCacheImpl( host_url, provider_key , sender));
     }
 
     public Api2Impl(String host_url, String app_id, String provider_key, ApiCache cache) {
@@ -57,9 +57,6 @@ public class Api2Impl implements Api2 {
         this.provider_key = provider_key;
         this.sender = sender;
         this.cache = cache;
-        this.cache.setSender(sender);
-        this.cache.setHostUrl(host_url);
-        this.cache.setProviderKey(provider_key);
     }
 
     /**

@@ -11,6 +11,11 @@ public class DefaultCacheImpl extends CacheImplCommon implements ApiCache {
         data_cache = new DefaultCacheFactory().createCache("etc/default.xml");
     }
 
+    public DefaultCacheImpl(String host_url, String provider_key, HttpSender sender, Cache data_cache) {
+        super(host_url, provider_key, sender);
+        this.data_cache = data_cache;
+    }
+
 
     @Override
      protected void finalize() throws Throwable {

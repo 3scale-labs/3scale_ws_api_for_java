@@ -23,6 +23,12 @@ public class NullCacheImpl implements ApiCache {
     private String host_url;
     private String provider_key;
 
+    public NullCacheImpl(String host_url, String provider_key, HttpSender sender) {
+        this.host_url = host_url;
+        this.provider_key = provider_key;
+        this.sender = sender;
+    }
+
 
     /**
      * Always returns Null so the data is loaded from the server
@@ -60,15 +66,4 @@ public class NullCacheImpl implements ApiCache {
         }
     }
 
-    public void setSender(HttpSender sender) {
-        this.sender = sender;
-    }
-
-    public void setHostUrl(String host_url) {
-        this.host_url = host_url;
-    }
-
-    public void setProviderKey(String provider_key) {
-        this.provider_key = provider_key;
-    }
 }

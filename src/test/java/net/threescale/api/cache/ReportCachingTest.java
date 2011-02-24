@@ -4,6 +4,7 @@ import net.threescale.api.CommonBase;
 import net.threescale.api.v2.ApiHttpResponse;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.HttpSender;
+import org.jboss.cache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,10 +28,13 @@ public class ReportCachingTest extends CommonBase {
     @Mock
     protected HttpSender sender;
 
+    @Mock
+    protected Cache data_cache;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        api_cache = new DefaultCacheImpl(SERVER_URL, PROVIDER_KEY, sender);
+        api_cache = new DefaultCacheImpl(SERVER_URL, PROVIDER_KEY, sender, data_cache);
     }
 
 
