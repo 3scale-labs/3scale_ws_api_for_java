@@ -22,7 +22,8 @@ public abstract class CacheImplCommon implements ApiCache {
     // This is initialized by sub-class
     protected Cache data_cache;
 
-    private long expirationTimeInMillis = 500L;
+    private long authorizeExpirationTimeInMillis = 500L;
+    private long reportExpirationTimeInMillis = 500L;
 
     public CacheImplCommon(String host_url, String provider_key, HttpSender sender) {
         this.sender = sender;
@@ -43,7 +44,7 @@ public abstract class CacheImplCommon implements ApiCache {
             authorizeNode = root.addChild(authorizeFqn);
         }
 
-        Long future = System.currentTimeMillis() + expirationTimeInMillis;
+        Long future = System.currentTimeMillis() + authorizeExpirationTimeInMillis;
         authorizeNode.put(responseKey, authorizedResponse);
         authorizeNode.put("expiration", future);
     }
@@ -54,8 +55,13 @@ public abstract class CacheImplCommon implements ApiCache {
     }
 
 
-    public void setExpirationInterval(long expirationTimeInMillis) {
-        this.expirationTimeInMillis = expirationTimeInMillis;
+    public void setAuthorizeExpirationInterval(long expirationTimeInMillis) {
+        this.authorizeExpirationTimeInMillis = expirationTimeInMillis;
+    }
+
+
+    public void setReportExpirationInterval(long expirationTimeInMillis) {
+        this.reportExpirationTimeInMillis = expirationTimeInMillis;
     }
 
 
@@ -73,15 +79,4 @@ public abstract class CacheImplCommon implements ApiCache {
          }
      }
 
-    public void setSender(HttpSender sender) {
-        this.sender = sender;
-    }
-
-    public void setHostUrl(String host_url) {
-        this.host_url = host_url;
-    }
-
-    public void setProviderKey(String providerKey) {
-        this.provider_key = providerKey;
-    }
 }

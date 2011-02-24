@@ -19,7 +19,9 @@ public interface ApiCache {
 
     void close();
 
-    void setExpirationInterval(long expirationTimeInMillis);
+    void setAuthorizeExpirationInterval(long expirationTimeInMillis);
+
+    void setReportExpirationInterval(long expirationTimeInMillis);
 
     void report(ApiTransaction[] transactions) throws ApiException;
 }

@@ -1,6 +1,5 @@
 package net.threescale.api.cache;
 
-import net.threescale.api.ApiFactory;
 import net.threescale.api.CommonBase;
 import net.threescale.api.v2.ApiHttpResponse;
 import net.threescale.api.v2.ApiTransaction;
@@ -47,7 +46,7 @@ public abstract class CacheImplCommonBase extends CommonBase {
 
     @Test
     public void testCacheExpiresAfter50thOfASecond() throws InterruptedException {
-        cache.setExpirationInterval(50L);
+        cache.setAuthorizeExpirationInterval(50L);
 
         AuthorizeResponse originalResponse = new AuthorizeResponse(HAPPY_PATH_RESPONSE);
         cache.addAuthorizedResponse(APP_KEY, originalResponse);

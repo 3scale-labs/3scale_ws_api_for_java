@@ -48,7 +48,11 @@ public class NullCacheImpl implements ApiCache {
         // Does Nothing
     }
 
-    public void setExpirationInterval(long expirationTimeInMillis) {
+    public void setAuthorizeExpirationInterval(long expirationTimeInMillis) {
+        // Does Nothings
+    }
+
+    public void setReportExpirationInterval(long expirationTimeInMillis) {
         // Does Nothings
     }
 
