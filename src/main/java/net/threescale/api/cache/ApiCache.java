@@ -24,4 +24,6 @@ public interface ApiCache {
     void setReportExpirationInterval(long expirationTimeInMillis);
 
     void report(ApiTransaction[] transactions) throws ApiException;
+
+    ApiTransaction getTransactionFor(String app_id, String when);
 }

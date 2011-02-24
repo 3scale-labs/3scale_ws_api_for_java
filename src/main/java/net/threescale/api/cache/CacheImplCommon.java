@@ -9,12 +9,15 @@ import org.jboss.cache.Region;
 import org.jboss.cache.config.EvictionRegionConfig;
 import org.jboss.cache.eviction.LRUAlgorithmConfig;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class CacheImplCommon implements ApiCache {
 
-    private static final String authorize_prefix = "/authorize";
-    private static final String responseKey = "/response";
+    public static final String authorize_prefix = "/authorize";
+    public static final String authorizeResponseKey = "/auth_response";
+
+    public static final String responseKey = "/response";
 
     private Logger log = LogFactory.getLogger(this);
     
@@ -38,7 +41,13 @@ public abstract class CacheImplCommon implements ApiCache {
 
      public AuthorizeResponse getAuthorizeFor(String app_key) {
         Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
-        return (AuthorizeResponse) data_cache.get(authorizeFqn, responseKey);
+        return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
+    }
+
+
+    public ApiTransaction getTransactionFor(String app_id, String when) {
+        Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + app_id);
+        return (ApiTransaction) data_cache.get(reportFqn, when);
     }
 
     public void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse) {
@@ -50,7 +59,7 @@ public abstract class CacheImplCommon implements ApiCache {
         }
 
         Long future = System.currentTimeMillis() + authorizeExpirationTimeInMillis;
-        authorizeNode.put(responseKey, authorizedResponse);
+        authorizeNode.put(authorizeResponseKey, authorizedResponse);
         authorizeNode.put("expiration", future);
     }
 
@@ -71,24 +80,24 @@ public abstract class CacheImplCommon implements ApiCache {
 
 
     public void report(ApiTransaction[] transactions) throws ApiException {
-         String post_data = ApiUtil.formatPostData(provider_key, transactions);
+        for (ApiTransaction transaction : transactions) {
+            Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + transaction.getApp_id());
 
-         ApiHttpResponse response = sender.sendPostToServer(host_url, post_data);
+            Node reportNode = data_cache.getNode(reportFqn);
+            if (reportNode == null) {
+                reportNode = data_cache.getRoot().addChild(reportFqn);
+            }
 
-         if (response.getResponseCode() == 202) {
-             return;
-         } else if (response.getResponseCode() == 403) {
-             throw new ApiException(response.getResponseText());
-         } else {
-             throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
-         }
-     }
+            reportNode.put(transaction.getTimestamp(), transaction);
 
+            log.fine("Put transaction into cache as " + reportFqn + "/" + transaction.getTimestamp());
+        }
+    }
     /* Setup the Eviction policy for the response nodes
        Called after the cache has been created
      */
     private void addEvictionPolicies(Cache cache) {
-        Fqn fqn = Fqn.fromString(responseKey);
+        Fqn fqn = Fqn.fromString(authorizeResponseKey);
 
         // Create a configuration for an LRUPolicy
         LRUAlgorithmConfig lruc = new LRUAlgorithmConfig();
