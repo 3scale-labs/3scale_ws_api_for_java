@@ -2,14 +2,13 @@ package net.threescale.api.cache;
 
 import net.threescale.api.ApiFactory;
 import net.threescale.api.CommonBase;
-import net.threescale.api.v2.Api2;
-import net.threescale.api.v2.ApiHttpResponse;
-import net.threescale.api.v2.AuthorizeResponse;
-import net.threescale.api.v2.HttpSender;
+import net.threescale.api.v2.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.HashMap;
 
 import static org.mockito.Mockito.*;
 
@@ -51,4 +50,23 @@ public class CacheTest extends CommonBase {
         verify(cache).addAuthorizedResponse(APP_KEY, authorizeResponse);
     }
 
+    @Test
+    public void reportWithTransactionsAddTransactionsToCache() throws Exception {
+
+        ApiTransaction[] transactions = new ApiTransaction[2];
+        HashMap<String, String> metrics0 = new HashMap<String,  String>();
+        metrics0.put("hits", "1");
+        metrics0.put("transfer", "4500");
+
+        HashMap<String, String> metrics1 = new HashMap<String,  String>();
+        metrics1.put("hits", "1");
+        metrics1.put("transfer", "2840");
+
+        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
+
+        server.report(transactions);
+
+        verify(cache).report(transactions);
+    }
 }

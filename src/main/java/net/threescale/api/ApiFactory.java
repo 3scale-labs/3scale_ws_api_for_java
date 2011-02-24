@@ -70,11 +70,11 @@ public class ApiFactory {
 
     public static Api2 createV2ApiWithLocalCache(String url, String application_id, String provider_private_key,
                                                            net.threescale.api.v2.HttpSender sender) {
-        return new Api2Impl(url, application_id, provider_private_key, sender, new DefaultCacheImpl());
+        return new Api2Impl(url, application_id, provider_private_key, sender, new DefaultCacheImpl(url, provider_private_key, sender));
     }
     
     public static Api2 createV2ApiWithRemoteCache(String url, String application_id, String provider_private_key,
                                                            String path_to_config) {
-        return new Api2Impl(url, application_id, provider_private_key, new ConfiguredCacheImpl(path_to_config));
+        return new Api2Impl(url, application_id, provider_private_key, new ConfiguredCacheImpl(path_to_config, url, provider_private_key, new net.threescale.api.v2.HttpSenderImpl()));
     }
 }

@@ -1,32 +1,44 @@
 package net.threescale.api.cache;
 
-import net.threescale.api.v2.ApiException;
-import net.threescale.api.v2.ApiTransaction;
-import net.threescale.api.v2.AuthorizeResponse;
-import net.threescale.api.v2.HttpSender;
+import net.threescale.api.LogFactory;
+import net.threescale.api.v2.*;
 import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
+
+import java.util.logging.Logger;
 
 public abstract class CacheImplCommon implements ApiCache {
 
     private static final String authorize_prefix = "authorize";
     private static final String responseKey = "response";
 
+    private Logger log = LogFactory.getLogger(this);
+    
+    private HttpSender sender;
+    private String host_url;
+    private String provider_key;
+
     // This is initialized by sub-class
-    protected Cache cache;
+    protected Cache data_cache;
 
     private long expirationTimeInMillis = 500L;
 
+    public CacheImplCommon(String host_url, String provider_key, HttpSender sender) {
+        this.sender = sender;
+        this.host_url = host_url;
+        this.provider_key = provider_key;
+    }
+
     public AuthorizeResponse getAuthorizeFor(String app_key) {
         Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
-        return (AuthorizeResponse)cache.get(authorizeFqn, responseKey);
+        return (AuthorizeResponse) data_cache.get(authorizeFqn, responseKey);
     }
 
     public void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse) {
         Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
-        Node root = cache.getRoot();
-        Node authorizeNode = cache.getNode(authorizeFqn);
+        Node root = data_cache.getRoot();
+        Node authorizeNode = data_cache.getNode(authorizeFqn);
         if (authorizeNode == null) {
             authorizeNode = root.addChild(authorizeFqn);
         }
@@ -37,8 +49,8 @@ public abstract class CacheImplCommon implements ApiCache {
     }
 
     public void close() {
-        cache.stop();
-        cache.destroy();
+        data_cache.stop();
+        data_cache.destroy();
     }
 
 
@@ -48,17 +60,28 @@ public abstract class CacheImplCommon implements ApiCache {
 
 
     public void report(ApiTransaction[] transactions) throws ApiException {
-        throw new ApiException("Not implemented");
-    }    
+         String post_data = ApiUtil.formatPostData(provider_key, transactions);
+
+         ApiHttpResponse response = sender.sendPostToServer(host_url, post_data);
+
+         if (response.getResponseCode() == 202) {
+             return;
+         } else if (response.getResponseCode() == 403) {
+             throw new ApiException(response.getResponseText());
+         } else {
+             throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
+         }
+     }
 
     public void setSender(HttpSender sender) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.sender = sender;
     }
 
     public void setHostUrl(String host_url) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.host_url = host_url;
     }
 
     public void setProviderKey(String providerKey) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }}
+        this.provider_key = providerKey;
+    }
+}
