@@ -74,4 +74,12 @@ public class NullCacheImpl implements ApiCache {
         return null;
     }
 
+    public Long getTransactionExpirationTimeFor(String app_id) {
+        return null;
+    }
+
+    public long getCurrentResponseExpirationTime() {
+        return 0;
+    }
+
 }

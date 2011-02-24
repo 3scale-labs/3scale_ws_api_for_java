@@ -2,25 +2,17 @@ package net.threescale.api.cache;
 
 import net.threescale.api.CommonBase;
 import net.threescale.api.LogFactory;
-import net.threescale.api.v2.ApiHttpResponse;
 import net.threescale.api.v2.ApiTransaction;
-import net.threescale.api.v2.AuthorizeResponse;
 import net.threescale.api.v2.HttpSender;
-import org.jboss.cache.Cache;
-import org.jboss.cache.Fqn;
 import org.jboss.cache.Region;
-import org.jboss.cache.config.EvictionRegionConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 
@@ -50,6 +42,27 @@ public class ReportCachingTest extends CommonBase {
     @Test
     public void reportTransactions() throws Exception {
 
+        api_cache.report(createTransactionData());
+
+        ApiTransaction t1 = api_cache.getTransactionFor("bce4c8f4", "2009-01-01 14:23:08");
+        assertNotNull("Transaction 1 was not stored in cache", t1);
+
+        ApiTransaction t2 = api_cache.getTransactionFor("bad7e480", "2009-01-01 18:11:59");
+        assertNotNull("Transaction 2 was not stored in cache", t2);
+    }
+
+
+    @Test
+    public void isCorrectExiprationTimeSetForAppId() throws Exception {
+        api_cache.report(createTransactionData());
+
+        long time1 = api_cache.getTransactionExpirationTimeFor("bce4c8f4");
+        assertEquals("T1 had wrong exipration time", api_cache.getCurrentResponseExpirationTime(), time1);
+        long time2 = api_cache.getTransactionExpirationTimeFor("bad7e480");
+        assertEquals("T2 had wrong exipration time", api_cache.getCurrentResponseExpirationTime(), time2);
+    }
+
+    private ApiTransaction[] createTransactionData() {
         ApiTransaction[] transactions = new ApiTransaction[2];
         HashMap<String, String> metrics0 = new HashMap<String,  String>();
         metrics0.put("hits", "1");
@@ -61,15 +74,7 @@ public class ReportCachingTest extends CommonBase {
 
         transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
         transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
-
-
-        api_cache.report(transactions);
-
-        ApiTransaction t1 = api_cache.getTransactionFor("bce4c8f4", "2009-01-01 14:23:08");
-        assertNotNull("Transaction 1 was not stored in cache", t1);
-
-        ApiTransaction t2 = api_cache.getTransactionFor("bad7e480", "2009-01-01 18:11:59");
-        assertNotNull("Transaction 2 was not stored in cache", t2);
+        return transactions;
     }
 
 

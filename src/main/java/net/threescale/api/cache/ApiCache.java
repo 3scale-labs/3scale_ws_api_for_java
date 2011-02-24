@@ -26,4 +26,8 @@ public interface ApiCache {
     void report(ApiTransaction[] transactions) throws ApiException;
 
     ApiTransaction getTransactionFor(String app_id, String when);
+
+    Long getTransactionExpirationTimeFor(String app_id);
+
+    long getCurrentResponseExpirationTime();
 }

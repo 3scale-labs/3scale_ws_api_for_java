@@ -9,6 +9,7 @@ import org.jboss.cache.Region;
 import org.jboss.cache.config.EvictionRegionConfig;
 import org.jboss.cache.eviction.LRUAlgorithmConfig;
 
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ public abstract class CacheImplCommon implements ApiCache {
     public static final String authorizeResponseKey = "/auth_response";
 
     public static final String responseKey = "/response";
+    private String EXPIRATION_KEY = "expiration";
 
     private Logger log = LogFactory.getLogger(this);
     
@@ -30,6 +32,9 @@ public abstract class CacheImplCommon implements ApiCache {
 
     private long authorizeExpirationTimeInMillis = 500L;
     private long reportExpirationTimeInMillis = 500L;
+
+    private long nextExpirationTime = new Date().getTime() + reportExpirationTimeInMillis;
+
 
     public CacheImplCommon(String host_url, String provider_key, HttpSender sender, Cache cache) {
         this.sender = sender;
@@ -50,6 +55,11 @@ public abstract class CacheImplCommon implements ApiCache {
         return (ApiTransaction) data_cache.get(reportFqn, when);
     }
 
+    public Long getTransactionExpirationTimeFor(String app_id) {
+        Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + app_id);
+        return (Long) data_cache.get(reportFqn, EXPIRATION_KEY);
+    }
+
     public void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse) {
         Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
         Node root = data_cache.getRoot();
@@ -60,7 +70,7 @@ public abstract class CacheImplCommon implements ApiCache {
 
         Long future = System.currentTimeMillis() + authorizeExpirationTimeInMillis;
         authorizeNode.put(authorizeResponseKey, authorizedResponse);
-        authorizeNode.put("expiration", future);
+        authorizeNode.put(EXPIRATION_KEY, future);
     }
 
     public void close() {
@@ -89,10 +99,18 @@ public abstract class CacheImplCommon implements ApiCache {
             }
 
             reportNode.put(transaction.getTimestamp(), transaction);
+            reportNode.put("expiration", nextExpirationTime);
 
             log.fine("Put transaction into cache as " + reportFqn + "/" + transaction.getTimestamp());
         }
     }
+
+
+    public long getCurrentResponseExpirationTime() {
+        return nextExpirationTime;
+    }
+
+
     /* Setup the Eviction policy for the response nodes
        Called after the cache has been created
      */
