@@ -5,13 +5,16 @@ import net.threescale.api.v2.*;
 import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
+import org.jboss.cache.Region;
+import org.jboss.cache.config.EvictionRegionConfig;
+import org.jboss.cache.eviction.LRUAlgorithmConfig;
 
 import java.util.logging.Logger;
 
 public abstract class CacheImplCommon implements ApiCache {
 
-    private static final String authorize_prefix = "authorize";
-    private static final String responseKey = "response";
+    private static final String authorize_prefix = "/authorize";
+    private static final String responseKey = "/response";
 
     private Logger log = LogFactory.getLogger(this);
     
@@ -20,18 +23,20 @@ public abstract class CacheImplCommon implements ApiCache {
     private String provider_key;
 
     // This is initialized by sub-class
-    protected Cache data_cache;
+    private Cache data_cache;
 
     private long authorizeExpirationTimeInMillis = 500L;
     private long reportExpirationTimeInMillis = 500L;
 
-    public CacheImplCommon(String host_url, String provider_key, HttpSender sender) {
+    public CacheImplCommon(String host_url, String provider_key, HttpSender sender, Cache cache) {
         this.sender = sender;
         this.host_url = host_url;
         this.provider_key = provider_key;
+        this.data_cache = cache;
+        addEvictionPolicies(data_cache);
     }
 
-    public AuthorizeResponse getAuthorizeFor(String app_key) {
+     public AuthorizeResponse getAuthorizeFor(String app_key) {
         Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
         return (AuthorizeResponse) data_cache.get(authorizeFqn, responseKey);
     }
@@ -78,5 +83,24 @@ public abstract class CacheImplCommon implements ApiCache {
              throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
          }
      }
+
+    /* Setup the Eviction policy for the response nodes
+       Called after the cache has been created
+     */
+    private void addEvictionPolicies(Cache cache) {
+        Fqn fqn = Fqn.fromString(responseKey);
+
+        // Create a configuration for an LRUPolicy
+        LRUAlgorithmConfig lruc = new LRUAlgorithmConfig();
+        lruc.setMaxNodes(10000);
+
+        // Create an eviction region config
+        EvictionRegionConfig erc = new EvictionRegionConfig(fqn, lruc);
+
+
+        // Create the region and set the config
+        Region region = cache.getRegion(fqn, true);
+        region.setEvictionRegionConfig(erc);
+    }
 
 }

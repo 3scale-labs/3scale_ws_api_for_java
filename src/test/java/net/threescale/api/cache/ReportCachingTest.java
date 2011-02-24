@@ -5,23 +5,21 @@ import net.threescale.api.v2.ApiHttpResponse;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Cache;
+import org.jboss.cache.Fqn;
+import org.jboss.cache.Region;
+import org.jboss.cache.config.EvictionRegionConfig;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: Feb 23, 2011
- * Time: 3:18:32 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class ReportCachingTest extends CommonBase {
     protected ApiCache api_cache;
 
@@ -31,10 +29,15 @@ public class ReportCachingTest extends CommonBase {
     @Mock
     protected Cache data_cache;
 
+    @Mock
+    protected Region region;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        when(data_cache.getRegion(any(Fqn.class), anyBoolean())).thenReturn(region);
         api_cache = new DefaultCacheImpl(SERVER_URL, PROVIDER_KEY, sender, data_cache);
+
     }
 
 
