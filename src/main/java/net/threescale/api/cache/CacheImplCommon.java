@@ -110,6 +110,11 @@ public abstract class CacheImplCommon implements ApiCache {
         return nextExpirationTime;
     }
 
+    public void incrementCurrentResponseExpirationTime() {
+        nextExpirationTime += reportExpirationTimeInMillis;
+        log.info("nextExpirationTime set to " + new Date(nextExpirationTime).toString());
+    }
+
 
     /* Setup the Eviction policy for the response nodes
        Called after the cache has been created
@@ -118,11 +123,10 @@ public abstract class CacheImplCommon implements ApiCache {
         Fqn fqn = Fqn.fromString(authorizeResponseKey);
 
         // Create a configuration for an LRUPolicy
-        LRUAlgorithmConfig lruc = new LRUAlgorithmConfig();
-        lruc.setMaxNodes(10000);
+        ECASTAlgorithmConfig config = new ECASTAlgorithmConfig(this);
 
         // Create an eviction region config
-        EvictionRegionConfig erc = new EvictionRegionConfig(fqn, lruc);
+        EvictionRegionConfig erc = new EvictionRegionConfig(fqn, config);
 
 
         // Create the region and set the config

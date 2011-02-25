@@ -3,14 +3,8 @@ package net.threescale.api.cache;
 import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.AuthorizeResponse;
-import net.threescale.api.v2.HttpSender;
 
-/**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 26-Oct-2010
- * Time: 14:49:06
- */
+
 public interface ApiCache {
 
     AuthorizeResponse getAuthorizeFor(String userKey);
@@ -30,4 +24,6 @@ public interface ApiCache {
     Long getTransactionExpirationTimeFor(String app_id);
 
     long getCurrentResponseExpirationTime();
+
+    void incrementCurrentResponseExpirationTime();
 }

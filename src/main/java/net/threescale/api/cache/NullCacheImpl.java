@@ -82,4 +82,7 @@ public class NullCacheImpl implements ApiCache {
         return 0;
     }
 
+    public void incrementCurrentResponseExpirationTime() {
+        // Does nothing
+    }
 }

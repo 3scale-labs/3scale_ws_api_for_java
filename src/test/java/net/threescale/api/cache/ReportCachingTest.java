@@ -62,6 +62,20 @@ public class ReportCachingTest extends CommonBase {
         assertEquals("T2 had wrong exipration time", api_cache.getCurrentResponseExpirationTime(), time2);
     }
 
+
+    @Test
+    public void transactionAreExpiredAtCorrectTime() throws Exception {
+        api_cache.setReportExpirationInterval(5L);
+        api_cache.report(createTransactionData());
+        Thread.sleep(800L);
+        
+        ApiTransaction t1 = api_cache.getTransactionFor("bce4c8f4", "2009-01-01 14:23:08");
+        assertNull("Transaction 1 was still in cache", t1);
+
+        ApiTransaction t2 = api_cache.getTransactionFor("bad7e480", "2009-01-01 18:11:59");
+        assertNull("Transaction 2 was was still in cache", t2);
+    }
+
     private ApiTransaction[] createTransactionData() {
         ApiTransaction[] transactions = new ApiTransaction[2];
         HashMap<String, String> metrics0 = new HashMap<String,  String>();
