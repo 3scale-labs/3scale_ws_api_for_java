@@ -228,17 +228,6 @@ public class ApiTest2 extends CommonBase {
         "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
         "<error code=\"application_not_found\">Application with id=\"12345678\" was not found</error>";
 
-    private static final String RESPONSE_HAPPY_PATH_DATA =
-        "provider_key=" + PROVIDER_KEY + "&" +
-        "transactions[0][app_id]=bce4c8f4&" +
-        "transactions[0][usage][transfer]=4500&" +
-        "transactions[0][usage][hits]=1&" +
-        "transactions[0][timestamp]=2009-01-01+14%3A23%3A08&" +
-        "transactions[1][app_id]=bad7e480&" +
-        "transactions[1][usage][transfer]=2840&" +
-        "transactions[1][usage][hits]=1&" +
-        "transactions[1][timestamp]=2009-01-01+18%3A11%3A59";
-
     private static final String PROVIDER_KEY_INVALID_ERROR_RESPONSE =
         "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
         "<error code=\"provider_key_invalid\">Provider key \"abcd1234\" is invalid</error>";

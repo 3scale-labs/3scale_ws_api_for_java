@@ -7,8 +7,11 @@ import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Region;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.verify;
+
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -26,8 +29,6 @@ public class ReportCachingTest extends CommonBase {
     @Mock
     protected HttpSender sender;
 
- //   @Mock
- //   protected Cache data_cache;
 
     @Mock
     protected Region region;
@@ -91,6 +92,17 @@ public class ReportCachingTest extends CommonBase {
         log.info("    New time: " + df.format(newTime));
         assertTrue("ExpirationTime was not incremented correctly",  newTime == (currentTime + 200L));
     }
+
+
+    @Test
+    public void evictedTransactionsAreSentToServer() throws Exception {
+        api_cache.setReportExpirationInterval(5L);
+        api_cache.report(createTransactionData());
+        Thread.sleep(550L);
+
+        verify(sender).sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA);
+    }
+    
 
     private ApiTransaction[] createTransactionData() {
         ApiTransaction[] transactions = new ApiTransaction[2];
