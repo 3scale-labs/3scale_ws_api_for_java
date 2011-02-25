@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
 
-public class ECASTAlgorithm extends BaseEvictionAlgorithm {
+public class ECASTAlgorithm extends ExpirationAlgorithm {
 
     private Logger log = LogFactory.getLogger(this);
     
@@ -16,17 +16,6 @@ public class ECASTAlgorithm extends BaseEvictionAlgorithm {
 
     public ECASTAlgorithm() {
         log.info("ECASTAlgorithm was created");
-    }
-
-    @Override
-    protected EvictionQueue setupEvictionQueue() throws EvictionException {
-        evictionQueue = new LinkedListEvictionQueue();
-        return evictionQueue;
-    }
-
-    @Override
-    protected boolean shouldEvictNode(NodeEntry nodeEntry) {
-        return nodeEntry.getCreationTimeStamp() > getEvictionAlgorithmConfig().getApiCache().getCurrentResponseExpirationTime();
     }
 
     public Class<? extends EvictionAlgorithmConfig> getConfigurationClass() {

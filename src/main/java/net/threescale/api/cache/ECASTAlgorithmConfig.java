@@ -2,9 +2,10 @@ package net.threescale.api.cache;
 
 import org.jboss.cache.config.EvictionAlgorithmConfig;
 import org.jboss.cache.eviction.EvictionAlgorithmConfigBase;
+import org.jboss.cache.eviction.ExpirationAlgorithmConfig;
 
 
-public class ECASTAlgorithmConfig extends EvictionAlgorithmConfigBase implements EvictionAlgorithmConfig {
+public class ECASTAlgorithmConfig extends ExpirationAlgorithmConfig {
 
     private ApiCache api_cache;
 
