@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -74,6 +75,21 @@ public class ReportCachingTest extends CommonBase {
 
         ApiTransaction t2 = api_cache.getTransactionFor("bad7e480", "2009-01-01 18:11:59");
         assertNull("Transaction 2 was was still in cache", t2);
+    }
+
+
+    @Test
+    public void cacheEvictionTimeIsBeingSetCorrectly() throws Exception {
+        api_cache.setReportExpirationInterval(200L);
+        long currentTime = api_cache.getCurrentResponseExpirationTime();
+        Thread.sleep(550L);
+        long newTime = api_cache.getCurrentResponseExpirationTime();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy MM dd hh mm ss S");
+
+        log.info("Current time: " + df.format(currentTime));
+        log.info("    New time: " + df.format(newTime));
+        assertTrue("ExpirationTime was not incremented correctly",  newTime == (currentTime + 200L));
     }
 
     private ApiTransaction[] createTransactionData() {

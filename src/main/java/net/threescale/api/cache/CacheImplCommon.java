@@ -111,8 +111,10 @@ public abstract class CacheImplCommon implements ApiCache {
     }
 
     public void incrementCurrentResponseExpirationTime() {
-        nextExpirationTime += reportExpirationTimeInMillis;
-        log.info("nextExpirationTime set to " + new Date(nextExpirationTime).toString());
+        long currentTime = new Date().getTime();
+        if (nextExpirationTime >= currentTime) {
+            nextExpirationTime += reportExpirationTimeInMillis;
+        }
     }
 
 
