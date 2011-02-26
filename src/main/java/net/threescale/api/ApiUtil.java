@@ -9,7 +9,8 @@ public class ApiUtil {
 
     /**
      * Get a Date formatter for the common API date format
-     * @return   A date formatter with the pattern 'yyyy-mm-dd hh:mm:ss'
+     *
+     * @return A date formatter with the pattern 'yyyy-mm-dd hh:mm:ss'
      */
     public static DateFormat getDataFormatter() {
         return simpleDateFormat;

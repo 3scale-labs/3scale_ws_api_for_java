@@ -25,7 +25,6 @@ public class ApiUtil {
     }
 
 
-
     public static String formatPostData(String provider_key, ApiTransaction[] transactions) {
         StringBuffer post_data = new StringBuffer();
         post_data.append("provider_key=").append(provider_key);
@@ -43,33 +42,33 @@ public class ApiUtil {
         data.append(prefix);
         data.append("[app_id]=").append(transaction.getApp_id());
         data.append(formatMetrics(prefix, transaction.getMetrics()));
-	if(transaction.getTimestamp() != null) {
-		data.append("&").append(prefix);
-	        data.append("[timestamp]=").append(ApiUtil.urlEncodeField(transaction.getTimestamp()));
-	}
+        if (transaction.getTimestamp() != null) {
+            data.append("&").append(prefix);
+            data.append("[timestamp]=").append(ApiUtil.urlEncodeField(transaction.getTimestamp()));
+        }
 
         return data.toString();
     }
 
-   public static String urlEncodeField(String field_to_encode) {
-         try {
-             return URLEncoder.encode(field_to_encode, "UTF-8");
-         } catch (UnsupportedEncodingException e) {
-             return field_to_encode;
-         }
-     }
+    public static String urlEncodeField(String field_to_encode) {
+        try {
+            return URLEncoder.encode(field_to_encode, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return field_to_encode;
+        }
+    }
 
-     private static String formatMetrics(String prefix, Map<String, String> metrics) {
-         StringBuffer data = new StringBuffer();
+    private static String formatMetrics(String prefix, Map<String, String> metrics) {
+        StringBuffer data = new StringBuffer();
 
-         Set<Map.Entry<String, String>> entries = metrics.entrySet();
+        Set<Map.Entry<String, String>> entries = metrics.entrySet();
 
-         for (Map.Entry<String, String> entry : entries) {
-             data.append("&").append(prefix).append("[usage]");
-             data.append("[").append(entry.getKey()).append("]=").append(entry.getValue());
-         }
-         return data.toString();
-     }
+        for (Map.Entry<String, String> entry : entries) {
+            data.append("&").append(prefix).append("[usage]");
+            data.append("[").append(entry.getKey()).append("]=").append(entry.getValue());
+        }
+        return data.toString();
+    }
 
     public static String formatPostData(String provider_key, List<ApiTransaction> transactionsToSend) {
         StringBuffer post_data = new StringBuffer();

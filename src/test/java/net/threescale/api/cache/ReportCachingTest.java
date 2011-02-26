@@ -4,7 +4,6 @@ import net.threescale.api.CommonBase;
 import net.threescale.api.LogFactory;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.HttpSender;
-import org.jboss.cache.Region;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -26,10 +25,6 @@ public class ReportCachingTest extends CommonBase {
 
     @Mock
     protected HttpSender sender;
-
-
-    @Mock
-    protected Region region;
 
     @Before
     public void setUp() throws Exception {
@@ -53,13 +48,13 @@ public class ReportCachingTest extends CommonBase {
 
 
     @Test
-    public void isCorrectExiprationTimeSetForAppId() throws Exception {
+    public void isCorrectExpirationTimeSetForAppId() throws Exception {
         api_cache.report(createTransactionData());
 
         long time1 = api_cache.getTransactionExpirationTimeFor("bce4c8f4");
-        assertEquals("T1 had wrong exipration time", api_cache.getCurrentResponseExpirationTime(), time1);
+        assertEquals("T1 had wrong expiration time", api_cache.getCurrentResponseExpirationTime(), time1);
         long time2 = api_cache.getTransactionExpirationTimeFor("bad7e480");
-        assertEquals("T2 had wrong exipration time", api_cache.getCurrentResponseExpirationTime(), time2);
+        assertEquals("T2 had wrong expiration time", api_cache.getCurrentResponseExpirationTime(), time2);
     }
 
 
@@ -124,22 +119,22 @@ public class ReportCachingTest extends CommonBase {
 
     protected static final String MULTIPLE_RESPONSE_DATA =
             "provider_key=" + PROVIDER_KEY + "&" +
-            "transactions[0][app_id]=bad7e443&" +
-            "transactions[0][usage][transfer]=2800&" +
-            "transactions[0][usage][hits]=11&" +
-            "transactions[0][timestamp]=2009-01-01+18%3A11%3A58&" +
-            "transactions[1][app_id]=bad7e480&" +
-            "transactions[1][usage][transfer]=2840&" +
-            "transactions[1][usage][hits]=1&" +
-            "transactions[1][timestamp]=2009-01-01+18%3A11%3A59&" +
-            "transactions[2][app_id]=bce4c8f4&"  +
-            "transactions[2][usage][transfer]=4500&" +
-            "transactions[2][usage][hits]=1&" +
-            "transactions[2][timestamp]=2009-01-01+14%3A23%3A08&" +
-            "transactions[3][app_id]=bce4c8f4&" +
-            "transactions[3][usage][transfer]=1500&" +
-            "transactions[3][usage][hits]=4&" +
-            "transactions[3][timestamp]=2009-01-01+14%3A23%3A20";
+                    "transactions[0][app_id]=bad7e443&" +
+                    "transactions[0][usage][transfer]=2800&" +
+                    "transactions[0][usage][hits]=11&" +
+                    "transactions[0][timestamp]=2009-01-01+18%3A11%3A58&" +
+                    "transactions[1][app_id]=bad7e480&" +
+                    "transactions[1][usage][transfer]=2840&" +
+                    "transactions[1][usage][hits]=1&" +
+                    "transactions[1][timestamp]=2009-01-01+18%3A11%3A59&" +
+                    "transactions[2][app_id]=bce4c8f4&" +
+                    "transactions[2][usage][transfer]=4500&" +
+                    "transactions[2][usage][hits]=1&" +
+                    "transactions[2][timestamp]=2009-01-01+14%3A23%3A08&" +
+                    "transactions[3][app_id]=bce4c8f4&" +
+                    "transactions[3][usage][transfer]=1500&" +
+                    "transactions[3][usage][hits]=4&" +
+                    "transactions[3][timestamp]=2009-01-01+14%3A23%3A20";
 
     private ApiTransaction[] createTransactionData() {
         ApiTransaction[] transactions = new ApiTransaction[2];

@@ -4,12 +4,13 @@ package net.threescale.api.v2;
  * Response returned for Http Request.
  */
 public class ApiHttpResponse {
-    
+
     private final int responseCode;
     private final String responseText;
 
     /**
      * Constructor
+     *
      * @param responseCode HTTP Response code
      * @param responseText HTTP Message contents
      */

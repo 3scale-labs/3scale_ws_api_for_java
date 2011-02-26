@@ -22,7 +22,7 @@ public interface ApiCache {
     void report(ApiTransaction[] transactions) throws ApiException;
 
     List<ApiTransaction> getTransactionFor(String app_id);
-    
+
     ApiTransaction getTransactionFor(String app_id, String when);
 
     Long getTransactionExpirationTimeFor(String app_id);

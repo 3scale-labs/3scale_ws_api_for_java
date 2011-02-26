@@ -3,12 +3,8 @@ package net.threescale.api.cache;
 import net.threescale.api.LogFactory;
 import net.threescale.api.v2.*;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -34,9 +30,9 @@ public class NullCacheImpl implements ApiCache {
 
     /**
      * Always returns Null so the data is loaded from the server
-     * 
+     *
      * @param userKey
-     * @return  null
+     * @return null
      */
     public AuthorizeResponse getAuthorizeFor(String userKey) {
         return null;

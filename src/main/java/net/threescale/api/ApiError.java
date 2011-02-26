@@ -17,6 +17,7 @@ public class ApiError {
 
     /**
      * Get the id key for this error.
+     *
      * @return Error Id code
      */
     public String getId() {
@@ -25,7 +26,8 @@ public class ApiError {
 
     /**
      * Get the index value when used to report errors in a batch call. Returns 0 if error is not in a batch.
-     * @return  Index value
+     *
+     * @return Index value
      */
     public int getIndex() {
         return index;
@@ -33,7 +35,8 @@ public class ApiError {
 
     /**
      * Get the actual text of the message.
-     * @return  Message text
+     *
+     * @return Message text
      */
     public String getMessage() {
         return message;

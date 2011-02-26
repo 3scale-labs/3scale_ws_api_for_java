@@ -25,7 +25,8 @@ public class ApiBatchMetric {
 
     /**
      * User Key under which to record the metric.
-     * @return  The User key
+     *
+     * @return The User key
      */
     public String getUser_key() {
         return user_key;
@@ -34,7 +35,8 @@ public class ApiBatchMetric {
     /**
      * Key/Value Map for the metrics.
      * Metrics are stored as 'key' 'value'.
-     * @return  Map of current metrics.
+     *
+     * @return Map of current metrics.
      */
     public Map<String, String> getMetrics() {
         return metrics;
@@ -42,6 +44,7 @@ public class ApiBatchMetric {
 
     /**
      * Optional time when this metric occurred. Null if not set.
+     *
      * @return The Date of the transaction
      */
     public Date getTransactionTime() {

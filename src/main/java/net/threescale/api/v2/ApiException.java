@@ -16,7 +16,8 @@ public class ApiException extends Exception {
 
     /**
      * Constructor
-     * @param errorCode HTTP response code.
+     *
+     * @param errorCode    HTTP response code.
      * @param errorMessage Error returned from server.
      */
     public ApiException(String errorCode, String errorMessage) {
@@ -26,6 +27,7 @@ public class ApiException extends Exception {
 
     /**
      * Contructor to build error from XML response.
+     *
      * @param xml error xml.
      */
     public ApiException(String xml) {
@@ -53,14 +55,15 @@ public class ApiException extends Exception {
     }
 
     public int toHttpStatusCode() {
-        if("application_not_found".equals(errorCode)) {
+        if ("application_not_found".equals(errorCode)) {
             return 404;
         }
         //todo other errorCodes
         return 500;
     }
+
     public String toHttpStatusMessage() {
-        if("application_not_found".equals(errorCode)) {
+        if ("application_not_found".equals(errorCode)) {
             return "Application Not Found";
         }
         //todo other errorCodes

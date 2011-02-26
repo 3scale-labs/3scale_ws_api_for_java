@@ -8,7 +8,7 @@ import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import static java.util.logging.Level.*;
+import static java.util.logging.Level.WARNING;
 
 /**
  * Response returned by server to authorize message.
@@ -39,7 +39,7 @@ public class ApiAuthorizeResponse {
 
 
     private String extractPlan(String responseFromServer, XPath xpath) {
-       return XmlHelper.extractNode(xpath, "/status/plan", responseFromServer);
+        return XmlHelper.extractNode(xpath, "/status/plan", responseFromServer);
     }
 
     private ApiUsageMetric[] extractUsages(String responseFromServer, XPath xpath) {
@@ -53,17 +53,17 @@ public class ApiAuthorizeResponse {
                 NodeList childNodes = item.getChildNodes();
                 results.add(extractApiUsage(
                         item.getAttributes().getNamedItem("metric").getNodeValue(),
-                        item.getAttributes().getNamedItem("period").getNodeValue(), 
+                        item.getAttributes().getNamedItem("period").getNodeValue(),
                         childNodes));
             }
         }
         catch (Exception ex) {
-          log.log(WARNING, ex.getMessage(), ex);
+            log.log(WARNING, ex.getMessage(), ex);
         }
         return results.toArray(new ApiUsageMetric[0]);
     }
 
-    private ApiUsageMetric extractApiUsage(String metric, String period,NodeList childNodes) throws Exception {
+    private ApiUsageMetric extractApiUsage(String metric, String period, NodeList childNodes) throws Exception {
         String periodStart = null;
         String periodEnd = null;
         String currentValue = null;
@@ -76,20 +76,15 @@ public class ApiAuthorizeResponse {
 
             if (name.equals("period_start")) {
                 periodStart = node.getFirstChild().getNodeValue();
-            }
-            else if (name.equals("period_end")) {
-                periodEnd =  node.getFirstChild().getNodeValue();
-            }
-            else if (name.equals("current_value")) {
-                currentValue =  node.getFirstChild().getNodeValue();
-            }
-            else if (name.equals("max_value")) {
-                maxValue =  node.getFirstChild().getNodeValue();
-            }
-            else if (name.equals("#text")) {
-            }
-            else {
-                throw new Exception("Unknown usage parameter: " + name );
+            } else if (name.equals("period_end")) {
+                periodEnd = node.getFirstChild().getNodeValue();
+            } else if (name.equals("current_value")) {
+                currentValue = node.getFirstChild().getNodeValue();
+            } else if (name.equals("max_value")) {
+                maxValue = node.getFirstChild().getNodeValue();
+            } else if (name.equals("#text")) {
+            } else {
+                throw new Exception("Unknown usage parameter: " + name);
             }
         }
 

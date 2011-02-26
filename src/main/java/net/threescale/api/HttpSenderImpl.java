@@ -1,8 +1,10 @@
 package net.threescale.api;
 
 import java.io.*;
-import java.net.*;
-import java.util.logging.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * Sends requests to a server using Http.
@@ -105,8 +107,7 @@ public class HttpSenderImpl implements HttpSender {
 
             if (con.getResponseCode() == 200) {
                 return extractContent(con);
-            }
-            else {
+            } else {
                 throw new ApiException(con.getResponseCode(), getErrorMessage(con));
             }
         }
@@ -121,7 +122,7 @@ public class HttpSenderImpl implements HttpSender {
             try {
                 throw new ApiException(con.getResponseCode(), getErrorMessage(con));
             } catch (IOException e) {
-                throw new ApiException(500, "provider.other",  e.getMessage());
+                throw new ApiException(500, "provider.other", e.getMessage());
             }
         } else {
             throw new ApiException(500, "provider.other", "Error connecting to server");

@@ -32,7 +32,7 @@ public class ApiUsageMetric {
         StringBuilder builder = new StringBuilder();
         builder.append("ApiUsageMetric: [");
         builder.append("metric: \"").append(getMetric()).append("\", ");
-        builder.append("period: \"").append(getPeriod()).append("\", ");    
+        builder.append("period: \"").append(getPeriod()).append("\", ");
         builder.append("period_start: \"").append(getPeriodStart()).append("\", ");
         builder.append("period_end: \"").append(getPeriodEnd()).append("\", ");
         builder.append("max_value: \"").append(getMaxValue()).append("\", ");
@@ -83,7 +83,7 @@ public class ApiUsageMetric {
         return margin();
     }
 
-    public Date getPeriodEndDate()  {
+    public Date getPeriodEndDate() {
         return Dates.parseDate(getPeriodEnd());
     }
 
@@ -93,7 +93,7 @@ public class ApiUsageMetric {
         return date == null ? 0 : (date.getTime() + 500) / 1000L;
     }
 
-    public Date getPeriodStartDate()  {
+    public Date getPeriodStartDate() {
         return Dates.parseDate(getPeriodEnd());
     }
 

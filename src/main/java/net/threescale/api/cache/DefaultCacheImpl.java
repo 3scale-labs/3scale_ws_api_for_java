@@ -1,7 +1,8 @@
 package net.threescale.api.cache;
 
 import net.threescale.api.v2.HttpSender;
-import org.jboss.cache.*;
+import org.jboss.cache.Cache;
+import org.jboss.cache.DefaultCacheFactory;
 
 
 public class DefaultCacheImpl extends CacheImplCommon implements ApiCache {

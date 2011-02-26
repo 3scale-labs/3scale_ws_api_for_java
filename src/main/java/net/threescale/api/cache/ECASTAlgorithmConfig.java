@@ -20,7 +20,7 @@ public class ECASTAlgorithmConfig extends ExpirationAlgorithmConfig {
 
     @Override
     public String getEvictionAlgorithmClassName() {
-        return ECASTAlgorithm.class.getName(); 
+        return ECASTAlgorithm.class.getName();
     }
 
     public ApiCache getApiCache() {

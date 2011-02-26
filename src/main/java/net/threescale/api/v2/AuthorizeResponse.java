@@ -149,6 +149,7 @@ public class AuthorizeResponse {
 
     /**
      * Returns the first hits metric. Hits metric is the default metric used by 3scale
+     *
      * @return returns the first hits metric or null, if the metric is not found
      */
     public ApiUsageMetric firstHitsMetric() {
@@ -158,6 +159,7 @@ public class AuthorizeResponse {
 
     /**
      * Returns the first metric which by name
+     *
      * @param metric_key name of the metric
      * @return returns the first hits metric or null, if the metric is not found
      */
@@ -172,6 +174,7 @@ public class AuthorizeResponse {
     }
 
     // Find a specific metric/period usage metric
+
     public ApiUsageMetric findMetricForPeriod(String metric_key, String period_key) {
         for (ApiUsageMetric metric : usage_reports) {
             if (metric.getMetric().equals(metric_key) && metric.getPeriod().equals(period_key)) {

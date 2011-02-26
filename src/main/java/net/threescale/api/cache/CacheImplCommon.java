@@ -1,7 +1,10 @@
 package net.threescale.api.cache;
 
 import net.threescale.api.LogFactory;
-import net.threescale.api.v2.*;
+import net.threescale.api.v2.ApiException;
+import net.threescale.api.v2.ApiTransaction;
+import net.threescale.api.v2.AuthorizeResponse;
+import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Cache;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
@@ -20,7 +23,7 @@ public abstract class CacheImplCommon implements ApiCache {
     private String EXPIRATION_KEY = "expiration";
 
     private Logger log = LogFactory.getLogger(this);
-    
+
     private HttpSender sender;
     private String host_url;
     private String provider_key;
@@ -42,7 +45,7 @@ public abstract class CacheImplCommon implements ApiCache {
         addEvictionPolicies(data_cache);
     }
 
-     public AuthorizeResponse getAuthorizeFor(String app_key) {
+    public AuthorizeResponse getAuthorizeFor(String app_key) {
         Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
@@ -57,7 +60,7 @@ public abstract class CacheImplCommon implements ApiCache {
 
         for (String key : keys) {
             if (!key.equals(EXPIRATION_KEY)) {
-                results.add((ApiTransaction)data.get(key));
+                results.add((ApiTransaction) data.get(key));
             }
         }
         return results;

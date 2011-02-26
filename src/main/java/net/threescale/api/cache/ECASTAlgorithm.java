@@ -47,7 +47,7 @@ public class ECASTAlgorithm extends ExpirationAlgorithm {
     private void sendTransactions() {
         ECASTAlgorithmConfig config = getEvictionAlgorithmConfig();
 
-        if (transactionsToSend.size() > 0){
+        if (transactionsToSend.size() > 0) {
             String data_to_send = ApiUtil.formatPostData(config.getProviderKey(), transactionsToSend);
             config.getSender().sendPostToServer(config.getHost_url(), data_to_send);
             transactionsToSend.clear();

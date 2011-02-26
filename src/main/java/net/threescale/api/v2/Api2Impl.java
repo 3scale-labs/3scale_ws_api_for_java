@@ -4,11 +4,6 @@ import net.threescale.api.LogFactory;
 import net.threescale.api.cache.ApiCache;
 import net.threescale.api.cache.NullCacheImpl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -44,7 +39,7 @@ public class Api2Impl implements Api2 {
      * @param sender       HttpSender to use for communications.
      */
     public Api2Impl(String host_url, String app_id, String provider_key, HttpSender sender) {
-        this(host_url, app_id, provider_key, sender, new NullCacheImpl( host_url, provider_key , sender));
+        this(host_url, app_id, provider_key, sender, new NullCacheImpl(host_url, provider_key, sender));
     }
 
     public Api2Impl(String host_url, String app_id, String provider_key, ApiCache cache) {
@@ -126,7 +121,6 @@ public class Api2Impl implements Api2 {
 
         return url.toString();
     }
-
 
 
 }

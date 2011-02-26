@@ -1,8 +1,6 @@
 package net.threescale.api;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,7 +9,7 @@ import java.util.logging.Logger;
  * DTO for API Usage Metrics
  */
 public class ApiUsageMetric {
-    
+
     private Logger log = LogFactory.getLogger(this);
 
     private final String metric;

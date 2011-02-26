@@ -2,23 +2,24 @@
 <html>
 <head></head>
 <body>
-  <p>This API is used to encapsulate the communication with the 3scale backend server 
-  for validating and reporting transactions between the user and the provider of 
-  a service. For the definitive specification of the interface refer to 
-  <a href="http://www.3scale.net/home/providertech">The 3scale Management API specification</a></p>
-  
-  <h2>Using the API</h2>
-  <ul>
-  	<li>You instansiate an API object using a factory. 
-  	    This can be done once in your application, or in each transaction.</li>
-  	<li>Send a 'start' to the server containing key supplied by the user.</li>
-  	<li>Perform the transaction.</li>
-  	<li>Send a 'confirm' for the transaction detailing what resources were used.</li>
-  </ul>
-  <p>If you decide to abort the transaction you send a 'cancel' instead of a 'confirm'.</p>
-  
-  
-  <h2>Example code</h2>
+<p>This API is used to encapsulate the communication with the 3scale backend server
+    for validating and reporting transactions between the user and the provider of
+    a service. For the definitive specification of the interface refer to
+    <a href="http://www.3scale.net/home/providertech">The 3scale Management API specification</a></p>
+
+<h2>Using the API</h2>
+<ul>
+    <li>You instansiate an API object using a factory.
+        This can be done once in your application, or in each transaction.
+    </li>
+    <li>Send a 'start' to the server containing key supplied by the user.</li>
+    <li>Perform the transaction.</li>
+    <li>Send a 'confirm' for the transaction detailing what resources were used.</li>
+</ul>
+<p>If you decide to abort the transaction you send a 'cancel' instead of a 'confirm'.</p>
+
+
+<h2>Example code</h2>
   
   <pre>
  		Api api = ApiFactory.createApi("http://www.3scale.net", "My Provider Key");
@@ -60,10 +61,10 @@
 		}
 	}
   </pre>
-  
-  <h2>Jar file</h2>
-  
-  <p>The runtime Api is in the distribution tarball in dist/threescale-api.jar.</p>
-  
+
+<h2>Jar file</h2>
+
+<p>The runtime Api is in the distribution tarball in dist/threescale-api.jar.</p>
+
 </body>
 </html>
