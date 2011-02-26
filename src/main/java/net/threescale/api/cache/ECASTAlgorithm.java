@@ -3,10 +3,11 @@ package net.threescale.api.cache;
 import net.threescale.api.LogFactory;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.ApiUtil;
-import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Fqn;
 import org.jboss.cache.config.EvictionAlgorithmConfig;
-import org.jboss.cache.eviction.*;
+import org.jboss.cache.eviction.EvictionEvent;
+import org.jboss.cache.eviction.EvictionException;
+import org.jboss.cache.eviction.ExpirationAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;

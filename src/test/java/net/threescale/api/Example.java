@@ -21,49 +21,49 @@ public class Example {
 
         Example.async_example();
     }
-    
+
     /**
      * This example uses the Sync operations
      */
-	public static void sync_example() {
-		Api api = ApiFactory.createApi("http://server.3scale.net", provider_private_key);
-		
-		
-		try {
-			ApiStartResponse transaction = api.start(user_key);
+    public static void sync_example() {
+        Api api = ApiFactory.createApi("http://server.3scale.net", provider_private_key);
 
-			try {
-				// Perform your transaction
-				
-				Map<String, String> metrics = new HashMap<String, String>();
-				
-				// Set metrics used by the transaction. You define these in your contract.
-				metrics.put("requests", "10");
-				metrics.put("bytes_transfered", "51983");
-				
-				try {
-					api.confirm(transaction.getTransactionId(), metrics);
-				} catch (ApiException ex){
-					// Log application error
-					ex.printStackTrace();
-				}
-			}
-			catch (Exception ex) {
-				// Handle exception from application
-				try {
-					api.cancel(transaction.getTransactionId());
-				} catch (ApiException ex2){
-					// Log application error
-					ex2.printStackTrace();
-				}
-			}
-			
-		} catch (ApiException e) {
-			if (e.getResponseCode() == 403) {
-				// Analyse error and return error message to user
-			}
-		}
-	}
+
+        try {
+            ApiStartResponse transaction = api.start(user_key);
+
+            try {
+                // Perform your transaction
+
+                Map<String, String> metrics = new HashMap<String, String>();
+
+                // Set metrics used by the transaction. You define these in your contract.
+                metrics.put("requests", "10");
+                metrics.put("bytes_transfered", "51983");
+
+                try {
+                    api.confirm(transaction.getTransactionId(), metrics);
+                } catch (ApiException ex) {
+                    // Log application error
+                    ex.printStackTrace();
+                }
+            }
+            catch (Exception ex) {
+                // Handle exception from application
+                try {
+                    api.cancel(transaction.getTransactionId());
+                } catch (ApiException ex2) {
+                    // Log application error
+                    ex2.printStackTrace();
+                }
+            }
+
+        } catch (ApiException e) {
+            if (e.getResponseCode() == 403) {
+                // Analyse error and return error message to user
+            }
+        }
+    }
 
     public static void async_example() {
         Api api = ApiFactory.createApi("http://server.3scale.net", provider_private_key);
@@ -83,18 +83,18 @@ public class Example {
                 // Metrics as defined by your plan
                 metric0.put("requests", "4");
                 metric0.put("bytes_transfered", "221412");
-                batchMetrics[0] = new ApiBatchMetric(user_key, metric0, null );
+                batchMetrics[0] = new ApiBatchMetric(user_key, metric0, null);
 
                 Map<String, String> metric1 = new HashMap<String, String>();
                 metric1.put("hits", "40");
                 metric1.put("queries_performed", "48");
-                batchMetrics[1] = new ApiBatchMetric("A different User_key", metric0, new Date() );
+                batchMetrics[1] = new ApiBatchMetric("A different User_key", metric0, new Date());
 
                 // Add as many ApiBatchMetric items as you need
 
                 try {
                     // Report the metrics
-                    api.batch(batchMetrics) ;
+                    api.batch(batchMetrics);
                 } catch (ApiException ex) {
                     ex.printStackTrace();
                     // If any metric is in error, no metrics are recorded, fix the errors and retry

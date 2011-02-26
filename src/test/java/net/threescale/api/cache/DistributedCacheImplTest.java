@@ -1,6 +1,5 @@
 package net.threescale.api.cache;
 
-import net.threescale.api.v2.HttpSenderImpl;
 import org.junit.Before;
 
 public class DistributedCacheImplTest extends CacheImplCommonBase {

@@ -1,6 +1,6 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.*;
+import net.threescale.api.HttpConnectionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,7 +27,8 @@ public class HttpSenderTest {
 
     @Mock
     HttpConnectionFactory factory;
-    @Mock HttpURLConnection con;
+    @Mock
+    HttpURLConnection con;
 
     @Before
     public void setUp() throws Exception {
@@ -121,35 +122,35 @@ public class HttpSenderTest {
     }
 
     private static final String HAPPY_PATH_RESPONSE =
-        "<status>" +
-        "  <authorized>true</authorized>" +
-        "  <plan>Basic</plan>" +
-        "  <usage_reports>" +
-        "    <usage_report metric=\"hits\" period=\"month\">" +
-        "      <period_start>2010-08-01 00:00:00 +00:00</period_start>" +
-        "      <period_end>2010-09-01 00:00:00 +00:00</period_end>" +
-        "      <current_value>17344</current_value>" +
-        "      <max_value>20000</max_value>" +
-        "    </usage_report>" +
-        "    <usage_report metric=\"hits\" period=\"day\">" +
-        "      <period_start>2010-08-04 00:00:00 +00:00</period_start>" +
-        "      <period_end>2010-08-05 00:00:00 +00:00</period_end>" +
-        "      <current_value>732</current_value>" +
-        "      <max_value>1000</max_value>" +
-        "    </usage_report>" +
-        "  </usage_reports>" +
-        "</status>";
+            "<status>" +
+                    "  <authorized>true</authorized>" +
+                    "  <plan>Basic</plan>" +
+                    "  <usage_reports>" +
+                    "    <usage_report metric=\"hits\" period=\"month\">" +
+                    "      <period_start>2010-08-01 00:00:00 +00:00</period_start>" +
+                    "      <period_end>2010-09-01 00:00:00 +00:00</period_end>" +
+                    "      <current_value>17344</current_value>" +
+                    "      <max_value>20000</max_value>" +
+                    "    </usage_report>" +
+                    "    <usage_report metric=\"hits\" period=\"day\">" +
+                    "      <period_start>2010-08-04 00:00:00 +00:00</period_start>" +
+                    "      <period_end>2010-08-05 00:00:00 +00:00</period_end>" +
+                    "      <current_value>732</current_value>" +
+                    "      <max_value>1000</max_value>" +
+                    "    </usage_report>" +
+                    "  </usage_reports>" +
+                    "</status>";
 
     private static final String APPLICATION_ID_ERROR_RESPONSE =
-        "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
-        "<error code=\"application_not_found\">Application with id=\"12345678\" was not found</error>";
+            "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+                    "<error code=\"application_not_found\">Application with id=\"12345678\" was not found</error>";
 
     private static final String REPORT_PROVIDER_ID_INVALID_RESPONSE =
-        "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
-        "<error code=\"provider_key_invalid\">Provider key \"abcd1234\" is invalid</error>";
+            "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+                    "<error code=\"provider_key_invalid\">Provider key \"abcd1234\" is invalid</error>";
 
-    private final String  ERROR_CONNECTING_RESPONSE =
-        "<?xml version=\"1.0\" encoding=\"utf-8\" ?> " +
-        "<error code=\"server_error\">Could not connect to the server</error>";
+    private final String ERROR_CONNECTING_RESPONSE =
+            "<?xml version=\"1.0\" encoding=\"utf-8\" ?> " +
+                    "<error code=\"server_error\">Could not connect to the server</error>";
 
 }

@@ -7,17 +7,15 @@ import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Region;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.verify;
-
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
 
 
 public class ReportCachingTest extends CommonBase {
@@ -70,7 +68,7 @@ public class ReportCachingTest extends CommonBase {
         api_cache.setReportExpirationInterval(5L);
         api_cache.report(createTransactionData());
         Thread.sleep(800L);
-        
+
         ApiTransaction t1 = api_cache.getTransactionFor("bce4c8f4", "2009-01-01 14:23:08");
         assertNull("Transaction 1 was still in cache", t1);
 
@@ -90,7 +88,7 @@ public class ReportCachingTest extends CommonBase {
 
         log.info("Current time: " + df.format(currentTime));
         log.info("    New time: " + df.format(newTime));
-        assertTrue("ExpirationTime was not incremented correctly",  newTime == (currentTime + 200L));
+        assertTrue("ExpirationTime was not incremented correctly", newTime == (currentTime + 200L));
     }
 
 
@@ -102,25 +100,25 @@ public class ReportCachingTest extends CommonBase {
 
         verify(sender).sendPostToServer(SERVER_URL, RESPONSE_DATA);
     }
-    
+
     protected static final String RESPONSE_DATA =
-        "provider_key=" + PROVIDER_KEY + "&" +
-        "transactions[0][app_id]=bad7e480&" +
-        "transactions[0][usage][transfer]=2840&" +
-        "transactions[0][usage][hits]=1&" +
-        "transactions[0][timestamp]=2009-01-01+18%3A11%3A59&" +
-        "transactions[1][app_id]=bce4c8f4&" +
-        "transactions[1][usage][transfer]=4500&" +
-        "transactions[1][usage][hits]=1&" +
-        "transactions[1][timestamp]=2009-01-01+14%3A23%3A08";
+            "provider_key=" + PROVIDER_KEY + "&" +
+                    "transactions[0][app_id]=bad7e480&" +
+                    "transactions[0][usage][transfer]=2840&" +
+                    "transactions[0][usage][hits]=1&" +
+                    "transactions[0][timestamp]=2009-01-01+18%3A11%3A59&" +
+                    "transactions[1][app_id]=bce4c8f4&" +
+                    "transactions[1][usage][transfer]=4500&" +
+                    "transactions[1][usage][hits]=1&" +
+                    "transactions[1][timestamp]=2009-01-01+14%3A23%3A08";
 
     private ApiTransaction[] createTransactionData() {
         ApiTransaction[] transactions = new ApiTransaction[2];
-        HashMap<String, String> metrics0 = new HashMap<String,  String>();
+        HashMap<String, String> metrics0 = new HashMap<String, String>();
         metrics0.put("hits", "1");
         metrics0.put("transfer", "4500");
 
-        HashMap<String, String> metrics1 = new HashMap<String,  String>();
+        HashMap<String, String> metrics1 = new HashMap<String, String>();
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 

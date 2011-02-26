@@ -53,11 +53,11 @@ public class CacheTest extends CommonBase {
     public void reportWithTransactionsAddTransactionsToCache() throws Exception {
 
         ApiTransaction[] transactions = new ApiTransaction[2];
-        HashMap<String, String> metrics0 = new HashMap<String,  String>();
+        HashMap<String, String> metrics0 = new HashMap<String, String>();
         metrics0.put("hits", "1");
         metrics0.put("transfer", "4500");
 
-        HashMap<String, String> metrics1 = new HashMap<String,  String>();
+        HashMap<String, String> metrics1 = new HashMap<String, String>();
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 

@@ -5,9 +5,9 @@ import net.threescale.api.v2.ApiHttpResponse;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.AuthorizeResponse;
 import net.threescale.api.v2.HttpSender;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.After;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -15,7 +15,8 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -63,13 +64,13 @@ public abstract class CacheImplCommonBase extends CommonBase {
     public void reportWithTransactionsAddTransactionsToCache() throws Exception {
 
         when(sender.sendPostToServer(anyString(), anyString())).thenReturn(new ApiHttpResponse(202, "202 response"));
-        
+
         ApiTransaction[] transactions = new ApiTransaction[2];
-        HashMap<String, String> metrics0 = new HashMap<String,  String>();
+        HashMap<String, String> metrics0 = new HashMap<String, String>();
         metrics0.put("hits", "1");
         metrics0.put("transfer", "4500");
 
-        HashMap<String, String> metrics1 = new HashMap<String,  String>();
+        HashMap<String, String> metrics1 = new HashMap<String, String>();
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 

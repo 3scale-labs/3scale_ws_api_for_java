@@ -44,7 +44,7 @@ public class Example {
                 // Process your api call here
 
                 ApiTransaction[] transactions = new ApiTransaction[1];
-                HashMap<String, String> metrics0 = new HashMap<String,  String>();
+                HashMap<String, String> metrics0 = new HashMap<String, String>();
                 metrics0.put("hits", "10");
 
                 transactions[0] = new ApiTransaction(app_id, nowTimeStamp(new Date()), metrics0);
@@ -77,7 +77,7 @@ public class Example {
             System.out.println("response" + response.toString());
         } catch (ApiException e) {
             System.out.println("ApiException: responseCode was: " + e.getErrorCode() +
-                               " Message was : " + e.getErrorMessage()); 
+                    " Message was : " + e.getErrorMessage());
         }
     }
 
@@ -89,7 +89,7 @@ public class Example {
             System.out.println("response" + response.toString());
         } catch (ApiException e) {
             System.out.println("ApiException: responseCode was: " + e.getErrorCode() +
-                               " Message was : " + e.getErrorMessage());
+                    " Message was : " + e.getErrorMessage());
         }
     }
 
@@ -113,8 +113,9 @@ public class Example {
     }
 
     // Find a specific metric/period usage metric
+
     private ApiUsageMetric findMetricForPeriod(ArrayList<ApiUsageMetric> usage_reports, String metric_key, String period_key) {
-        for( ApiUsageMetric metric : usage_reports) {
+        for (ApiUsageMetric metric : usage_reports) {
             if (metric.getMetric().equals(metric_key) && metric.getPeriod().equals(period_key)) {
                 return metric;
             }
