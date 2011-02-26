@@ -4,6 +4,8 @@ import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.AuthorizeResponse;
 
+import java.util.List;
+
 
 public interface ApiCache {
 
@@ -19,6 +21,8 @@ public interface ApiCache {
 
     void report(ApiTransaction[] transactions) throws ApiException;
 
+    List<ApiTransaction> getTransactionFor(String app_id);
+    
     ApiTransaction getTransactionFor(String app_id, String when);
 
     Long getTransactionExpirationTimeFor(String app_id);

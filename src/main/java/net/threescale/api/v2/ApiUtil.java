@@ -2,6 +2,7 @@ package net.threescale.api.v2;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -70,4 +71,13 @@ public class ApiUtil {
          return data.toString();
      }
 
+    public static String formatPostData(String provider_key, List<ApiTransaction> transactionsToSend) {
+        StringBuffer post_data = new StringBuffer();
+        post_data.append("provider_key=").append(provider_key);
+        for (int index = 0; index < transactionsToSend.size(); index++) {
+            post_data.append("&");
+            post_data.append(formatTransactionDataForPost(index, transactionsToSend.get(index)));
+        }
+        return post_data.toString();
+    }
 }

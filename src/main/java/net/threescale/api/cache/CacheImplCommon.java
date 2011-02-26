@@ -7,10 +7,8 @@ import org.jboss.cache.Fqn;
 import org.jboss.cache.Node;
 import org.jboss.cache.Region;
 import org.jboss.cache.config.EvictionRegionConfig;
-import org.jboss.cache.eviction.LRUAlgorithmConfig;
 
-import java.util.Date;
-import java.util.logging.Level;
+import java.util.*;
 import java.util.logging.Logger;
 
 public abstract class CacheImplCommon implements ApiCache {
@@ -49,6 +47,21 @@ public abstract class CacheImplCommon implements ApiCache {
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
 
+
+    public List<ApiTransaction> getTransactionFor(String app_id) {
+        Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + app_id);
+        List<ApiTransaction> results = new ArrayList<ApiTransaction>();
+
+        Map data = data_cache.getData(reportFqn);
+        Set<String> keys = data.keySet();
+
+        for (String key : keys) {
+            if (!key.equals(EXPIRATION_KEY)) {
+                results.add((ApiTransaction)data.get(key));
+            }
+        }
+        return results;
+    }
 
     public ApiTransaction getTransactionFor(String app_id, String when) {
         Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + app_id);
@@ -122,10 +135,10 @@ public abstract class CacheImplCommon implements ApiCache {
        Called after the cache has been created
      */
     private void addEvictionPolicies(Cache cache) {
-        Fqn fqn = Fqn.fromString(authorizeResponseKey);
+        Fqn fqn = Fqn.fromString(responseKey);
 
         // Create a configuration for an LRUPolicy
-        ECASTAlgorithmConfig config = new ECASTAlgorithmConfig(this);
+        ECASTAlgorithmConfig config = new ECASTAlgorithmConfig(this, host_url, provider_key, sender);
 
         // Create an eviction region config
         EvictionRegionConfig erc = new EvictionRegionConfig(fqn, config);

@@ -5,6 +5,8 @@ import net.threescale.api.v2.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -68,6 +70,10 @@ public class NullCacheImpl implements ApiCache {
         } else {
             throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
         }
+    }
+
+    public List<ApiTransaction> getTransactionFor(String app_id) {
+        return new ArrayList<ApiTransaction>();
     }
 
     public ApiTransaction getTransactionFor(String app_id, String when) {
