@@ -39,7 +39,7 @@ public class Example {
             System.out.println("response: " + response.toString());
 
             // Check that caller has available resources
-            if ((currentDailyHits(response) + 10) < maxDailyHits(response)) {
+            if ((currentDailyHits(response) + 1) < maxDailyHits(response)) {
 
                 // Process your api call here
 
@@ -109,7 +109,7 @@ public class Example {
     }
 
     private ApiUsageMetric findMetricForHitsPerDay(AuthorizeResponse response) {
-        return findMetricForPeriod(response.getUsageReports(), "hits", "day");
+        return findMetricForPeriod(response.getUsageReports(), "hits", "minute");
     }
 
     // Find a specific metric/period usage metric
