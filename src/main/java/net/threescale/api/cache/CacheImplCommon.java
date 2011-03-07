@@ -14,6 +14,11 @@ import org.jboss.cache.config.EvictionRegionConfig;
 import java.util.*;
 import java.util.logging.Logger;
 
+
+/**
+ * Base class for cache classes.
+ * @see net.threescale.api.cache.ApiCache
+ */
 public abstract class CacheImplCommon implements ApiCache {
 
     public static final String authorize_prefix = "/authorize";

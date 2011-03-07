@@ -10,9 +10,7 @@ import java.io.IOException;
 import static net.threescale.api.v2.ApiTransaction.buildHitsMetricApiTransaction;
 
 /**
- * User: cpatni
- * Date: 2/1/11
- * Time: 1:53 PM
+ * Example Servlet Filter Class for Api access.
  */
 public class ApiFilter implements Filter {
 

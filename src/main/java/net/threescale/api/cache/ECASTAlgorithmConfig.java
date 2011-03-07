@@ -4,6 +4,9 @@ import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.eviction.ExpirationAlgorithmConfig;
 
 
+/**
+ * Configuration data for the eviction algorithm.
+ */
 public class ECASTAlgorithmConfig extends ExpirationAlgorithmConfig {
 
     private final ApiCache api_cache;

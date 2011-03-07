@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
-
+/**
+ * Cache eviction algorithm that writes evicted records to the server.
+ */
 public class ECASTAlgorithm extends ExpirationAlgorithm {
 
     private Logger log = LogFactory.getLogger(this);
@@ -28,6 +30,11 @@ public class ECASTAlgorithm extends ExpirationAlgorithm {
     }
 
 
+    /**
+     * Evict a node and add it to the server transmission list.
+     * @param fqn
+     * @return
+     */
     @Override
     protected boolean evictCacheNode(Fqn fqn) {
         log.fine("evictCacheNode: " + fqn);
@@ -36,6 +43,11 @@ public class ECASTAlgorithm extends ExpirationAlgorithm {
     }
 
 
+    /**
+     * Call the super classes procees method then send all transactions in the transactionsToSend list to the server.
+     * @param eventQueue
+     * @throws EvictionException
+     */
     @Override
     public void process(BlockingQueue<EvictionEvent> eventQueue) throws EvictionException {
         log.fine("process was called: size " + eventQueue.size());
@@ -44,6 +56,9 @@ public class ECASTAlgorithm extends ExpirationAlgorithm {
         sendTransactions();
     }
 
+    /**
+     * Send transactions to the server.
+     */
     private void sendTransactions() {
         ECASTAlgorithmConfig config = getEvictionAlgorithmConfig();
 

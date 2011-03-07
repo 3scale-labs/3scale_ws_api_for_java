@@ -1,6 +1,12 @@
 Release Notes
 -------------
 
+v2.0.2
+------
+
+Added caching for responses.  Now transaction data will be cached at written to the server in one batch.
+
+
 v2.0.1
 ------
 

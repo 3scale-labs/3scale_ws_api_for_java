@@ -8,14 +8,16 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: Feb 23, 2011
- * Time: 2:51:10 PM
- * To change this template use File | Settings | File Templates.
+ * Common utility methods.
  */
 public class ApiUtil {
 
+    /**
+     * Creates an APIException from an ApiHttpResponse.
+     * @param log  Where to log the exception.
+     * @param response THe ApiHttpResponse to convert.
+     * @return  The response converted to an ApiException.
+     */
     public static ApiException createExceptionForUnexpectedResponse(Logger log, ApiHttpResponse response) {
         log.info("Unexpected Response: " + response.getResponseCode() +
                 " Text: " + response.getResponseText());
@@ -25,6 +27,12 @@ public class ApiUtil {
     }
 
 
+    /**
+     * Creates a parameter string from a set of transaction data.
+     * @param provider_key Provider Key for the message.
+     * @param transactions array of transactions.
+     * @return  formatted string.
+     */
     public static String formatPostData(String provider_key, ApiTransaction[] transactions) {
         StringBuffer post_data = new StringBuffer();
         post_data.append("provider_key=").append(provider_key);

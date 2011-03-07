@@ -10,8 +10,8 @@
 	<artifactId>java-api</artifactId>
 	<name>3scale Java API</name>
 	<url>http://http://www.3scale.net/</url>
-	<version>2.0.0</version>
-	<description>his API is used to encapsulate the communication with the 3scale backend server for validating and reporting transactions between the user and the provider of a service</description>
+	<version>2.0.2</version>
+	<description>This API is used to encapsulate the communication with the 3scale backend server for validating and reporting transactions between the user and the provider of a service</description>
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>

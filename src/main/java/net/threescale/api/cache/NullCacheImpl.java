@@ -8,10 +8,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 26-Oct-2010
- * Time: 15:00:36
+ * Null Cache that sends everything straight to the server.
+ * @see net.threescale.api.cache.ApiCache
  */
 public class NullCacheImpl implements ApiCache {
 

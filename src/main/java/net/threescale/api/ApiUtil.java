@@ -3,6 +3,9 @@ package net.threescale.api;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+/**
+ * Common utility methods.
+ */
 public class ApiUtil {
 
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

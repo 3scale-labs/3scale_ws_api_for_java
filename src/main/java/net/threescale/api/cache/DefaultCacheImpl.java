@@ -4,7 +4,9 @@ import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Cache;
 import org.jboss.cache.DefaultCacheFactory;
 
-
+/**
+ * A cache that uses the default xml file (etc/default.xml).
+ */
 public class DefaultCacheImpl extends CacheImplCommon implements ApiCache {
 
     public DefaultCacheImpl(String host_url, String provider_key, HttpSender sender) {
