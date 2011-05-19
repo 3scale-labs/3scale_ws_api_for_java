@@ -93,7 +93,7 @@ public class HttpSenderImpl implements HttpSender {
                 ApiHttpResponse response = new ApiHttpResponse(con.getResponseCode(), extractContent(con));
                 log.info("Received response: " + response.getResponseCode() + " with message: " + response.getResponseText());
                 return response;
-            } else  if (con.getResponseCode() == 403 || con.getResponseCode() == 404) {
+            } else  if (con.getResponseCode() == 403 || con.getResponseCode() == 404 || con.getResponseCode() == 409) {
                 ApiHttpResponse response = new ApiHttpResponse(con.getResponseCode(), getErrorMessage(con));
                 log.info("Received response: " + response.getResponseCode() + " with message: " + response.getResponseText());
                 return response;

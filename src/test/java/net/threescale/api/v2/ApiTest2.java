@@ -62,7 +62,7 @@ public class ApiTest2 extends CommonBase {
                                     "?app_id=" + APP_ID +
                                     "&provider_key=" + PROVIDER_KEY +
                                     "&app_key=" + APP_KEY))
-        .thenReturn(new ApiHttpResponse(200, EXCEEDED_PATH_RESPONSE));
+        .thenReturn(new ApiHttpResponse(409, EXCEEDED_PATH_RESPONSE));
 
 
         AuthorizeResponse response = server.authorize(APP_KEY, null);
