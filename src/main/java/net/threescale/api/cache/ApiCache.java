@@ -21,10 +21,10 @@ public interface ApiCache {
 
     /**
      * Add authorized response to the cache.
-     * @param app_key App Key
+     * @param app_id App Id
      * @param authorizedResponse Response data to add.
      */
-    void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse);
+    void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse);
 
     /**
      * Close the cache.

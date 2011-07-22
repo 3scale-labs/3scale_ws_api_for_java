@@ -229,6 +229,16 @@
       </item>
     </group>
   </component>
+  <component name="PhpProjectConfiguration">
+    <sdk>
+      <PhpSdkConfig version="5.3.4" home="/usr/bin/">
+        <include_paths>
+          <path value="." />
+          <path value="/usr/lib/php" />
+        </include_paths>
+      </PhpSdkConfig>
+    </sdk>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Threescale_api.iml" filepath="$PROJECT_DIR$/Threescale_api.iml" />

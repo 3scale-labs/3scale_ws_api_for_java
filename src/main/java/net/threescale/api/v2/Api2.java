@@ -16,7 +16,7 @@ public interface Api2 {
      * @return AuthorizeResponse containing the current usage metrics.
      * @throws ApiException if there is an error connection to the server
      */
-    AuthorizeResponse authorize(String app_key, String referrer) throws ApiException;
+    AuthorizeResponse authorize(String app_id, String app_key, String referrer) throws ApiException;
 
     /**
      * Send a set of usage data to the server

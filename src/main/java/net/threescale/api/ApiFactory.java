@@ -42,8 +42,8 @@ public class ApiFactory {
      * @param provider_private_key The Providers private key obtained from 3scale.
      * @return A new Api object.
      */
-    public static net.threescale.api.v2.Api2 createV2Api(String url, String application_id, String provider_private_key) {
-        return new Api2Impl(url, application_id, provider_private_key);
+    public static net.threescale.api.v2.Api2 createV2Api(String url, String provider_private_key) {
+        return new Api2Impl(url, provider_private_key);
     }
 
     /**
@@ -52,8 +52,8 @@ public class ApiFactory {
      * @param provider_private_key The Providers private key obtained from 3scale.
      * @return A new Api object.
      */
-    public static Api2 createV2Api(String app_id, String provider_private_key) {
-        return createV2Api(DEFAULT_3SCALE_PROVIDER_API_URL, app_id, provider_private_key);
+    public static Api2 createV2Api(String provider_private_key) {
+        return createV2Api(DEFAULT_3SCALE_PROVIDER_API_URL, provider_private_key);
     }
 
     /**
@@ -64,23 +64,23 @@ public class ApiFactory {
      * @param sender               The HttpSender object to be used for communication with the server.
      * @return A new Api object.
      */
-    public static net.threescale.api.v2.Api2 createV2Api(String url, String application_id, String provider_private_key,
+    public static net.threescale.api.v2.Api2 createV2Api(String url, String provider_private_key,
                                                          net.threescale.api.v2.HttpSender sender) {
-        return new Api2Impl(url, application_id, provider_private_key, sender);
+        return new Api2Impl(url, provider_private_key, sender);
     }
 
-    public static Api2 createV2ApiWithCache(String url, String application_id, String provider_private_key,
+    public static Api2 createV2ApiWithCache(String url, String provider_private_key,
                                             net.threescale.api.v2.HttpSender sender, ApiCache cache) {
-        return new Api2Impl(url, application_id, provider_private_key, sender, cache);
+        return new Api2Impl(url, provider_private_key, sender, cache);
     }
 
-    public static Api2 createV2ApiWithLocalCache(String url, String application_id, String provider_private_key,
+    public static Api2 createV2ApiWithLocalCache(String url, String provider_private_key,
                                                  net.threescale.api.v2.HttpSender sender) {
-        return new Api2Impl(url, application_id, provider_private_key, sender, new DefaultCacheImpl(url, provider_private_key, sender));
+        return new Api2Impl(url, provider_private_key, sender, new DefaultCacheImpl(url, provider_private_key, sender));
     }
 
-    public static Api2 createV2ApiWithRemoteCache(String url, String application_id, String provider_private_key,
+    public static Api2 createV2ApiWithRemoteCache(String url, String provider_private_key,
                                                   String path_to_config) {
-        return new Api2Impl(url, application_id, provider_private_key, new ConfiguredCacheImpl(path_to_config, url, provider_private_key, new net.threescale.api.v2.HttpSenderImpl()));
+        return new Api2Impl(url, provider_private_key, new ConfiguredCacheImpl(path_to_config, url, provider_private_key, new net.threescale.api.v2.HttpSenderImpl()));
     }
 }

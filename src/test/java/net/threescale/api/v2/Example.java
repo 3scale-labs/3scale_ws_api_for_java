@@ -31,11 +31,11 @@ public class Example {
      * Executes
      */
     private void version2_happy_path_example() {
-        Api2 server = ApiFactory.createV2Api(app_url, app_id, provider_private_key);
+        Api2 server = ApiFactory.createV2Api(app_url, provider_private_key);
 
         try {
             //
-            AuthorizeResponse response = server.authorize(null, null);
+            AuthorizeResponse response = server.authorize(null, null, null);
             System.out.println("response: " + response.toString());
 
             // Check that caller has available resources
@@ -70,10 +70,10 @@ public class Example {
     }
 
     private void version2_invalid_app_id() {
-        Api2 server = ApiFactory.createV2Api(app_url, invalid_app_id, provider_private_key);
+        Api2 server = ApiFactory.createV2Api(app_url,  provider_private_key);
 
         try {
-            AuthorizeResponse response = server.authorize(app_key, null);
+            AuthorizeResponse response = server.authorize(invalid_app_id, app_key, null);
             System.out.println("response" + response.toString());
         } catch (ApiException e) {
             System.out.println("ApiException: responseCode was: " + e.getErrorCode() +
@@ -82,10 +82,10 @@ public class Example {
     }
 
     private void version2_invalid_provider_key_on_authorize() {
-        Api2 server = ApiFactory.createV2Api(app_url, app_id, invalid_provider_private_key);
+        Api2 server = ApiFactory.createV2Api(app_url, invalid_provider_private_key);
 
         try {
-            AuthorizeResponse response = server.authorize(app_key, null);
+            AuthorizeResponse response = server.authorize(app_id, app_key, null);
             System.out.println("response" + response.toString());
         } catch (ApiException e) {
             System.out.println("ApiException: responseCode was: " + e.getErrorCode() +

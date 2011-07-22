@@ -23,7 +23,7 @@ public class CacheTest extends CommonBase {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = ApiFactory.createV2ApiWithCache("su1.3scale.net", APP_ID, PROVIDER_KEY, sender, cache);
+        server = ApiFactory.createV2ApiWithCache("su1.3scale.net", PROVIDER_KEY, sender, cache);
     }
 
     private Api2 server;
@@ -40,13 +40,13 @@ public class CacheTest extends CommonBase {
                 "&app_key=" + APP_KEY))
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
-        when(cache.getAuthorizeFor(APP_KEY))
+        when(cache.getAuthorizeFor(APP_ID))
                 .thenReturn(null);
 
-        AuthorizeResponse authorizeResponse = server.authorize(APP_KEY, null);
+        AuthorizeResponse authorizeResponse = server.authorize(APP_ID, APP_KEY, null);
 
-        verify(cache).getAuthorizeFor(APP_KEY);
-        verify(cache).addAuthorizedResponse(APP_KEY, authorizeResponse);
+        verify(cache).getAuthorizeFor(APP_ID);
+        verify(cache).addAuthorizedResponse(APP_ID, authorizeResponse);
     }
 
     @Test

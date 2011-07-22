@@ -14,7 +14,6 @@ public class Api2Impl implements Api2 {
     private Logger log = LogFactory.getLogger(this);
 
     private final String host_url;
-    private final String app_id;
     private final String provider_key;
     private final HttpSender sender;
     private ApiCache cache;
@@ -23,32 +22,29 @@ public class Api2Impl implements Api2 {
      * Normal constructor using standard HttpSender
      *
      * @param host_url     API authorization server URL
-     * @param app_id       System supplied ID for this application
      * @param provider_key Private API Key from contract
      */
-    public Api2Impl(String host_url, String app_id, String provider_key) {
-        this(host_url, app_id, provider_key, new HttpSenderImpl());
+    public Api2Impl(String host_url,  String provider_key) {
+        this(host_url, provider_key, new HttpSenderImpl());
     }
 
     /**
      * Constructor allowing injection of HttpSender (used for testing)
      *
      * @param host_url     API authorization server URL
-     * @param app_id       System supplied ID for this application
      * @param provider_key Private API Key from contract
      * @param sender       HttpSender to use for communications.
      */
-    public Api2Impl(String host_url, String app_id, String provider_key, HttpSender sender) {
-        this(host_url, app_id, provider_key, sender, new NullCacheImpl(host_url, provider_key, sender));
+    public Api2Impl(String host_url, String provider_key, HttpSender sender) {
+        this(host_url, provider_key, sender, new NullCacheImpl(host_url, provider_key, sender));
     }
 
-    public Api2Impl(String host_url, String app_id, String provider_key, ApiCache cache) {
-        this(host_url, app_id, provider_key, new HttpSenderImpl(), cache);
+    public Api2Impl(String host_url, String provider_key, ApiCache cache) {
+        this(host_url, provider_key, new HttpSenderImpl(), cache);
     }
 
-    public Api2Impl(String host_url, String app_id, String provider_key, HttpSender sender, ApiCache cache) {
+    public Api2Impl(String host_url, String provider_key, HttpSender sender, ApiCache cache) {
         this.host_url = host_url;
-        this.app_id = app_id;
         this.provider_key = provider_key;
         this.sender = sender;
         this.cache = cache;
@@ -62,11 +58,11 @@ public class Api2Impl implements Api2 {
      * @return AuthorizeResponse containing the current usage metrics.
      * @throws ApiException if there is an error connection to the server
      */
-    public AuthorizeResponse authorize(String app_key, String referrer) throws ApiException {
+    public AuthorizeResponse authorize(String app_id, String app_key, String referrer) throws ApiException {
 
-        AuthorizeResponse cached_response = cache.getAuthorizeFor(app_key);
+        AuthorizeResponse cached_response = cache.getAuthorizeFor(app_id);
         if (cached_response == null) {
-            String url = formatGetUrl(app_key, referrer);
+            String url = formatGetUrl(app_id, app_key, referrer);
             log.info("Sending GET to sever with url: " + url);
 
             ApiHttpResponse response = sender.sendGetToServer(url);
@@ -75,7 +71,7 @@ public class Api2Impl implements Api2 {
 
             if (response.getResponseCode() == 200 || response.getResponseCode() == 409) {
                 AuthorizeResponse authorizedResponse = new AuthorizeResponse(response.getResponseText());
-                cache.addAuthorizedResponse(app_key, authorizedResponse);
+                cache.addAuthorizedResponse(app_id, authorizedResponse);
                 return authorizedResponse;
             } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
                 throw new ApiException(response.getResponseText());
@@ -100,7 +96,7 @@ public class Api2Impl implements Api2 {
 
 // Private Methods
 
-    private String formatGetUrl(String app_key, String referrer) {
+    private String formatGetUrl(String app_id, String app_key, String referrer) {
         StringBuffer url = new StringBuffer();
 
         url.append(host_url)

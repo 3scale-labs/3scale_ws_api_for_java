@@ -25,7 +25,7 @@ public class ApiTest2 extends CommonBase {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = ApiFactory.createV2Api("su1.3scale.net", APP_ID, PROVIDER_KEY, sender);
+        server = ApiFactory.createV2Api("su1.3scale.net", PROVIDER_KEY, sender);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class ApiTest2 extends CommonBase {
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        AuthorizeResponse response = server.authorize(APP_KEY, null);
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, null);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -66,7 +66,7 @@ public class ApiTest2 extends CommonBase {
                 .thenReturn(new ApiHttpResponse(200, EXCEEDED_PATH_RESPONSE));
 
 
-        AuthorizeResponse response = server.authorize(APP_KEY, null);
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, null);
         assertEquals(false, response.getAuthorized());
         assertEquals("Pro", response.getPlan());
         assertEquals("Usage limits are exceeded", response.getReason());
@@ -95,7 +95,7 @@ public class ApiTest2 extends CommonBase {
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        AuthorizeResponse response = server.authorize(APP_KEY, REFERRER_IP);
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, REFERRER_IP);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -112,7 +112,7 @@ public class ApiTest2 extends CommonBase {
 
         AuthorizeResponse response = null;
         try {
-            response = server.authorize(null, null);
+            response = server.authorize(null, null, null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals("application_not_found", e.getErrorCode());
@@ -131,7 +131,7 @@ public class ApiTest2 extends CommonBase {
 
         AuthorizeResponse response = null;
         try {
-            response = server.authorize(null, null);
+            response = server.authorize(null, null, null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals("provider_key_invalid", e.getErrorCode());

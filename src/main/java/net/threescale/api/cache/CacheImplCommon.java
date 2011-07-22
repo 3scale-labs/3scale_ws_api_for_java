@@ -50,8 +50,8 @@ public abstract class CacheImplCommon implements ApiCache {
         addEvictionPolicies(data_cache);
     }
 
-    public AuthorizeResponse getAuthorizeFor(String app_key) {
-        Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
+    public AuthorizeResponse getAuthorizeFor(String app_id) {
+        Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_id);
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
 
