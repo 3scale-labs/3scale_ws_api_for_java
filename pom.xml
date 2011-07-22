@@ -1,22 +1,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<repositories>
 		<repository>
-			<id>JBoss repository</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <layout>default</layout>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+            </snapshots>
 		</repository>
+        <repository>
+            <id>codehaus-release-repo</id>
+            <name>Codehaus Release Repo</name>
+            <url>http://repository.codehaus.org</url>
+        </repository>
 	</repositories>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.threescale</groupId>
 	<artifactId>java-api</artifactId>
 	<name>3scale Java API</name>
 	<url>http://http://www.3scale.net/</url>
-	<version>2.0.2</version>
+	<version>2.0.3</version>
 	<description>This API is used to encapsulate the communication with the 3scale backend server for validating and reporting transactions between the user and the provider of a service</description>
 	<packaging>jar</packaging>
 	<dependencies>
-		<dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-servlet-tester</artifactId>
+            <version>6.1.6</version>
+        </dependency>
+        <dependency>
 			<groupId>org.jboss.cache</groupId>
-                        <artifactId>jbosscache-core</artifactId>
+            <artifactId>jbosscache-core</artifactId>
 			<version>3.2.5.GA</version>
 		</dependency>
 		<dependency>
@@ -74,7 +94,7 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+ 	</dependencies>
 	<properties>
 		<maven.compile.source>1.6</maven.compile.source>
 		<maven.compile.target>1.6</maven.compile.target>
