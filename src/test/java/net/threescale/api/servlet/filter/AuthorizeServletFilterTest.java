@@ -29,13 +29,23 @@ public class AuthorizeServletFilterTest {
 
 
     @Test
-    public void testPost () throws Exception
+    public void testCorrectApiKey () throws Exception
     {
 
-       this.request.setURI("/");
+       this.request.setURI("/?ts_api_key=23454321");
        this.response.parse(tester.getResponses(request.generate()));
        assertTrue(this.response.getMethod() == null);
        assertEquals(200, this.response.getStatus());
+    }
+
+    @Test
+    public void testInvalidApiKey () throws Exception
+    {
+
+       this.request.setURI("/?ts_api_key=54321");
+       this.response.parse(tester.getResponses(request.generate()));
+       assertTrue(this.response.getMethod() == null);
+       assertEquals(409, this.response.getStatus());
     }
 
 
