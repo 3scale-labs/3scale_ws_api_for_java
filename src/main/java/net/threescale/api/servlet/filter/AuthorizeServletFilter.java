@@ -76,7 +76,6 @@ public class AuthorizeServletFilter implements Filter {
     private String ts_provider_key = null;
     private String ts_authorize_response = "authorize_response";
 
-    private FilterConfig filterConfig;
     private ServletContext context;
     private Api2 server;
 
@@ -84,7 +83,6 @@ public class AuthorizeServletFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        this.filterConfig = filterConfig;
         this.context = filterConfig.getServletContext();
 
         processInitParams();
