@@ -16,11 +16,12 @@ import java.lang.reflect.Method;
 /**
  * This class intercepts the incoming request and checks for a parameter containing the users
  * api key and (optionally) app id and / or referrer.
- * <p/>
+ *
  * If no key/id is present, or does not authorize correctly it returns an error response.
- * <p/>
- * If the key/id does authorize the authorize response is placed in the session attributes and next filter in the chain is called.
- * <p/>
+ *
+ * If the key/id does authorize the AuthorizeResponse is placed in the session attributes
+ * and the next filter in the chain is called.
+ *
  * The parameter names for the api_key, app_id, referrer and the authorization response may be overridden in the
  * configuration.
  *
@@ -86,32 +87,7 @@ public class AuthorizeServletFilter implements Filter {
         this.filterConfig = filterConfig;
         this.context = filterConfig.getServletContext();
 
-        String tmp = context.getInitParameter("ts_provider_key");
-        if (tmp != null) {
-            ts_provider_key = tmp;
-        } else {
-            throw new ServletException("No provider key has been set");
-        }
-
-        tmp = context.getInitParameter("ts_app_id_param_name");
-        if (tmp != null) {
-            ts_app_id = tmp;
-        }
-
-        tmp = context.getInitParameter("ts_app_key_param_name");
-        if (tmp != null) {
-            ts_app_key = tmp;
-        }
-
-        tmp = context.getInitParameter("ts_referrer_param_name");
-        if (tmp != null) {
-            ts_referrer = tmp;
-        }
-
-        tmp = context.getInitParameter("ts_authorize_response_attr_name");
-        if (tmp != null) {
-            ts_authorize_response = tmp;
-        }
+        processInitParams();
 
         try {
             Method m = factoryClass.getMethod("createV2Api", new Class[]{String.class, String.class});
@@ -123,6 +99,7 @@ public class AuthorizeServletFilter implements Filter {
             context.log("Could not create API object for 3scale interface", ex);
         }
     }
+
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -168,6 +145,37 @@ public class AuthorizeServletFilter implements Filter {
 
     public static void setFactoryClass(Class klass) {
         factoryClass = klass;
+    }
+
+    private void processInitParams() throws ServletException {
+
+        ts_provider_key = processInitParam("ts_provider_key", null);
+        if (ts_provider_key == null) {
+            throw new ServletException("No provider key has been set");
+        }
+
+        ts_app_id = processInitParam("ts_app_id_param_name", "app_id");
+        ts_app_key = processInitParam("ts_app_key_param_name", "app_key");
+        ts_referrer = processInitParam("ts_referrer_param_name", "referrer");
+        ts_authorize_response = processInitParam("ts_authorize_response_attr_name", "authorize_response");
+    }
+
+    private String processInitParam(String name, String def) {
+
+        String tmp = context.getInitParameter(name);
+        if (tmp == null) {
+            tmp = def;
+        }
+
+        return tmp;
+    }
+
+    private void processInitParam() {
+        String tmp;
+        tmp = context.getInitParameter("ts_app_id_param_name");
+        if (tmp != null) {
+            ts_app_id = tmp;
+        }
     }
 
     @Override
