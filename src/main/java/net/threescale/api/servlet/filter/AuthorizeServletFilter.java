@@ -123,24 +123,26 @@ public class AuthorizeServletFilter implements Filter {
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
                     context.log("Authorize failed for: " + api_id);
-                    httpResponse.setStatus(409);
-                    PrintWriter writer = httpResponse.getWriter();
-                    writer.append(response.getRawMessage());
-                    writer.flush();
+                    setStatusAndResponse(httpResponse, 409, response.getRawMessage());
                     session.removeAttribute(ts_authorize_response);
 
                 }
             } catch (ApiException e) {
-                httpResponse.setStatus(404);
-                PrintWriter writer = httpResponse.getWriter();
-                writer.append(e.getRawMessage());
-                writer.flush();
+                setStatusAndResponse(httpResponse, 404, e.getRawMessage());
             }
         } else {
             context.log("api_id missing in request");
             httpResponse.setStatus(409);
         }
 
+    }
+
+    private void setStatusAndResponse(HttpServletResponse response, int code, String rawMessage)
+      throws IOException {
+        response.setStatus(code);
+        PrintWriter writer = response.getWriter();
+        writer.append(rawMessage);
+        writer.flush();
     }
 
     public static void setFactoryClass(Class klass) {
