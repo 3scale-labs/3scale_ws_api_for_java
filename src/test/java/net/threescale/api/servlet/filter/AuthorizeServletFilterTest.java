@@ -62,6 +62,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testValidatesWithCorrectAppId() throws Exception {
 
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
@@ -73,6 +75,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
     @Test
     public void testPlacesResponseInSessionWhenAuthorizedOk() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
 
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
         tester.start();
@@ -87,6 +91,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testLimitsExceededWithCorrectAppIdGives409() throws Exception {
 
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
@@ -100,6 +106,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testLimitsExceededWithCorrectAppIdGivesCorrectResponse() throws Exception {
 
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
@@ -112,6 +120,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
     @Test
     public void testLimitsExceededWithCorrectAppIdClearsSessionResponse() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
 
         tester.start();
 
@@ -127,6 +137,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testValidatesWithCorrectAppIdAndAppKey() throws Exception {
 
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
         when(tsServer.authorize("23454321", "3scale-3333", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
@@ -138,6 +150,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
     @Test
     public void testValidatesWithCorrectAppIdAndAppKeyAndReferer() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
 
         tester.start();
 
@@ -151,6 +165,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testFailsWith404OnInvalidAppId() throws Exception {
 
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
         when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
@@ -162,6 +178,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
     @Test
     public void testReturnsCorrectResponseOnInvalidAppId() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
 
         tester.start();
 
@@ -175,6 +193,8 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
     @Test
     public void testResetsSessionAuthorizeResponseOnFailure() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
 
         tester.start();
 
@@ -197,8 +217,10 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testSettingACustomAppIdParmValidatesWithCorrectAppId() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_app_id", "my_app_id");
+        tester.getContext().getInitParams().put("ts_app_id_param_name", "my_app_id");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
 
@@ -212,8 +234,10 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testSettingACustomAppKeyParmValidatesWithCorrectAppId() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_app_key", "my_app_key");
+        tester.getContext().getInitParams().put("ts_app_key_param_name", "my_app_key");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
 
@@ -227,8 +251,10 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testSettingACustomReferrerParmValidatesWithCorrectAppId() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_referrer", "my_referrer");
+        tester.getContext().getInitParams().put("ts_referrer_param_name", "my_referrer");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
 
@@ -242,8 +268,10 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testSettingCustomAuthResponseAttributeName() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_authorize_response", "my_response");
+        tester.getContext().getInitParams().put("ts_authorize_response_attr_name", "my_response");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        setProviderKey(PROVIDER_KEY);
+
         tester.start();
 
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
@@ -262,6 +290,11 @@ public class AuthorizeServletFilterTest extends CommonBase {
     public void cleanupServletContainer() throws Exception {
         tester.stop();
     }
+
+
+    private void setProviderKey(String providerKey) {
+        tester.getContext().getInitParams().put("ts_provider_key", providerKey);
+     }
 
 
     public static class APITestFactory {

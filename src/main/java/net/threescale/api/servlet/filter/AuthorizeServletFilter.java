@@ -23,6 +23,48 @@ import java.lang.reflect.Method;
  * <p/>
  * The parameter names for the api_key, app_id, referrer and the authorization response may be overridden in the
  * configuration.
+ *
+ *
+ * To add the filter to your filter chain you need to add some lines to your web.xml file.  This is an example.
+ *
+ *    <filter>
+ *      <filter-name>AuthorizationFilter</filter-name>
+ *      <filter-class>net.threescale.api.servlet.filter.AuthorizeServletFilter</filter-class>
+ *      <init-param>
+ *        <param-name>ts_provider_key</param-name>
+ *        <param-value>your 3scale provider key</param-value>
+ *      </init-param>
+ *      <init-param>
+ *        <param-name>ts_app_id_param_name</param-name>
+ *        <param-value>api_app_id</param-value>
+ *      </init-param>
+ *      <init-param>
+ *        <param-name>ts_app_key_param_name</param-name>
+ *        <param-value>api_app_key</param-value>
+ *      </init-param>
+ *      <init-param>
+ *        <param-name>ts_referrer_param_name</param-name>
+ *        <param-value>api_referrer</param-value>
+ *      </init-param>
+ *      <init-param>
+ *        <param-name>ts_authorize_response_attr_name</param-name>
+ *        <param-value>api_auth_response</param-value>
+ *      </init-param>
+ *    </filter>
+ *
+ * In this example the ts_app_id, ts_app_key, ts_referrer override the default names for the request parameters.
+ * If you omit them they default to: 'app_id', 'app_key' and 'referrer'.
+ * The ts_authorize_response is the attribute name used in the request's session for the Authorize response object
+ * and defaults to 'authorize_response'
+ *
+ * Then add a mapping for the request urls:
+ *
+ *    <filter-mapping>
+ *      <filter-name>AuthorizationFilter</filter-name>
+ *      <url-pattern>/api/*</url-pattern>
+ *    </filter-mapping>
+ *
+ * You also need to place the threescale-api.jar in 
  */
 public class AuthorizeServletFilter implements Filter {
 
@@ -44,22 +86,29 @@ public class AuthorizeServletFilter implements Filter {
         this.filterConfig = filterConfig;
         this.context = filterConfig.getServletContext();
 
-        String tmp = context.getInitParameter("ts_app_id");
+        String tmp = context.getInitParameter("ts_provider_key");
+        if (tmp != null) {
+            ts_provider_key = tmp;
+        } else {
+            throw new ServletException("No provider key has been set");
+        }
+
+        tmp = context.getInitParameter("ts_app_id_param_name");
         if (tmp != null) {
             ts_app_id = tmp;
         }
 
-        tmp = context.getInitParameter("ts_app_key");
+        tmp = context.getInitParameter("ts_app_key_param_name");
         if (tmp != null) {
             ts_app_key = tmp;
         }
 
-        tmp = context.getInitParameter("ts_referrer");
+        tmp = context.getInitParameter("ts_referrer_param_name");
         if (tmp != null) {
             ts_referrer = tmp;
         }
 
-        tmp = context.getInitParameter("ts_authorize_response");
+        tmp = context.getInitParameter("ts_authorize_response_attr_name");
         if (tmp != null) {
             ts_authorize_response = tmp;
         }
