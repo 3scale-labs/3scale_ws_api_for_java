@@ -13,6 +13,7 @@ import javax.xml.xpath.XPathFactory;
 public class ApiException extends Exception {
     private String errorCode;
     private String errorMessage;
+    private String originalMessage;
 
     /**
      * Constructor
@@ -23,6 +24,7 @@ public class ApiException extends Exception {
     public ApiException(String errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
+        this.originalMessage = "n/a";
     }
 
     /**
@@ -31,6 +33,7 @@ public class ApiException extends Exception {
      * @param xml error xml.
      */
     public ApiException(String xml) {
+        this.originalMessage = xml;
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xpath = xPathFactory.newXPath();
         NodeList nodes = XmlHelper.extractNodeList(xpath, "//error[@code]", xml);
@@ -68,5 +71,9 @@ public class ApiException extends Exception {
         }
         //todo other errorCodes
         return errorCode;
+    }
+
+    public String getRawMessage() {
+        return originalMessage;
     }
 }

@@ -40,4 +40,9 @@ public class CommonBase {
                     "transactions[1][usage][transfer]=2840&" +
                     "transactions[1][usage][hits]=1&" +
                     "transactions[1][timestamp]=2009-01-01+18%3A11%3A59";
+
+    protected static final String INVALID_APP_ID_RESPONSE =
+        "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+        "  <error code=\"application_not_found\">Application with id=\"12345678\" was not found</error>";
+
 }
