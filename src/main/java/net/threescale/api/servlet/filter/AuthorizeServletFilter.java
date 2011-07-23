@@ -19,9 +19,9 @@ import java.lang.reflect.Method;
  * <p/>
  * If no key/id is present, or does not authorize correctly it returns an error response.
  * <p/>
- * If the key/id does authorize the next filter in the chain is called.
+ * If the key/id does authorize the authorize response is placed in the session attributes and next filter in the chain is called.
  * <p/>
- * The parameter name for the api key (api_key) or app id (app_id) may be overridden in the
+ * The parameter names for the api_key, app_id, referrer and the authorization response may be overridden in the
  * configuration.
  */
 public class AuthorizeServletFilter implements Filter {
@@ -43,6 +43,27 @@ public class AuthorizeServletFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
         this.context = filterConfig.getServletContext();
+
+        String tmp = context.getInitParameter("ts_app_id");
+        if (tmp != null) {
+            ts_app_id = tmp;
+        }
+
+        tmp = context.getInitParameter("ts_app_key");
+        if (tmp != null) {
+            ts_app_key = tmp;
+        }
+
+        tmp = context.getInitParameter("ts_referrer");
+        if (tmp != null) {
+            ts_referrer = tmp;
+        }
+
+        tmp = context.getInitParameter("ts_authorize_response");
+        if (tmp != null) {
+            ts_authorize_response = tmp;
+        }
+
         try {
             Method m = factoryClass.getMethod("createV2Api", new Class[]{String.class, String.class});
             Object factory = factoryClass.newInstance();
@@ -90,7 +111,7 @@ public class AuthorizeServletFilter implements Filter {
                 writer.flush();
             }
         } else {
-            context.log("api_key missing in request");
+            context.log("api_id missing in request");
             httpResponse.setStatus(409);
         }
 

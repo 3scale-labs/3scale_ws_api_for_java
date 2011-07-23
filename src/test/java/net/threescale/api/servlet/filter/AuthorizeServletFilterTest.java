@@ -50,7 +50,6 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
         tester.addFilter(AuthorizeServletFilter.class, "/", 1);
         baseUrl = tester.createSocketConnector(true);
-        tester.start();
 
         this.request = new HttpTester();
         this.response = new HttpTester();
@@ -63,67 +62,121 @@ public class AuthorizeServletFilterTest extends CommonBase {
     @Test
     public void testValidatesWithCorrectAppId() throws Exception {
 
-        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        tester.start();
 
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
-        assertTrue(this.response.getMethod() == null);
         assertEquals(200, this.response.getStatus());
+    }
+
+    @Test
+    public void testPlacesResponseInSessionWhenAuthorizedOk() throws Exception {
+
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        tester.start();
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
         assertEquals(true, sessionListener.attrs.contains("authorize_response"));
     }
 
     @Test
-    public void testLimitsExceededWithCorrectAppId() throws Exception {
+    public void testLimitsExceededWithCorrectAppIdGives409() throws Exception {
+
+        tester.start();
 
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
-        assertTrue(this.response.getMethod() == null);
+
         assertEquals(409, this.response.getStatus());
-        assertEquals(LIMITS_EXCEEDED_RESPONSE, this.response.getContent());
-        assertEquals(false, sessionListener.attrs.contains("authorize_response"));
     }
 
     @Test
+    public void testLimitsExceededWithCorrectAppIdGivesCorrectResponse() throws Exception {
+
+        tester.start();
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+
+        assertEquals(LIMITS_EXCEEDED_RESPONSE, this.response.getContent());
+    }
+
+    @Test
+    public void testLimitsExceededWithCorrectAppIdClearsSessionResponse() throws Exception {
+
+        tester.start();
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+
+        assertEquals(false, sessionListener.attrs.contains("authorize_response"));
+    }
+
+
+    @Test
     public void testValidatesWithCorrectAppIdAndAppKey() throws Exception {
+
+        tester.start();
 
         when(tsServer.authorize("23454321", "3scale-3333", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321&app_key=3scale-3333");
 
         this.response.parse(tester.getResponses(request.generate()));
-        assertTrue(this.response.getMethod() == null);
         assertEquals(200, this.response.getStatus());
     }
 
     @Test
     public void testValidatesWithCorrectAppIdAndAppKeyAndReferer() throws Exception {
 
+        tester.start();
+
         when(tsServer.authorize("23454321", "3scale-3333", "example.org")).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321&app_key=3scale-3333&referrer=example.org");
 
         this.response.parse(tester.getResponses(request.generate()));
-        assertTrue(this.response.getMethod() == null);
         assertEquals(200, this.response.getStatus());
     }
 
     @Test
-    public void testFailsWithInvalidAppId() throws Exception {
+    public void testFailsWith404OnInvalidAppId() throws Exception {
+
+        tester.start();
 
         when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
         this.request.setURI("/?app_id=54321");
 
         this.response.parse(tester.getResponses(request.generate()));
-        assertTrue(this.response.getMethod() == null);
         assertEquals(404, this.response.getStatus());
+    }
+
+    @Test
+    public void testReturnsCorrectResponseOnInvalidAppId() throws Exception {
+
+        tester.start();
+
+        when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
+        this.request.setURI("/?app_id=54321");
+
+        this.response.parse(tester.getResponses(request.generate()));
         assertEquals(INVALID_APP_ID_RESPONSE, this.response.getContent());
     }
 
 
     @Test
     public void testResetsSessionAuthorizeResponseOnFailure() throws Exception {
+
+        tester.start();
 
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
@@ -136,8 +189,70 @@ public class AuthorizeServletFilterTest extends CommonBase {
         sb.append(this.request.generate());
 
         this.response.parse(tester.getResponses(request.generate()));
+
         assertEquals(false, sessionListener.attrs.contains("authorize_response"));
     }
+
+
+    @Test
+    public void testSettingACustomAppIdParmValidatesWithCorrectAppId() throws Exception {
+
+        tester.getContext().getInitParams().put("ts_app_id", "my_app_id");
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        tester.start();
+
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?my_app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals(200, this.response.getStatus());
+    }
+
+    @Test
+    public void testSettingACustomAppKeyParmValidatesWithCorrectAppId() throws Exception {
+
+        tester.getContext().getInitParams().put("ts_app_key", "my_app_key");
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        tester.start();
+
+
+        when(tsServer.authorize("23454321", "9876", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?app_id=23454321&my_app_key=9876");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals(200, this.response.getStatus());
+    }
+
+    @Test
+    public void testSettingACustomReferrerParmValidatesWithCorrectAppId() throws Exception {
+
+        tester.getContext().getInitParams().put("ts_referrer", "my_referrer");
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        tester.start();
+
+
+        when(tsServer.authorize("23454321", null, "example.org")).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?app_id=23454321&my_referrer=example.org");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals(200, this.response.getStatus());
+    }
+
+    @Test
+    public void testSettingCustomAuthResponseAttributeName() throws Exception {
+
+        tester.getContext().getInitParams().put("ts_authorize_response", "my_response");
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        tester.start();
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals(true, sessionListener.attrs.contains("my_response"));
+    }
+
 
 
     /**
