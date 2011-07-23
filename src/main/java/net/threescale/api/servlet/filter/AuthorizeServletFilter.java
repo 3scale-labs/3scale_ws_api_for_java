@@ -1,6 +1,5 @@
 package net.threescale.api.servlet.filter;
 
-import net.threescale.api.ApiFactory;
 import net.threescale.api.v2.Api2;
 import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.AuthorizeResponse;
@@ -168,14 +167,6 @@ public class AuthorizeServletFilter implements Filter {
         }
 
         return tmp;
-    }
-
-    private void processInitParam() {
-        String tmp;
-        tmp = context.getInitParameter("ts_app_id_param_name");
-        if (tmp != null) {
-            ts_app_id = tmp;
-        }
     }
 
     @Override
