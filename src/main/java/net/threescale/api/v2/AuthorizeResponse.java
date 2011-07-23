@@ -20,6 +20,8 @@ public class AuthorizeResponse {
 
     private Logger log = LogFactory.getLogger(this);
 
+    private String originalMessage;
+
     private Boolean authorized = new Boolean(false);
     private String plan = "";
     private String reason = "";
@@ -27,6 +29,8 @@ public class AuthorizeResponse {
 
 
     public AuthorizeResponse(String xml) {
+
+        this.originalMessage = xml;
 
         try {
             log.info("Parsing response: " + xml);
@@ -69,6 +73,10 @@ public class AuthorizeResponse {
         builder.append("]");
         builder.append("]");
         return builder.toString();
+    }
+
+    public String getRawMessage() {
+        return this.originalMessage;
     }
 
     /**

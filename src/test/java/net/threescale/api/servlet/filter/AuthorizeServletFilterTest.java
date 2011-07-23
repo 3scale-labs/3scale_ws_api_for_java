@@ -10,6 +10,11 @@ import org.mockito.MockitoAnnotations;
 import org.mortbay.jetty.testing.HttpTester;
 import org.mortbay.jetty.testing.ServletTester;
 
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+import java.util.EventListener;
+import java.util.HashSet;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -20,6 +25,10 @@ public class AuthorizeServletFilterTest extends CommonBase {
     private static String baseUrl;
     private HttpTester request;
     private HttpTester response;
+
+    private LocalHtpSessionAttributeListener sessionListener = new LocalHtpSessionAttributeListener();
+
+
     @Mock
     private static Api2 tsServer;
 
@@ -52,10 +61,37 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
 
     @Test
-    public void testValidatesCorrectApiId() throws Exception {
-        
+    public void testValidatesWithCorrectAppId() throws Exception {
+
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+
         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
-        this.request.setURI("/?ts_api_id=23454321");
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertTrue(this.response.getMethod() == null);
+        assertEquals(200, this.response.getStatus());
+        assertEquals(true, sessionListener.attrs.contains("authorize_response"));
+    }
+
+    @Test
+    public void testLimitsExceededWithCorrectAppId() throws Exception {
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertTrue(this.response.getMethod() == null);
+        assertEquals(409, this.response.getStatus());
+        assertEquals(LIMITS_EXCEEDED_RESPONSE, this.response.getContent());
+        assertEquals(false, sessionListener.attrs.contains("authorize_response"));
+    }
+
+    @Test
+    public void testValidatesWithCorrectAppIdAndAppKey() throws Exception {
+
+        when(tsServer.authorize("23454321", "3scale-3333", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?app_id=23454321&app_key=3scale-3333");
 
         this.response.parse(tester.getResponses(request.generate()));
         assertTrue(this.response.getMethod() == null);
@@ -63,10 +99,21 @@ public class AuthorizeServletFilterTest extends CommonBase {
     }
 
     @Test
-    public void testFailsWithInvalidApiId() throws Exception {
+    public void testValidatesWithCorrectAppIdAndAppKeyAndReferer() throws Exception {
+
+        when(tsServer.authorize("23454321", "3scale-3333", "example.org")).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?app_id=23454321&app_key=3scale-3333&referrer=example.org");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertTrue(this.response.getMethod() == null);
+        assertEquals(200, this.response.getStatus());
+    }
+
+    @Test
+    public void testFailsWithInvalidAppId() throws Exception {
 
         when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
-        this.request.setURI("/?ts_api_id=54321");
+        this.request.setURI("/?app_id=54321");
 
         this.response.parse(tester.getResponses(request.generate()));
         assertTrue(this.response.getMethod() == null);
@@ -74,6 +121,23 @@ public class AuthorizeServletFilterTest extends CommonBase {
         assertEquals(INVALID_APP_ID_RESPONSE, this.response.getContent());
     }
 
+
+    @Test
+    public void testResetsSessionAuthorizeResponseOnFailure() throws Exception {
+
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+
+        this.request.setURI("/?app_id=23454321");
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(this.request.generate());
+        sb.append(this.request.generate());
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals(false, sessionListener.attrs.contains("authorize_response"));
+    }
 
 
     /**
@@ -92,5 +156,27 @@ public class AuthorizeServletFilterTest extends CommonBase {
             return tsServer;
         }
 
+    }
+
+    public class LocalHtpSessionAttributeListener implements HttpSessionAttributeListener {
+
+        HashSet<String> attrs = new HashSet<String>();
+
+        @Override
+        public void attributeAdded(HttpSessionBindingEvent httpSessionBindingEvent) {
+            attrs.add(httpSessionBindingEvent.getName());
+        }
+
+        @Override
+        public void attributeRemoved(HttpSessionBindingEvent httpSessionBindingEvent) {
+            attrs.remove(httpSessionBindingEvent.getName());
+        }
+
+        @Override
+        public void attributeReplaced(HttpSessionBindingEvent httpSessionBindingEvent) {
+            if (httpSessionBindingEvent.getValue() == null) {
+                attrs.remove(httpSessionBindingEvent.getName());
+            }
+        }
     }
 }

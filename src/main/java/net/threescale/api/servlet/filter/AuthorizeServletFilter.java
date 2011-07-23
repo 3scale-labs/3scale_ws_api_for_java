@@ -6,31 +6,37 @@ import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.AuthorizeResponse;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 /**
- * This class intercepts the incoming request and checks for a parameter containing either the users
- * api key (ts_api_key) or app id (ts_app_id).
+ * This class intercepts the incoming request and checks for a parameter containing the users
+ * api key and (optionally) app id and / or referrer.
  * <p/>
- * If no key/id is present, or does not authorize correctly it returns an error response or xxxx.
+ * If no key/id is present, or does not authorize correctly it returns an error response.
  * <p/>
  * If the key/id does authorize the next filter in the chain is called.
  * <p/>
- * The parameter name for the api key (ts_api_key) or app id (ts_app_id) may be overridden in the
+ * The parameter name for the api key (api_key) or app id (app_id) may be overridden in the
  * configuration.
  */
 public class AuthorizeServletFilter implements Filter {
 
-    private FilterConfig filterConfig;
-    private String ts_api_id = "ts_api_id";
-    private String ts_api_key = "ts_api_key";
-    private ServletContext context;
-    private Api2 server;
+    private String ts_app_id = "app_id";
+    private String ts_app_key = "app_key";
+    private String ts_referrer = "referrer";
     private String ts_url = "http://su1.3scale.net";
     private String ts_provider_key = null;
+    private String ts_authorize_response = "authorize_response";
+
+    private FilterConfig filterConfig;
+    private ServletContext context;
+    private Api2 server;
+
     private static Class factoryClass = net.threescale.api.ApiFactory.class;
 
     @Override
@@ -51,18 +57,31 @@ public class AuthorizeServletFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
+        HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-        String api_id = servletRequest.getParameter(ts_api_id);
+        String api_id = httpRequest.getParameter(ts_app_id);
+        String api_key = httpRequest.getParameter(ts_app_key);
+        String referrer = httpRequest.getParameter(ts_referrer);
+        HttpSession session = httpRequest.getSession();
+
+        session.removeAttribute(ts_authorize_response);
+
         if (api_id != null) {
             try {
-                AuthorizeResponse response = server.authorize(api_id, null, null);
+                AuthorizeResponse response = server.authorize(api_id, api_key, referrer);
                 if (response.getAuthorized()) {
                     context.log("Authorized ok for : " + api_id);
+                    session.setAttribute(ts_authorize_response, response);
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
                     context.log("Authorize failed for: " + api_id);
-                    ((HttpServletResponse) servletResponse).setStatus(409);
+                    httpResponse.setStatus(409);
+                    PrintWriter writer = httpResponse.getWriter();
+                    writer.append(response.getRawMessage());
+                    writer.flush();
+                    session.removeAttribute(ts_authorize_response);
+
                 }
             } catch (ApiException e) {
                 httpResponse.setStatus(404);
