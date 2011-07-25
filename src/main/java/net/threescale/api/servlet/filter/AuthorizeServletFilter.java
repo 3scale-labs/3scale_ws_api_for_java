@@ -29,31 +29,48 @@ import java.lang.reflect.Method;
  *
  *    <filter>
  *      <filter-name>AuthorizationFilter</filter-name>
+ *
  *      <filter-class>net.threescale.api.servlet.filter.AuthorizeServletFilter</filter-class>
+ *
  *      <init-param>
  *        <param-name>ts_provider_key</param-name>
  *        <param-value>your 3scale provider key</param-value>
  *      </init-param>
+ *
+ *      <init-param>
+ *        <param-name>ts_redirect_url</param-name>
+ *        <param-value>http://myexample.org/api_error.jsp</param-value>
+ *      </init-param>
+ *
  *      <init-param>
  *        <param-name>ts_app_id_param_name</param-name>
  *        <param-value>api_app_id</param-value>
  *      </init-param>
+ *
  *      <init-param>
  *        <param-name>ts_app_key_param_name</param-name>
  *        <param-value>api_app_key</param-value>
  *      </init-param>
+ *
  *      <init-param>
  *        <param-name>ts_referrer_param_name</param-name>
  *        <param-value>api_referrer</param-value>
  *      </init-param>
+ *
  *      <init-param>
  *        <param-name>ts_authorize_response_attr_name</param-name>
  *        <param-value>api_auth_response</param-value>
  *      </init-param>
+ *
  *    </filter>
+ *
+ *
+ * The ts_redirect_url is the page the request is redirected to if an authorization error occurs. If
+ * this is not set the error information is returned to the user in the response body.
  *
  * In this example the ts_app_id, ts_app_key, ts_referrer override the default names for the request parameters.
  * If you omit them they default to: 'app_id', 'app_key' and 'referrer'.
+ *
  * The ts_authorize_response is the attribute name used in the request's session for the Authorize response object
  * and defaults to 'authorize_response'
  *
@@ -64,7 +81,7 @@ import java.lang.reflect.Method;
  *      <url-pattern>/api/*</url-pattern>
  *    </filter-mapping>
  *
- * You also need to place the threescale-api.jar in 
+ * You also need to place the threescale-api.jar in your classpath.
  */
 public class AuthorizeServletFilter implements Filter {
 
@@ -81,11 +98,13 @@ public class AuthorizeServletFilter implements Filter {
     private static Class factoryClass = net.threescale.api.ApiFactory.class;
     private FilterResponseSelector filterResponse;
     private String ts_redirect_url = null;
+    private FilterConfig filterConfig;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        this.filterConfig = filterConfig;
         this.context = filterConfig.getServletContext();
-
+        
         processInitParams();
         setFilterResponse();
 
@@ -102,9 +121,9 @@ public class AuthorizeServletFilter implements Filter {
 
     private void setFilterResponse() {
         if (ts_redirect_url == null) {
-        filterResponse = new FilterRespondsToUser();
+            filterResponse = new FilterRespondsToUser();
         } else {
-            
+            filterResponse = new FilterRespondsWithRedirect(filterConfig, ts_redirect_url);
         }
     }
 
@@ -131,16 +150,15 @@ public class AuthorizeServletFilter implements Filter {
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
                     context.log("Authorize failed for: " + api_id);
-                    filterResponse.sendFailedResponse(httpResponse, 409, response.getRawMessage());
-                    session.removeAttribute(ts_authorize_response);
+                    filterResponse.sendFailedResponse(httpRequest, httpResponse, 409, response);
 
                 }
             } catch (ApiException e) {
-                filterResponse.sendFailedResponse(httpResponse, 404, e.getRawMessage());
+                filterResponse.sendFailedResponse(httpRequest, httpResponse, 404, e);
             }
         } else {
             context.log("api_id missing in request");
-            filterResponse.sendFailedResponse(httpResponse, 404, MISSING_API_ID_ERROR_XML);
+            filterResponse.sendFailedResponse(httpRequest, httpResponse, 404, new ApiException(MISSING_API_ID_ERROR_XML));
         }
 
     }
@@ -151,27 +169,18 @@ public class AuthorizeServletFilter implements Filter {
 
     private void processInitParams() throws ServletException {
 
-        ts_provider_key = processInitParam("ts_provider_key", null);
+        ts_provider_key = Helper.processInitParam(context, "ts_provider_key", null);
         if (ts_provider_key == null) {
             throw new ServletException("No provider key has been set");
         }
 
-        ts_redirect_url = processInitParam("ts_redirect_url", null);
-        ts_app_id = processInitParam("ts_app_id_param_name", "app_id");
-        ts_app_key = processInitParam("ts_app_key_param_name", "app_key");
-        ts_referrer = processInitParam("ts_referrer_param_name", "referrer");
-        ts_authorize_response = processInitParam("ts_authorize_response_attr_name", "authorize_response");
+        ts_redirect_url = Helper.processInitParam(context, "ts_redirect_url", null);
+        ts_app_id = Helper.processInitParam(context, "ts_app_id_param_name", "app_id");
+        ts_app_key = Helper.processInitParam(context, "ts_app_key_param_name", "app_key");
+        ts_referrer = Helper.processInitParam(context, "ts_referrer_param_name", "referrer");
+        ts_authorize_response = Helper.processInitParam(context, "ts_authorize_response_attr_name", "authorize_response");
     }
 
-    private String processInitParam(String name, String def) {
-
-        String tmp = context.getInitParameter(name);
-        if (tmp == null) {
-            tmp = def;
-        }
-
-        return tmp;
-    }
 
     @Override
     public void destroy() {

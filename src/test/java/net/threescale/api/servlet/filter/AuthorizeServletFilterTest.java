@@ -13,6 +13,7 @@ import org.mortbay.jetty.testing.ServletTester;
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import java.util.EventListener;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import static junit.framework.Assert.assertEquals;
@@ -85,7 +86,7 @@ public class AuthorizeServletFilterTest extends CommonBase {
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
-        assertEquals(true, sessionListener.attrs.contains("authorize_response"));
+        assertEquals(true, sessionListener.attrs.containsKey("authorize_response"));
     }
 
     @Test
@@ -130,7 +131,7 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
         this.response.parse(tester.getResponses(request.generate()));
 
-        assertEquals(false, sessionListener.attrs.contains("authorize_response"));
+        assertEquals(false, sessionListener.attrs.containsKey("authorize_response"));
     }
 
 
@@ -210,7 +211,7 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
         this.response.parse(tester.getResponses(request.generate()));
 
-        assertEquals(false, sessionListener.attrs.contains("authorize_response"));
+        assertEquals(false, sessionListener.attrs.containsKey("authorize_response"));
     }
 
 
@@ -278,12 +279,75 @@ public class AuthorizeServletFilterTest extends CommonBase {
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
-        assertEquals(true, sessionListener.attrs.contains("my_response"));
+        assertEquals(true, sessionListener.attrs.containsKey("my_response"));
     }
 
 
+    @Test
+    public void testSettingRedirectUrlRedirectsToCorrectURL() throws Exception {
 
-    /**
+        tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+        setProviderKey(PROVIDER_KEY);
+
+        tester.start();
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals("http://example.org/api_error.jsp", this.response.getHeader("Location"));
+    }
+
+    @Test
+     public void testSettingRedirectUrlSetsTheCorrectStatus() throws Exception {
+
+         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         setProviderKey(PROVIDER_KEY);
+
+         tester.start();
+
+         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         this.request.setURI("/?app_id=23454321");
+
+         this.response.parse(tester.getResponses(request.generate()));
+         assertEquals(302, this.response.getStatus());
+     }
+
+
+    @Test
+     public void testSettingRedirectUrlPlacesAuthResponseInSession() throws Exception {
+
+         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+         setProviderKey(PROVIDER_KEY);
+
+         tester.start();
+
+         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         this.request.setURI("/?app_id=23454321");
+
+         this.response.parse(tester.getResponses(request.generate()));
+         assertEquals(true, sessionListener.attrs.containsKey("authorize_response"));
+     }
+
+    @Test
+     public void testSettingRedirectUrlPlacesCorrectTypeOfAuthResponseInSession() throws Exception {
+
+         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+         setProviderKey(PROVIDER_KEY);
+
+         tester.start();
+
+         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         this.request.setURI("/?app_id=23454321");
+
+         this.response.parse(tester.getResponses(request.generate()));
+         assertEquals(AuthorizeResponse.class, sessionListener.attrs.get("authorize_response").getClass());
+     }
+
+
+     /**
      * Stops the Jetty container.
      */
     @After
@@ -308,11 +372,11 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
     public class LocalHtpSessionAttributeListener implements HttpSessionAttributeListener {
 
-        HashSet<String> attrs = new HashSet<String>();
+        HashMap<String, Object> attrs = new HashMap<String, Object>();
 
         @Override
         public void attributeAdded(HttpSessionBindingEvent httpSessionBindingEvent) {
-            attrs.add(httpSessionBindingEvent.getName());
+            attrs.put(httpSessionBindingEvent.getName(), httpSessionBindingEvent.getValue());
         }
 
         @Override

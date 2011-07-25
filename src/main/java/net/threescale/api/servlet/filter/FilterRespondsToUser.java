@@ -1,5 +1,9 @@
 package net.threescale.api.servlet.filter;
 
+import net.threescale.api.v2.ApiResponse;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,8 +14,8 @@ import java.io.PrintWriter;
 public class FilterRespondsToUser implements FilterResponseSelector {
 
     @Override
-    public void sendFailedResponse(HttpServletResponse httpResponse, int httpStatus, String rawMessage) throws IOException {
-        setStatusAndResponse(httpResponse, httpStatus, rawMessage);        
+    public void sendFailedResponse(HttpServletRequest httpRequest, HttpServletResponse httpResponse, int httpStatus, ApiResponse response) throws IOException, ServletException {
+        setStatusAndResponse(httpResponse, httpStatus, response.getRawMessage());
     }
 
 

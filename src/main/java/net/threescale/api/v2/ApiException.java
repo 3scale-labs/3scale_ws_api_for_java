@@ -10,7 +10,7 @@ import javax.xml.xpath.XPathFactory;
 /**
  * Encapsulate Api Exceptions
  */
-public class ApiException extends Exception {
+public class ApiException extends Exception implements ApiResponse {
     private String errorCode;
     private String errorMessage;
     private String originalMessage;

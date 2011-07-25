@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 /**
  * Response from server containing current statistics.
  */
-public class AuthorizeResponse {
+public class AuthorizeResponse  implements ApiResponse {
 
     private Logger log = LogFactory.getLogger(this);
 
