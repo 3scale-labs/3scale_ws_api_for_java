@@ -4,4 +4,5 @@ build
 
 threescale_api.iws
 api.tmproj
+target/*
 
