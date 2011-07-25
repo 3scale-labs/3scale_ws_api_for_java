@@ -11,6 +11,7 @@ public interface Api2 {
     /**
      * Fetch the current statistics for an application.
      *
+     * @param app_id   Application Id give by user
      * @param app_key  Optional Application Key (or null)
      * @param referrer Optional referrer ip address (or null)'
      * @return AuthorizeResponse containing the current usage metrics.

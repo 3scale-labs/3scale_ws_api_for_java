@@ -12,18 +12,14 @@ import org.mortbay.jetty.testing.ServletTester;
 
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
-import java.util.EventListener;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class AuthorizeServletFilterTest extends CommonBase {
 
     private static ServletTester tester;
-    private static String baseUrl;
     private HttpTester request;
     private HttpTester response;
 
@@ -38,6 +34,7 @@ public class AuthorizeServletFilterTest extends CommonBase {
      * This kicks off an instance of the Jetty
      * servlet container so that we can hit it.
      * We register an test service.
+     * @throws Exception  Throws if an error occurs in setup
      */
     @Before
     public void setUp() throws Exception {
@@ -50,7 +47,7 @@ public class AuthorizeServletFilterTest extends CommonBase {
         AuthorizeServletFilter.setFactoryClass(APITestFactory.class);
 
         tester.addFilter(AuthorizeServletFilter.class, "/", 1);
-        baseUrl = tester.createSocketConnector(true);
+        tester.createSocketConnector(true);
 
         this.request = new HttpTester();
         this.response = new HttpTester();
@@ -344,6 +341,39 @@ public class AuthorizeServletFilterTest extends CommonBase {
 
          this.response.parse(tester.getResponses(request.generate()));
          assertEquals(AuthorizeResponse.class, sessionListener.attrs.get("authorize_response").getClass());
+     }
+
+    @Test
+     public void testSettingRedirectUrlPlacesErrorResponseInSession() throws Exception {
+
+         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+         setProviderKey(PROVIDER_KEY);
+
+         tester.start();
+
+         when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
+         this.request.setURI("/?app_id=54321");
+
+         this.response.parse(tester.getResponses(request.generate()));
+         assertEquals(true, sessionListener.attrs.containsKey("authorize_response"));
+     }
+
+
+    @Test
+     public void testSettingRedirectUrlPlacesErrorResponseTypeInSession() throws Exception {
+
+         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         tester.getContext().getSessionHandler().addEventListener(sessionListener);
+         setProviderKey(PROVIDER_KEY);
+
+         tester.start();
+
+         when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
+         this.request.setURI("/?app_id=54321");
+
+         this.response.parse(tester.getResponses(request.generate()));
+         assertEquals(ApiException.class, sessionListener.attrs.get("authorize_response").getClass());
      }
 
 

@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 
 /**
@@ -67,6 +66,9 @@ import java.lang.reflect.Method;
  *
  * The ts_redirect_url is the page the request is redirected to if an authorization error occurs. If
  * this is not set the error information is returned to the user in the response body.
+ * If this is set then the authorization_response session attribute will contain either an AuthorizationResponse
+ * or an ApiException depending on the type of failure.  For a failed authorization due to limits exceeded etc. it
+ * will be an AuthorizationResponse, anything else will set an ApiException.
  *
  * In this example the ts_app_id, ts_app_key, ts_referrer override the default names for the request parameters.
  * If you omit them they default to: 'app_id', 'app_key' and 'referrer'.
