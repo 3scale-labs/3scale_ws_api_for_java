@@ -79,12 +79,15 @@ public class AuthorizeServletFilter implements Filter {
     private Api2 server;
 
     private static Class factoryClass = net.threescale.api.ApiFactory.class;
+    private FilterResponseSelector filterResponse;
+    private String ts_redirect_url = null;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.context = filterConfig.getServletContext();
 
         processInitParams();
+        setFilterResponse();
 
         try {
             Method m = factoryClass.getMethod("createV2Api", new Class[]{String.class, String.class});
@@ -94,6 +97,14 @@ public class AuthorizeServletFilter implements Filter {
         }
         catch (Exception ex) {
             context.log("Could not create API object for 3scale interface", ex);
+        }
+    }
+
+    private void setFilterResponse() {
+        if (ts_redirect_url == null) {
+        filterResponse = new FilterRespondsToUser();
+        } else {
+            
         }
     }
 
@@ -120,26 +131,18 @@ public class AuthorizeServletFilter implements Filter {
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
                     context.log("Authorize failed for: " + api_id);
-                    setStatusAndResponse(httpResponse, 409, response.getRawMessage());
+                    filterResponse.sendFailedResponse(httpResponse, 409, response.getRawMessage());
                     session.removeAttribute(ts_authorize_response);
 
                 }
             } catch (ApiException e) {
-                setStatusAndResponse(httpResponse, 404, e.getRawMessage());
+                filterResponse.sendFailedResponse(httpResponse, 404, e.getRawMessage());
             }
         } else {
             context.log("api_id missing in request");
-            httpResponse.setStatus(409);
+            filterResponse.sendFailedResponse(httpResponse, 404, MISSING_API_ID_ERROR_XML);
         }
 
-    }
-
-    private void setStatusAndResponse(HttpServletResponse response, int code, String rawMessage)
-      throws IOException {
-        response.setStatus(code);
-        PrintWriter writer = response.getWriter();
-        writer.append(rawMessage);
-        writer.flush();
     }
 
     public static void setFactoryClass(Class klass) {
@@ -153,6 +156,7 @@ public class AuthorizeServletFilter implements Filter {
             throw new ServletException("No provider key has been set");
         }
 
+        ts_redirect_url = processInitParam("ts_redirect_url", null);
         ts_app_id = processInitParam("ts_app_id_param_name", "app_id");
         ts_app_key = processInitParam("ts_app_key_param_name", "app_key");
         ts_referrer = processInitParam("ts_referrer_param_name", "referrer");
@@ -172,4 +176,9 @@ public class AuthorizeServletFilter implements Filter {
     @Override
     public void destroy() {
     }
+
+
+    private static final String MISSING_API_ID_ERROR_XML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n" +
+            "<error code=\"api_id_not_set\">app_id was not provided in the request</error>";
+
 }
