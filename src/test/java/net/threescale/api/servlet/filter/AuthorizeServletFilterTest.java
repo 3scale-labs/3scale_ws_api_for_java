@@ -87,6 +87,20 @@ public class AuthorizeServletFilterTest extends CommonBase {
     }
 
     @Test
+    public void testValidatesWithCorrectAppIdPassesOnToNextServletInChain() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
+
+        tester.start();
+
+        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?app_id=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals("Test Servlet Called", this.response.getContent());
+    }
+
+    @Test
     public void testLimitsExceededWithCorrectAppIdGives409() throws Exception {
 
         setProviderKey(PROVIDER_KEY);
