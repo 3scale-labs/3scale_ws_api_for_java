@@ -1,6 +1,5 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.HttpConnectionFactory;
 import net.threescale.api.LogFactory;
 
 import java.io.*;
