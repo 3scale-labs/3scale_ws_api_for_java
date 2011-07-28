@@ -1,6 +1,5 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.HttpConnectionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

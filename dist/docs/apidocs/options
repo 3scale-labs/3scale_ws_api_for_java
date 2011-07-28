@@ -1,0 +1,23 @@
+-classpath
+'/Users/geoffd/projects/ThreeScale/threescale_api/target/classes:/Users/geoffd/.m2/repository/org/jboss/logging/jboss-logging-spi/2.0.5.GA/jboss-logging-spi-2.0.5.GA.jar:/Users/geoffd/.m2/repository/org/jboss/cache/jbosscache-core/3.2.5.GA/jbosscache-core-3.2.5.GA.jar:/Users/geoffd/.m2/repository/org/mortbay/jetty/jetty/6.1.26/jetty-6.1.26.jar:/Users/geoffd/.m2/repository/org/jboss/jboss-common-core/2.2.14.GA/jboss-common-core-2.2.14.GA.jar:/Users/geoffd/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:/Users/geoffd/.m2/repository/jgroups/jgroups/2.6.13.GA/jgroups-2.6.13.GA.jar:/Users/geoffd/.m2/repository/org/mortbay/jetty/jetty-servlet-tester/6.1.26/jetty-servlet-tester-6.1.26.jar:/Users/geoffd/.m2/repository/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar:/Users/geoffd/.m2/repository/org/mortbay/jetty/jetty-util/6.1.26/jetty-util-6.1.26.jar:/Users/geoffd/.m2/repository/org/mortbay/jetty/servlet-api/2.5-20081211/servlet-api-2.5-20081211.jar:/Users/geoffd/.m2/repository/org/jboss/javaee/jboss-transaction-api/1.0.1.GA/jboss-transaction-api-1.0.1.GA.jar'
+-encoding
+'MacRoman'
+-protected
+-sourcepath
+'/Users/geoffd/projects/ThreeScale/threescale_api/src/main/java'
+-bottom
+'Copyright &#169; 2011. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/geoffd/projects/ThreeScale/threescale_api/dist/docs/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'3scale Java API 2.0.3.b1 API'
+-linkoffline
+'http://download.oracle.com/javase/6/docs/api' '/Users/geoffd/projects/ThreeScale/threescale_api/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'3scale Java API 2.0.3.b1 API'
