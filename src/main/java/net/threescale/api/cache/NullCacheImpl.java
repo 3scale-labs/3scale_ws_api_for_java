@@ -4,6 +4,7 @@ import net.threescale.api.LogFactory;
 import net.threescale.api.v2.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -30,13 +31,15 @@ public class NullCacheImpl implements ApiCache {
      * Always returns Null so the data is loaded from the server
      *
      * @param userKey
-     * @return null
+     * @param app_key
+     *@param referrer
+     * @param usage @return null
      */
-    public AuthorizeResponse getAuthorizeFor(String userKey) {
+    public AuthorizeResponse getAuthorizeFor(String userKey, String app_key, String referrer, HashMap<String, String> usage) {
         return null;
     }
 
-    public void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse) {
+    public void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, HashMap<String, String> usage) {
         // Does nothing
     }
 

@@ -4,6 +4,7 @@ import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.ApiTransaction;
 import net.threescale.api.v2.AuthorizeResponse;
 
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -14,17 +15,23 @@ public interface ApiCache {
 
     /**
      * Get authorize for a user key.
-     * @param userKey
+     * @param app_id
+     * @param app_key
+     * @param referrer
+     * @param usage
      * @return
      */
-    AuthorizeResponse getAuthorizeFor(String userKey);
+    AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, HashMap<String, String> usage);
 
     /**
      * Add authorized response to the cache.
      * @param app_id App Id
      * @param authorizedResponse Response data to add.
+     * @param app_key
+     * @param referrer
+     * @param usage
      */
-    void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse);
+    void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, HashMap<String, String> usage);
 
     /**
      * Close the cache.

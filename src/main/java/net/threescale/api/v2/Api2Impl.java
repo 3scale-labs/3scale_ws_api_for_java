@@ -63,7 +63,7 @@ public class Api2Impl implements Api2 {
      */
     public AuthorizeResponse authorize(String app_id, String app_key, String referrer, HashMap<String, String> usage_metrics) throws ApiException {
 
-        AuthorizeResponse cached_response = cache.getAuthorizeFor(app_id);
+        AuthorizeResponse cached_response = cache.getAuthorizeFor(app_id, app_key, referrer, usage_metrics);
         if (cached_response == null) {
             String url = formatGetUrl(app_id, app_key, referrer, usage_metrics);
             log.info("Sending GET to sever with url: " + url);
@@ -74,7 +74,7 @@ public class Api2Impl implements Api2 {
 
             if (response.getResponseCode() == 200 || response.getResponseCode() == 409) {
                 AuthorizeResponse authorizedResponse = new AuthorizeResponse(response.getResponseText());
-                cache.addAuthorizedResponse(app_id, authorizedResponse);
+                cache.addAuthorizedResponse(app_id, authorizedResponse, app_key, referrer, usage_metrics);
                 return authorizedResponse;
             } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
                 throw new ApiException(response.getResponseText());

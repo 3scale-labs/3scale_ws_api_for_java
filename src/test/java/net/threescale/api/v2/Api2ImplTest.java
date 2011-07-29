@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 
-public class ApiTest2 extends CommonBase {
+public class Api2ImplTest extends CommonBase {
 
 
     private Api2 server;
@@ -92,11 +92,11 @@ public class ApiTest2 extends CommonBase {
                 "?app_id=" + APP_ID +
                 "&provider_key=" + PROVIDER_KEY +
                 "&app_key=" + APP_KEY +
-                "&referrer=" + REFERRER_IP))
+                "&referrer=" + REFERRER))
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, REFERRER_IP);
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, REFERRER);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());

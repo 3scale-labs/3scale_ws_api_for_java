@@ -11,7 +11,7 @@ import java.util.HashMap;
 public interface Api2 {
 
     /**
-      * Fetch the current statistics for an application.
+      * Authorize access and fetch the current statistics for an application.
       *
       * @param app_id   Application Id give by user
       * @param app_key  Optional Application Key (or null)
@@ -22,7 +22,7 @@ public interface Api2 {
      AuthorizeResponse authorize(String app_id, String app_key, String referrer) throws ApiException;
 
     /**
-      * Fetch the current statistics for an application.
+      * Authorize access and fetch the current statistics for an application for specific metrics
       *
       * @param app_id   Application Id give by user
       * @param app_key  Optional Application Key (or null)

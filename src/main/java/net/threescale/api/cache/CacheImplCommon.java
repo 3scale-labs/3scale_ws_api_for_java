@@ -50,8 +50,9 @@ public abstract class CacheImplCommon implements ApiCache {
         addEvictionPolicies(data_cache);
     }
 
-    public AuthorizeResponse getAuthorizeFor(String app_id) {
-        Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_id);
+    public AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, HashMap<String, String> usage) {
+        Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, usage);
+
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
 
@@ -81,8 +82,8 @@ public abstract class CacheImplCommon implements ApiCache {
         return (Long) data_cache.get(reportFqn, EXPIRATION_KEY);
     }
 
-    public void addAuthorizedResponse(String app_key, AuthorizeResponse authorizedResponse) {
-        Fqn<String> authorizeFqn = Fqn.fromString(authorize_prefix + "/" + app_key);
+    public void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, HashMap<String, String> usage) {
+        Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, usage);
         Node root = data_cache.getRoot();
         Node authorizeNode = data_cache.getNode(authorizeFqn);
         if (authorizeNode == null) {
@@ -136,6 +137,33 @@ public abstract class CacheImplCommon implements ApiCache {
         if (nextExpirationTime >= currentTime) {
             nextExpirationTime += reportExpirationTimeInMillis;
         }
+    }
+
+    private Fqn<String> authorizeKeyFrom(String app_id, String app_key, String referrer, HashMap<String, String> usage) {
+        String usage_as_string = "";
+
+        app_key = valueOrNone(app_key);
+        referrer = valueOrNone(referrer);
+
+        if (usage == null) {
+            usage_as_string = "none";
+        } else {
+            StringBuffer sb = new StringBuffer();
+            Set<String> keys = usage.keySet();
+            for (String key : keys) {
+                sb.append("&" + key);
+            }
+            usage_as_string = sb.toString();
+        }
+
+        return Fqn.fromString(authorize_prefix + "/" + app_id + "/" + app_key + "/" + referrer + "/" + usage_as_string);
+    }
+
+    private String valueOrNone(String app_key) {
+        if (app_key == null) {
+            app_key = "none";
+        }
+        return app_key;
     }
 
 

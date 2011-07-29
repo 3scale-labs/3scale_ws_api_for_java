@@ -40,13 +40,13 @@ public class CacheTest extends CommonBase {
                 "&app_key=" + APP_KEY))
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
-        when(cache.getAuthorizeFor(APP_ID))
+        when(cache.getAuthorizeFor(APP_ID, APP_KEY, null, null))
                 .thenReturn(null);
 
         AuthorizeResponse authorizeResponse = server.authorize(APP_ID, APP_KEY, null);
 
-        verify(cache).getAuthorizeFor(APP_ID);
-        verify(cache).addAuthorizedResponse(APP_ID, authorizeResponse);
+        verify(cache).getAuthorizeFor(APP_ID, APP_KEY, null, null);
+        verify(cache).addAuthorizedResponse(APP_ID, authorizeResponse, APP_KEY, null, null);
     }
 
     @Test
