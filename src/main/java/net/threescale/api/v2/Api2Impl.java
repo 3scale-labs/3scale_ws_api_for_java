@@ -5,6 +5,8 @@ import net.threescale.api.cache.ApiCache;
 import net.threescale.api.cache.NullCacheImpl;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -63,7 +65,7 @@ public class Api2Impl implements Api2 {
 
         AuthorizeResponse cached_response = cache.getAuthorizeFor(app_id);
         if (cached_response == null) {
-            String url = formatGetUrl(app_id, app_key, referrer);
+            String url = formatGetUrl(app_id, app_key, referrer, usage_metrics);
             log.info("Sending GET to sever with url: " + url);
 
             ApiHttpResponse response = sender.sendGetToServer(url);
@@ -103,7 +105,7 @@ public class Api2Impl implements Api2 {
 
 // Private Methods
 
-    private String formatGetUrl(String app_id, String app_key, String referrer) {
+    private String formatGetUrl(String app_id, String app_key, String referrer, HashMap<String, String> usage) {
         StringBuffer url = new StringBuffer();
 
         url.append(host_url)
@@ -120,6 +122,14 @@ public class Api2Impl implements Api2 {
         if (referrer != null) {
             url.append("&referrer=")
                     .append(referrer);
+        }
+
+        if (usage != null) {
+            Set<Map.Entry<String,String>> entries = usage.entrySet();
+            for (Map.Entry<String, String> entry : entries) {
+                url.append("&usage[" + entry.getKey() + "]=" + entry.getValue());
+            }
+
         }
 
         return url.toString();

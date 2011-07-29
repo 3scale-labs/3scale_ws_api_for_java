@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
@@ -100,6 +101,24 @@ public class ApiTest2 extends CommonBase {
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
     }
+
+    @Test
+     public void test_metrics_are_sent_for_authorization() throws ApiException {
+
+        when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
+                 "?app_id=" + APP_ID +
+                 "&provider_key=" + PROVIDER_KEY +
+                 "&app_key=" + APP_KEY +
+                 "&usage[transfer]=1024&usage[hits]=1"))
+            .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
+
+        HashMap<String, String> usage = new HashMap<String, String>();
+        usage.put("hits", "1");
+        usage.put("transfer", "1024");
+        
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, null, usage);
+        assertNotNull(response);
+     }
 
 
     @Test
