@@ -4,6 +4,7 @@ import net.threescale.api.LogFactory;
 import net.threescale.api.cache.ApiCache;
 import net.threescale.api.cache.NullCacheImpl;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
@@ -58,7 +59,7 @@ public class Api2Impl implements Api2 {
      * @return AuthorizeResponse containing the current usage metrics.
      * @throws ApiException if there is an error connection to the server
      */
-    public AuthorizeResponse authorize(String app_id, String app_key, String referrer) throws ApiException {
+    public AuthorizeResponse authorize(String app_id, String app_key, String referrer, HashMap<String, String> usage_metrics) throws ApiException {
 
         AuthorizeResponse cached_response = cache.getAuthorizeFor(app_id);
         if (cached_response == null) {
@@ -81,6 +82,12 @@ public class Api2Impl implements Api2 {
         } else {
             return cached_response;
         }
+    }
+
+
+    @Override
+    public AuthorizeResponse authorize(String app_id, String app_key, String referrer) throws ApiException {
+        return authorize(app_id, app_key, referrer, null);
     }
 
     /**

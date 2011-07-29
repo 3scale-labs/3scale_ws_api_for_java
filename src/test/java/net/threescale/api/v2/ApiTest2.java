@@ -112,7 +112,7 @@ public class ApiTest2 extends CommonBase {
 
         AuthorizeResponse response = null;
         try {
-            response = server.authorize(null, null, null);
+            response = server.authorize(APP_ID, null, null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals("application_not_found", e.getErrorCode());
@@ -131,7 +131,7 @@ public class ApiTest2 extends CommonBase {
 
         AuthorizeResponse response = null;
         try {
-            response = server.authorize(null, null, null);
+            response = server.authorize(APP_ID, null, null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals("provider_key_invalid", e.getErrorCode());
