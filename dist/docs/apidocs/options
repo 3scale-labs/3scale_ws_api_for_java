@@ -14,10 +14,10 @@
 -docencoding
 'UTF-8'
 -doctitle
-'3scale Java API 2.0.3.b1 API'
+'3scale Java API 2.0.3.b2 API'
 -linkoffline
 'http://download.oracle.com/javase/6/docs/api' '/Users/geoffd/projects/ThreeScale/threescale_api/target/javadoc-bundle-options'
 -use
 -version
 -windowtitle
-'3scale Java API 2.0.3.b1 API'
+'3scale Java API 2.0.3.b2 API'

@@ -1,6 +1,14 @@
 Release Notes
 -------------
 
+v2.0.3.b2
+---------
+
+Added extra keys to ensure the cache stores extra information
+Added metrics hash to authorize call.
+
+
+
 v2.0.3.b1
 ---------
 
