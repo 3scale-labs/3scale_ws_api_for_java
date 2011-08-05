@@ -117,6 +117,21 @@ public class AuthorizationInterceptorTest extends CommonBase {
     }
 
     @Test
+     public void testLimitsExceededWithCorrectAppIdSetsTheCorrectContextType() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
+
+         tester.start();
+
+         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         this.request.setURI("/?app_id=23454321");
+
+         this.response.parse(tester.getResponses(request.generate()));
+
+         assertEquals("text/xml", this.response.getContentType());
+     }
+
+    @Test
     public void testLimitsExceededWithCorrectAppIdGivesCorrectResponse() throws Exception {
 
         setProviderKey(PROVIDER_KEY);

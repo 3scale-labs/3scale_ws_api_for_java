@@ -3,13 +3,13 @@ package net.threescale.api.servlet.filter;
 import net.threescale.api.v2.ApiResponse;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.HttpRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
 
 /**
  * The filter sends back error responses to the user
@@ -18,23 +18,28 @@ public class FilterRespondsToUser implements FilterResponseSelector {
 
     @Override
     public void sendFailedResponse(HttpServletRequest httpRequest, HttpServletResponse httpResponse, int httpStatus, ApiResponse response) throws IOException, ServletException {
-        setStatusAndResponse(httpResponse, httpStatus, response.getRawMessage());
+        httpResponse.setStatus(httpStatus);
+        httpResponse.setContentType("text/xml");
+        PrintWriter writer = httpResponse.getWriter();
+        writer.append(response.getRawMessage());
+        writer.flush();
     }
 
     @Override
     public ServerResponse sendFailedResponse(HttpServletRequest httpRequest, int status, ApiResponse response) {
 
         Headers<Object> headers = new Headers<Object>();
-        ServerResponse serverResponse = new ServerResponse(response.getRawMessage(), status, headers);
-        return serverResponse;
+
+        Enumeration headerNames = httpRequest.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = (String) headerNames.nextElement();
+            headers.add(headerName, httpRequest.getHeader(headerName));
+        }
+
+        headers.add("content-type", "text/xml");
+
+        return new ServerResponse(response.getRawMessage(), status, headers);
     }
 
 
-    private void setStatusAndResponse(HttpServletResponse response, int code, String rawMessage)
-      throws IOException {
-        response.setStatus(code);
-        PrintWriter writer = response.getWriter();
-        writer.append(rawMessage);
-        writer.flush();
-    }
 }
