@@ -1,6 +1,15 @@
 Release Notes
 -------------
 
+v2.0.3.b3
+---------
+
+Added RESTEasy AuthorisationInterceptor.
+Added init-param of ts_url to allow overriding of 3scale server address.
+Added RESTEasy AuthorisationInterceptor.
+
+The parameters are the same as the Authorization Servlet, but use context-param instead of init-param.
+
 v2.0.3.b2
 ---------
 

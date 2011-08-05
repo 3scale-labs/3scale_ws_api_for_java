@@ -6,8 +6,7 @@ V2.0.3 Introduced a new Servlet Filter, AuthorizeServletFilter.  This performs t
 authorize call to the server and if successful the next AuthorizeResponse is placed in the session
  data and the next filter in the chain is called.
 
- To configure the filter use:
-
+See the @see AuthorizeServletFilter comments for more details.
  
 
 To configure ServletFilter
