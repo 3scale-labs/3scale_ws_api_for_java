@@ -100,11 +100,9 @@ public class AuthorizeServletFilter implements Filter {
     private static Class factoryClass = net.threescale.api.ApiFactory.class;
     private FilterResponseSelector filterResponse;
     private String ts_redirect_url = null;
-    private FilterConfig filterConfig;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        this.filterConfig = filterConfig;
         this.context = filterConfig.getServletContext();
         
         processInitParams();
@@ -125,7 +123,7 @@ public class AuthorizeServletFilter implements Filter {
         if (ts_redirect_url == null) {
             filterResponse = new FilterRespondsToUser();
         } else {
-            filterResponse = new FilterRespondsWithRedirect(filterConfig, ts_redirect_url);
+            filterResponse = new FilterRespondsWithRedirect(context, ts_redirect_url);
         }
     }
 

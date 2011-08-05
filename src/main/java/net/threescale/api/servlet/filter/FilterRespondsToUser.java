@@ -1,6 +1,9 @@
 package net.threescale.api.servlet.filter;
 
 import net.threescale.api.v2.ApiResponse;
+import org.jboss.resteasy.core.Headers;
+import org.jboss.resteasy.core.ServerResponse;
+import org.jboss.resteasy.spi.HttpRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +21,14 @@ public class FilterRespondsToUser implements FilterResponseSelector {
         setStatusAndResponse(httpResponse, httpStatus, response.getRawMessage());
     }
 
+    @Override
+    public ServerResponse sendFailedResponse(HttpServletRequest httpRequest, int status, ApiResponse response) {
+
+        Headers<Object> headers = new Headers<Object>();
+        ServerResponse serverResponse = new ServerResponse(response.getRawMessage(), status, headers);
+        return serverResponse;
+    }
+
 
     private void setStatusAndResponse(HttpServletResponse response, int code, String rawMessage)
       throws IOException {
@@ -26,6 +37,4 @@ public class FilterRespondsToUser implements FilterResponseSelector {
         writer.append(rawMessage);
         writer.flush();
     }
-
-
 }

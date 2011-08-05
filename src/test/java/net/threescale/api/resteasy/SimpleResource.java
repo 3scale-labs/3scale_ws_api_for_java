@@ -12,7 +12,7 @@ public class SimpleResource {
     @Produces("text/plain")
 
     public String getBasic() throws Exception {
-        return "basic";
+        return "Test Servlet Called";
 
     }
 }

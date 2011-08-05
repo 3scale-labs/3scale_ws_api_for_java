@@ -1,6 +1,7 @@
 package net.threescale.api.resteasy;
 
 import net.threescale.api.CommonBase;
+import net.threescale.api.servlet.filter.AuthorizeServletFilter;
 import net.threescale.api.v2.Api2;
 import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.AuthorizeResponse;
@@ -47,6 +48,8 @@ public class AuthorizationInterceptorTest extends CommonBase {
         tester.getContext().getInitParams().put("resteasy.providers", "net.threescale.api.resteasy.AuthorizationInterceptor");
         tester.createSocketConnector(true);
 
+        AuthorizationInterceptor.setFactoryClass(APITestFactory.class);
+        
         this.request = new HttpTester();
         this.response = new HttpTester();
         this.request.setMethod("GET");
