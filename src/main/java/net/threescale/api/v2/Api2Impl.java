@@ -103,6 +103,12 @@ public class Api2Impl implements Api2 {
         cache.report(transactions);
     }
 
+    @Override
+    public String getServerUrl() {
+        return host_url;
+    }
+
+
 // Private Methods
 
     private String formatGetUrl(String app_id, String app_key, String referrer, HashMap<String, String> usage) {

@@ -29,14 +29,15 @@ import java.lang.reflect.Method;
 @Provider
 @ServerInterceptor
 @Precedence("SECURITY")
-public class AuthorizationInterceptor  implements PreProcessInterceptor{
+public class AuthorizationInterceptor implements PreProcessInterceptor {
 
-   @Context private ServletContext context;
+    @Context
+    private ServletContext context;
 
     private String ts_app_id = "app_id";
     private String ts_app_key = "app_key";
     private String ts_referrer = "referrer";
-    private String ts_url = "http://su1.3scale.net";
+    private String ts_url = null;
     private String ts_provider_key = null;
     private String ts_authorize_response = "authorize_response";
     private String ts_redirect_url = null;
@@ -47,31 +48,33 @@ public class AuthorizationInterceptor  implements PreProcessInterceptor{
 
     private static Class factoryClass = net.threescale.api.ApiFactory.class;
 
-    @Context HttpServletRequest servletRequest;
+    @Context
+    HttpServletRequest servletRequest;
 
-   @Override
+    @Override
     public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
 
-       try {
-           Method m = factoryClass.getMethod("createV2Api", new Class[]{String.class, String.class});
-           Object factory = factoryClass.newInstance();
-           server = (Api2) m.invoke(factory, ts_url, ts_provider_key);
-           context.log("Create server object with url: " + ts_url + " and provider_key: " + ts_provider_key);
-       }
-       catch (Exception ex) {
-           context.log("Could not create API object for 3scale interface", ex);
-       }
+        try {
+            processInitParams();
+        } catch (ServletException e) {
+            throw new WebApplicationException(e);
+        }
+        
+        try {
+            Method m = factoryClass.getMethod("createV2Api", new Class[]{String.class, String.class});
+            Object factory = factoryClass.newInstance();
+            server = (Api2) m.invoke(factory, ts_url, ts_provider_key);
+            context.log("Create server object with url: " + ts_url + " and provider_key: " + ts_provider_key);
+        }
+        catch (Exception ex) {
+            context.log("Could not create API object for 3scale interface", ex);
+        }
 
-       try {
-           processInitParams();
-       } catch (ServletException e) {
-           throw new WebApplicationException(e);
-       }
-       setFilterResponse();
-       
-       UriInfo uriInfo = httpRequest.getUri();
-       MultivaluedMap<String, String> parameters = uriInfo.getQueryParameters();
-       String api_id = parameters.getFirst(ts_app_id);
+        setFilterResponse();
+
+        UriInfo uriInfo = httpRequest.getUri();
+        MultivaluedMap<String, String> parameters = uriInfo.getQueryParameters();
+        String api_id = parameters.getFirst(ts_app_id);
         String api_key = parameters.getFirst(ts_app_key);
         String referrer = parameters.getFirst(ts_referrer);
         HttpSession session = servletRequest.getSession();
@@ -123,6 +126,7 @@ public class AuthorizationInterceptor  implements PreProcessInterceptor{
         }
 
         ts_redirect_url = Helper.processInitParam(context, "ts_redirect_url", null);
+        ts_url = Helper.processInitParam(context, "ts_url", "http://su1.3scale.net");
         ts_app_id = Helper.processInitParam(context, "ts_app_id_param_name", "app_id");
         ts_app_key = Helper.processInitParam(context, "ts_app_key_param_name", "app_key");
         ts_referrer = Helper.processInitParam(context, "ts_referrer_param_name", "referrer");
@@ -130,4 +134,4 @@ public class AuthorizationInterceptor  implements PreProcessInterceptor{
     }
 
 
- }
+}

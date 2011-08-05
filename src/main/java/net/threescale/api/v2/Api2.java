@@ -40,4 +40,10 @@ public interface Api2 {
      * @throws ApiException if there is an error connection to the server
      */
     void report(ApiTransaction[] transactions) throws ApiException;
+
+    /**
+     * `get the url of the 3scale server
+     * @return  The current server url
+     */
+    String getServerUrl();
 }
