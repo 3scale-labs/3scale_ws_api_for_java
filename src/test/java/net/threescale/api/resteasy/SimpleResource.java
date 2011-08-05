@@ -8,7 +8,7 @@ import javax.ws.rs.Produces;
 public class SimpleResource {
     
     @GET
-    @Path("basic")
+    @Path("/")
     @Produces("text/plain")
 
     public String getBasic() throws Exception {

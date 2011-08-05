@@ -8,18 +8,30 @@ import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
+import java.util.Enumeration;
 
 @Provider
 @ServerInterceptor
 @Precedence("SECURITY")
 public class AuthorizationInterceptor  implements PreProcessInterceptor{
-    @Override
+
+   @Context ServletContext config; 
+
+   @Override
     public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
-        ServerResponse response = new ServerResponse("", HttpServletResponse.SC_NOT_FOUND, null);
+
+       UriInfo uriInfo = httpRequest.getUri();
+       String provider_key = config.getInitParameter("ts_provider_key");
+       ServerResponse response = new ServerResponse("", HttpServletResponse.SC_NOT_FOUND, null);
         return null;
     }
 }
