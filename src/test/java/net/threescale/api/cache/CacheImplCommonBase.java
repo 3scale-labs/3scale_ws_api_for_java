@@ -77,7 +77,7 @@ public abstract class CacheImplCommonBase extends CommonBase {
     }
 
     @Test
-    public void testGetAuthorizeForCachesADifferentMetricReturnsOriginalResponseOnSecondAccess() throws Exception {
+    public void testGetAuthorizeForCachesADifferentMetricReturnsDifferentResponseOnSecondAccess() throws Exception {
         HashMap<String, String> metrics1 = new HashMap<String, String>();
         metrics1.put("hits", "1");
 

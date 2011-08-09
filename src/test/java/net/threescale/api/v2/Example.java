@@ -22,20 +22,42 @@ public class Example {
 
     public static void main(String args[]) {
 
-        new Example().version2_happy_path_example();
-        new Example().version2_invalid_app_id();
-        new Example().version2_invalid_provider_key_on_authorize();
+        new Example().happy_path_example_with_no_cache();
+        new Example().happy_path_example_using_local_cache();
+        new Example().happy_path_example_using_remote_or_custom_cache();
+
+        new Example().example_with_invalid_app_id();
+        new Example().example_with_invalid_provider_key_on_authorize();
     }
+
+    private void happy_path_example_with_no_cache() {
+        Api2 server = ApiFactory.createV2Api(app_url, provider_private_key);
+        executeHappyPath(server);
+    }
+
+    private void happy_path_example_using_local_cache() {
+        Api2 server = ApiFactory.createV2ApiWithLocalCache(app_url, provider_private_key);
+        executeHappyPath(server);
+    }
+
+
+    private void happy_path_example_using_remote_or_custom_cache() {
+
+        /* Remote caches are usually quite specific to the application. Please refer to the JBoss Cache
+           documentation on how to setup a remote cache and the options available.
+        */
+        Api2 server = ApiFactory.createV2ApiWithRemoteCache(app_url, provider_private_key, "etc/config-samples/buddy-replication.xml");
+        executeHappyPath(server);
+    }
+
 
     /**
      * Executes
      */
-    private void version2_happy_path_example() {
-        Api2 server = ApiFactory.createV2Api(app_url, provider_private_key);
-
+    private void executeHappyPath(Api2 server) {
         try {
             //
-            AuthorizeResponse response = server.authorize(null, null, null);
+            AuthorizeResponse response = server.authorize(app_id, null, null);
             System.out.println("response: " + response.toString());
 
             // Check that caller has available resources
@@ -69,7 +91,7 @@ public class Example {
         }
     }
 
-    private void version2_invalid_app_id() {
+    private void example_with_invalid_app_id() {
         Api2 server = ApiFactory.createV2Api(app_url,  provider_private_key);
 
         try {
@@ -81,7 +103,7 @@ public class Example {
         }
     }
 
-    private void version2_invalid_provider_key_on_authorize() {
+    private void example_with_invalid_provider_key_on_authorize() {
         Api2 server = ApiFactory.createV2Api(app_url, invalid_provider_private_key);
 
         try {
@@ -92,6 +114,9 @@ public class Example {
                     " Message was : " + e.getErrorMessage());
         }
     }
+
+
+
 
     private String nowTimeStamp(Date timestamp) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
