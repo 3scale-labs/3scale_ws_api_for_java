@@ -33,8 +33,7 @@ public class AuthorizationInterceptorTest extends AuthorizationCommon {
         MockitoAnnotations.initMocks(this);
 
         tester = new ServletTester();
-        tester.setContextPath("/");
-        tester.addServlet(org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.class, "/");
+        holder = tester.addServlet(org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.class, "/");
         tester.getContext().getInitParams().put("resteasy.resources", "net.threescale.api.resteasy.SimpleResource");
         tester.getContext().getInitParams().put("resteasy.providers", "net.threescale.api.resteasy.AuthorizationInterceptor");
         tester.createSocketConnector(true);
@@ -48,6 +47,12 @@ public class AuthorizationInterceptorTest extends AuthorizationCommon {
         this.request.setVersion("HTTP/1.0");
     }
 
+    protected void setProviderKey(String providerKey) {
+        setInitParam("ts_provider_key", providerKey);
+     }
+    protected void setInitParam(String name, String value) {
+        tester.getContext().getInitParams().put(name, value);
+     }
 
     public static class APITestFactory {
 

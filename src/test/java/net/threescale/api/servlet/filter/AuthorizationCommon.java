@@ -6,8 +6,12 @@ import net.threescale.api.v2.Api2;
 import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.AuthorizeResponse;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mortbay.jetty.servlet.FilterHolder;
+import org.mortbay.jetty.servlet.Holder;
 import org.mortbay.jetty.testing.HttpTester;
 import org.mortbay.jetty.testing.ServletTester;
 
@@ -20,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 
-public class AuthorizationCommon extends CommonBase {
+public abstract class AuthorizationCommon extends CommonBase {
     protected static ServletTester tester;
     protected HttpTester request;
     protected HttpTester response;
@@ -28,6 +32,7 @@ public class AuthorizationCommon extends CommonBase {
 
     @Mock
     protected static Api2 tsServer;
+    protected Holder holder;
 
     @Test
     public void testValidatesWithCorrectAppId() throws Exception {
@@ -379,9 +384,9 @@ public class AuthorizationCommon extends CommonBase {
         tester.stop();
     }
 
-    protected void setProviderKey(String providerKey) {
-        tester.getContext().getInitParams().put("ts_provider_key", providerKey);
-     }
+    protected abstract void setProviderKey(String providerKey);
+    protected abstract void setInitParam(String name, String value);
+
 
     public class LocalHtpSessionAttributeListener implements HttpSessionAttributeListener {
 

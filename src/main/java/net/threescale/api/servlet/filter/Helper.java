@@ -1,5 +1,6 @@
 package net.threescale.api.servlet.filter;
 
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 
 /**
@@ -14,6 +15,16 @@ public class Helper {
     public static String processInitParam(ServletContext context,  String name, String def) {
 
         String tmp = context.getInitParameter(name);
+        if (tmp == null) {
+            tmp = def;
+        }
+
+        return tmp;
+    }
+
+    public static String processInitParam(FilterConfig filterConfig,  String name, String def) {
+
+        String tmp = filterConfig.getInitParameter(name);
         if (tmp == null) {
             tmp = def;
         }

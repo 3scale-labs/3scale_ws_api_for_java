@@ -290,6 +290,7 @@
         <root url="jar://$PROJECT_DIR$/lib/jgroups.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jboss-transaction-api.jar!/" />
         <root url="file://$PROJECT_DIR$/lib" />
+        <root url="jar://$PROJECT_DIR$/../SampleWebApp/web/lib/threescale-api-2.0.3.b3.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

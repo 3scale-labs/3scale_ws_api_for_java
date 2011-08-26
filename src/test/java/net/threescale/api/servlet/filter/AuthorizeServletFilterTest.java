@@ -7,6 +7,7 @@ import net.threescale.api.v2.AuthorizeResponse;
 import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.testing.HttpTester;
 import org.mortbay.jetty.testing.ServletTester;
 
@@ -18,8 +19,6 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class AuthorizeServletFilterTest extends AuthorizationCommon {
-
-
 
 
     /**
@@ -36,9 +35,9 @@ public class AuthorizeServletFilterTest extends AuthorizationCommon {
         tester.setContextPath("/");
         tester.addServlet(AuthorizeTestServlet.class, "/");
 
-        AuthorizeServletFilter.setFactoryClass(APITestFactory.class);
+        AuthorizeServletFilter.setFactoryClass(AuthorizeServletFilterTest.APITestFactory.class);
 
-        tester.addFilter(AuthorizeServletFilter.class, "/", 1);
+        holder = tester.addFilter(AuthorizeServletFilter.class, "/", 1);
         tester.createSocketConnector(true);
 
         this.request = new HttpTester();
@@ -47,11 +46,8 @@ public class AuthorizeServletFilterTest extends AuthorizationCommon {
         this.request.setHeader("Host", "tester");
         this.request.setVersion("HTTP/1.0");
     }
-
-
-
-
-     /**
+ 
+    /**
      * Stops the Jetty container.
      */
     @After
@@ -59,6 +55,13 @@ public class AuthorizeServletFilterTest extends AuthorizationCommon {
         tester.stop();
     }
 
+    protected void setProviderKey(String providerKey) {
+        setInitParam("ts_provider_key", providerKey);
+     }
+
+    protected void setInitParam(String name, String value) {
+        holder.setInitParameter(name, value);
+     }
 
     public static class APITestFactory {
 
