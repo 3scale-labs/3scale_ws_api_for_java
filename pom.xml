@@ -22,7 +22,7 @@
 	</repositories>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.threescale</groupId>
-	<artifactId>java-api</artifactId>
+	<artifactId>threescale-api</artifactId>
 	<name>3scale Java API</name>
 	<url>http://http://www.3scale.net/</url>
 	<version>2.0.3.b4</version>

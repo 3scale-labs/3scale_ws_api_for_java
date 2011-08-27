@@ -9,6 +9,7 @@ import net.threescale.api.v2.AuthorizeResponse;
 import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.testing.HttpTester;
 import org.mortbay.jetty.testing.ServletTester;
 
@@ -51,7 +52,7 @@ public class AuthorizationInterceptorTest extends AuthorizationCommon {
         setInitParam("ts_provider_key", providerKey);
      }
     protected void setInitParam(String name, String value) {
-        tester.getContext().getInitParams().put(name, value);
+        holder.setInitParameter(name, value);
      }
 
     public static class APITestFactory {

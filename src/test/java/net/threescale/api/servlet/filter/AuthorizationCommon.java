@@ -218,7 +218,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
     public void testSettingACustomAppIdParmValidatesWithCorrectAppId() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_app_id_param_name", "my_app_id");
+        holder.setInitParameter("ts_app_id_param_name", "my_app_id");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
         setProviderKey(PROVIDER_KEY);
 
@@ -235,7 +235,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
     public void testSettingACustomAppKeyParmValidatesWithCorrectAppId() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_app_key_param_name", "my_app_key");
+        holder.setInitParameter("ts_app_key_param_name", "my_app_key");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
         setProviderKey(PROVIDER_KEY);
 
@@ -252,7 +252,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
     public void testSettingACustomReferrerParmValidatesWithCorrectAppId() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_referrer_param_name", "my_referrer");
+        holder.setInitParameter("ts_referrer_param_name", "my_referrer");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
         setProviderKey(PROVIDER_KEY);
 
@@ -269,7 +269,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
     public void testSettingCustomAuthResponseAttributeName() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_authorize_response_attr_name", "my_response");
+        holder.setInitParameter("ts_authorize_response_attr_name", "my_response");
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
         setProviderKey(PROVIDER_KEY);
 
@@ -285,7 +285,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
     public void testSettingRedirectUrlRedirectsToCorrectURL() throws Exception {
 
-        tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+        holder.setInitParameter("ts_redirect_url", "http://example.org/api_error.jsp");
         setProviderKey(PROVIDER_KEY);
 
         tester.start();
@@ -300,7 +300,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
      public void testSettingRedirectUrlSetsTheCorrectStatus() throws Exception {
 
-         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         holder.setInitParameter("ts_redirect_url", "http://example.org/api_error.jsp");
          setProviderKey(PROVIDER_KEY);
 
          tester.start();
@@ -315,7 +315,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
      public void testSettingRedirectUrlPlacesAuthResponseInSession() throws Exception {
 
-         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         holder.setInitParameter("ts_redirect_url", "http://example.org/api_error.jsp");
          tester.getContext().getSessionHandler().addEventListener(sessionListener);
          setProviderKey(PROVIDER_KEY);
 
@@ -331,7 +331,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
      public void testSettingRedirectUrlPlacesCorrectTypeOfAuthResponseInSession() throws Exception {
 
-         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         holder.setInitParameter("ts_redirect_url", "http://example.org/api_error.jsp");
          tester.getContext().getSessionHandler().addEventListener(sessionListener);
          setProviderKey(PROVIDER_KEY);
 
@@ -347,7 +347,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
      public void testSettingRedirectUrlPlacesErrorResponseInSession() throws Exception {
 
-         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         holder.setInitParameter("ts_redirect_url", "http://example.org/api_error.jsp");
          tester.getContext().getSessionHandler().addEventListener(sessionListener);
          setProviderKey(PROVIDER_KEY);
 
@@ -363,7 +363,7 @@ public abstract class AuthorizationCommon extends CommonBase {
     @Test
      public void testSettingRedirectUrlPlacesErrorResponseTypeInSession() throws Exception {
 
-         tester.getContext().getInitParams().put("ts_redirect_url", "http://example.org/api_error.jsp");
+         holder.setInitParameter("ts_redirect_url", "http://example.org/api_error.jsp");
          tester.getContext().getSessionHandler().addEventListener(sessionListener);
          setProviderKey(PROVIDER_KEY);
 

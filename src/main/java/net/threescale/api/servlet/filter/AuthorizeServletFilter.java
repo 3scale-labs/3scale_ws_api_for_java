@@ -94,7 +94,8 @@ public class AuthorizeServletFilter implements Filter {
     private String ts_provider_key = null;
     private String ts_authorize_response = "authorize_response";
 
-    private FilterConfig filterConfig;
+    private FilterConfig config;
+    private ServletContext context;
     private Api2 server;
 
     private static Class factoryClass = net.threescale.api.ApiFactory.class;
@@ -103,7 +104,8 @@ public class AuthorizeServletFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        this.filterConfig = filterConfig;
+        this.config = filterConfig;
+        this.context = filterConfig.getServletContext();
         
         processInitParams();
         setFilterResponse();
@@ -123,7 +125,7 @@ public class AuthorizeServletFilter implements Filter {
         if (ts_redirect_url == null) {
             filterResponse = new FilterRespondsToUser();
         } else {
-            filterResponse = new FilterRespondsWithRedirect(filterConfig.getServletContext(), ts_redirect_url);
+            filterResponse = new FilterRespondsWithRedirect(context, ts_redirect_url, ts_authorize_response);
         }
     }
 
@@ -145,11 +147,11 @@ public class AuthorizeServletFilter implements Filter {
             try {
                 AuthorizeResponse response = server.authorize(api_id, api_key, referrer);
                 if (response.getAuthorized()) {
-                    filterConfig.getServletContext().log("Authorized ok for : " + api_id);
+                    context.log("Authorized ok for : " + api_id);
                     session.setAttribute(ts_authorize_response, response);
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
-                    filterConfig.getServletContext().log("Authorize failed for: " + api_id);
+                    context.log("Authorize failed for: " + api_id);
                     filterResponse.sendFailedResponse(httpRequest, httpResponse, 409, response);
 
                 }
@@ -157,7 +159,7 @@ public class AuthorizeServletFilter implements Filter {
                 filterResponse.sendFailedResponse(httpRequest, httpResponse, 404, e);
             }
         } else {
-            filterConfig.getServletContext().log("api_id missing in request");
+            context.log("api_id missing in request");
             filterResponse.sendFailedResponse(httpRequest, httpResponse, 404, new ApiException(MISSING_API_ID_ERROR_XML));
         }
 
@@ -169,16 +171,16 @@ public class AuthorizeServletFilter implements Filter {
 
     private void processInitParams() throws ServletException {
 
-        ts_provider_key = Helper.processInitParam(filterConfig, "ts_provider_key", null);
+        ts_provider_key = Helper.processInitParam(config, "ts_provider_key", null);
         if (ts_provider_key == null) {
             throw new ServletException("No provider key has been set for AuthorizeServeltFilter");
         }
 
-        ts_redirect_url = Helper.processInitParam(filterConfig.getServletContext(), "ts_redirect_url", null);
-        ts_app_id = Helper.processInitParam(filterConfig.getServletContext(), "ts_app_id_param_name", "app_id");
-        ts_app_key = Helper.processInitParam(filterConfig.getServletContext(), "ts_app_key_param_name", "app_key");
-        ts_referrer = Helper.processInitParam(filterConfig.getServletContext(), "ts_referrer_param_name", "referrer");
-        ts_authorize_response = Helper.processInitParam(filterConfig.getServletContext(), "ts_authorize_response_attr_name", "authorize_response");
+        ts_redirect_url = Helper.processInitParam(config, "ts_redirect_url", null);
+        ts_app_id = Helper.processInitParam(config, "ts_app_id_param_name", "app_id");
+        ts_app_key = Helper.processInitParam(config, "ts_app_key_param_name", "app_key");
+        ts_referrer = Helper.processInitParam(config, "ts_referrer_param_name", "referrer");
+        ts_authorize_response = Helper.processInitParam(config, "ts_authorize_response_attr_name", "authorize_response");
     }
 
 

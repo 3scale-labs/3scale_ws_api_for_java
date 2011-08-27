@@ -15,6 +15,7 @@ import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,9 @@ public class AuthorizationInterceptor implements PreProcessInterceptor {
 
     @Context
     private ServletContext context;
+
+    @Context
+    private ServletConfig config;
 
     private String ts_app_id = "app_id";
     private String ts_app_key = "app_key";
@@ -114,23 +118,23 @@ public class AuthorizationInterceptor implements PreProcessInterceptor {
         if (ts_redirect_url == null) {
             filterResponse = new FilterRespondsToUser();
         } else {
-            filterResponse = new FilterRespondsWithRedirect(context, ts_redirect_url);
+            filterResponse = new FilterRespondsWithRedirect(context, ts_redirect_url, ts_authorize_response);
         }
     }
 
     private void processInitParams() throws ServletException {
 
-        ts_provider_key = Helper.processInitParam(context, "ts_provider_key", null);
+        ts_provider_key = Helper.processInitParam(config, "ts_provider_key", null);
         if (ts_provider_key == null) {
             throw new ServletException("No provider key has been set");
         }
 
-        ts_redirect_url = Helper.processInitParam(context, "ts_redirect_url", null);
-        ts_url = Helper.processInitParam(context, "ts_url", "http://su1.3scale.net");
-        ts_app_id = Helper.processInitParam(context, "ts_app_id_param_name", "app_id");
-        ts_app_key = Helper.processInitParam(context, "ts_app_key_param_name", "app_key");
-        ts_referrer = Helper.processInitParam(context, "ts_referrer_param_name", "referrer");
-        ts_authorize_response = Helper.processInitParam(context, "ts_authorize_response_attr_name", "authorize_response");
+        ts_redirect_url = Helper.processInitParam(config, "ts_redirect_url", null);
+        ts_url = Helper.processInitParam(config, "ts_url", "http://su1.3scale.net");
+        ts_app_id = Helper.processInitParam(config, "ts_app_id_param_name", "app_id");
+        ts_app_key = Helper.processInitParam(config, "ts_app_key_param_name", "app_key");
+        ts_referrer = Helper.processInitParam(config, "ts_referrer_param_name", "referrer");
+        ts_authorize_response = Helper.processInitParam(config, "ts_authorize_response_attr_name", "authorize_response");
     }
 
 
