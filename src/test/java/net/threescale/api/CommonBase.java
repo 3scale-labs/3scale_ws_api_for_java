@@ -5,6 +5,7 @@ public class CommonBase {
     protected static final String SERVER_URL = "su1.3scale.net";
     protected static final String APP_ID = "api-id-ffff";
     protected static final String APP_KEY = "3scale-dsfsdfdsfisodfsdf491e6d941b5b522";
+    protected static final String USER_KEY = "3scale-dsdfdsfioio89123021s121222";
     protected static final String PROVIDER_KEY = "goodf621b66acb7ec8ceabed4b7aff278";
     protected static final String REFERRER = "example.org";
 

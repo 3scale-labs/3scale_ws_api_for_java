@@ -32,14 +32,15 @@ public class NullCacheImpl implements ApiCache {
      *
      * @param userKey
      * @param app_key
-     *@param referrer
+     * @param referrer
+     * @param user_key
      * @param usage @return null
      */
-    public AuthorizeResponse getAuthorizeFor(String userKey, String app_key, String referrer, HashMap<String, String> usage) {
+    public AuthorizeResponse getAuthorizeFor(String userKey, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
         return null;
     }
 
-    public void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, HashMap<String, String> usage) {
+    public void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
         // Does nothing
     }
 

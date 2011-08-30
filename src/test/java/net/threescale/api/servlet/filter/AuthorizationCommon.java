@@ -6,11 +6,8 @@ import net.threescale.api.v2.Api2;
 import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.AuthorizeResponse;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.servlet.Holder;
 import org.mortbay.jetty.testing.HttpTester;
 import org.mortbay.jetty.testing.ServletTester;
@@ -41,7 +38,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -56,7 +53,7 @@ public abstract class AuthorizationCommon extends CommonBase {
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -70,7 +67,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -84,7 +81,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -99,7 +96,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
          tester.start();
 
-         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
          this.request.setURI("/?app_id=23454321");
 
          this.response.parse(tester.getResponses(request.generate()));
@@ -114,7 +111,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -129,7 +126,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -144,7 +141,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", "3scale-3333", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", "3scale-3333", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321&app_key=3scale-3333");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -158,7 +155,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", "3scale-3333", "example.org")).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", "3scale-3333", "example.org", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321&app_key=3scale-3333&referrer=example.org");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -172,7 +169,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
+        when(tsServer.authorize("54321", null, null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
         this.request.setURI("/?app_id=54321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -186,7 +183,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
+        when(tsServer.authorize("54321", null, null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
         this.request.setURI("/?app_id=54321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -201,8 +198,8 @@ public abstract class AuthorizationCommon extends CommonBase {
         tester.start();
 
         tester.getContext().getSessionHandler().addEventListener(sessionListener);
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
 
         this.request.setURI("/?app_id=23454321");
 
@@ -225,7 +222,7 @@ public abstract class AuthorizationCommon extends CommonBase {
         tester.start();
 
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?my_app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -242,7 +239,7 @@ public abstract class AuthorizationCommon extends CommonBase {
         tester.start();
 
 
-        when(tsServer.authorize("23454321", "9876", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", "9876", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321&my_app_key=9876");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -259,7 +256,7 @@ public abstract class AuthorizationCommon extends CommonBase {
         tester.start();
 
 
-        when(tsServer.authorize("23454321", null, "example.org")).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, "example.org", null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321&my_referrer=example.org");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -275,7 +272,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -290,7 +287,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
         tester.start();
 
-        when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+        when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
         this.request.setURI("/?app_id=23454321");
 
         this.response.parse(tester.getResponses(request.generate()));
@@ -305,7 +302,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
          tester.start();
 
-         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
          this.request.setURI("/?app_id=23454321");
 
          this.response.parse(tester.getResponses(request.generate()));
@@ -321,7 +318,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
          tester.start();
 
-         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
          this.request.setURI("/?app_id=23454321");
 
          this.response.parse(tester.getResponses(request.generate()));
@@ -337,7 +334,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
          tester.start();
 
-         when(tsServer.authorize("23454321", null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
+         when(tsServer.authorize("23454321", null, null, null)).thenReturn(new AuthorizeResponse(LIMITS_EXCEEDED_RESPONSE));
          this.request.setURI("/?app_id=23454321");
 
          this.response.parse(tester.getResponses(request.generate()));
@@ -353,7 +350,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
          tester.start();
 
-         when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
+         when(tsServer.authorize("54321", null, null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
          this.request.setURI("/?app_id=54321");
 
          this.response.parse(tester.getResponses(request.generate()));
@@ -369,7 +366,7 @@ public abstract class AuthorizationCommon extends CommonBase {
 
          tester.start();
 
-         when(tsServer.authorize("54321", null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
+         when(tsServer.authorize("54321", null, null, null)).thenThrow(new ApiException(INVALID_APP_ID_RESPONSE));
          this.request.setURI("/?app_id=54321");
 
          this.response.parse(tester.getResponses(request.generate()));

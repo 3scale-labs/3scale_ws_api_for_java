@@ -145,7 +145,7 @@ public class AuthorizeServletFilter implements Filter {
 
         if (api_id != null) {
             try {
-                AuthorizeResponse response = server.authorize(api_id, api_key, referrer);
+                AuthorizeResponse response = server.authorize(api_id, api_key, referrer, null);
                 if (response.getAuthorized()) {
                     context.log("Authorized ok for : " + api_id);
                     session.setAttribute(ts_authorize_response, response);

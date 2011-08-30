@@ -50,8 +50,8 @@ public abstract class CacheImplCommon implements ApiCache {
         addEvictionPolicies(data_cache);
     }
 
-    public AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, HashMap<String, String> usage) {
-        Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, usage);
+    public AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
+        Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, user_key, usage);
 
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
@@ -82,8 +82,8 @@ public abstract class CacheImplCommon implements ApiCache {
         return (Long) data_cache.get(reportFqn, EXPIRATION_KEY);
     }
 
-    public void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, HashMap<String, String> usage) {
-        Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, usage);
+    public void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
+        Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, user_key, usage);
         Node root = data_cache.getRoot();
         Node authorizeNode = data_cache.getNode(authorizeFqn);
         if (authorizeNode == null) {
@@ -139,10 +139,11 @@ public abstract class CacheImplCommon implements ApiCache {
         }
     }
 
-    private Fqn<String> authorizeKeyFrom(String app_id, String app_key, String referrer, HashMap<String, String> usage) {
-        String usage_as_string = "";
+    private Fqn<String> authorizeKeyFrom(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
+        String usage_as_string;
 
         app_key = valueOrNone(app_key);
+        user_key = valueOrNone(user_key);
         referrer = valueOrNone(referrer);
 
         if (usage == null) {
@@ -151,12 +152,13 @@ public abstract class CacheImplCommon implements ApiCache {
             StringBuffer sb = new StringBuffer();
             Set<String> keys = usage.keySet();
             for (String key : keys) {
-                sb.append("&" + key);
+                sb.append("&");
+                sb.append(key);
             }
             usage_as_string = sb.toString();
         }
 
-        return Fqn.fromString(authorize_prefix + "/" + app_id + "/" + app_key + "/" + referrer + "/" + usage_as_string);
+        return Fqn.fromString(authorize_prefix + "/" + app_id + "/" + app_key + "/"+ user_key + "/" + referrer + "/" + usage_as_string);
     }
 
     private String valueOrNone(String app_key) {

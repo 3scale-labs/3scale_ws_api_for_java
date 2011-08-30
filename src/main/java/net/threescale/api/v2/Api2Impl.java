@@ -54,8 +54,9 @@ public class Api2Impl implements Api2 {
     }
 
     /**
-     * Fetch the current statistics for an application.
+     * Fetch the current statistics for an application, using an app_id.
      *
+     * @param app_id  Application id (or null)
      * @param app_key  Optional Application Key (or null)
      * @param referrer Optional referrer ip address (or null)'
      * @return AuthorizeResponse containing the current usage metrics.
@@ -63,9 +64,9 @@ public class Api2Impl implements Api2 {
      */
     public AuthorizeResponse authorize(String app_id, String app_key, String referrer, HashMap<String, String> usage_metrics) throws ApiException {
 
-        AuthorizeResponse cached_response = cache.getAuthorizeFor(app_id, app_key, referrer, usage_metrics);
+        AuthorizeResponse cached_response = cache.getAuthorizeFor(app_id, app_key, referrer, null, usage_metrics);
         if (cached_response == null) {
-            String url = formatGetUrl(app_id, app_key, referrer, usage_metrics);
+            String url = formatGetUrl(app_id, app_key, referrer, null, usage_metrics);
             log.info("Sending GET to sever with url: " + url);
 
             ApiHttpResponse response = sender.sendGetToServer(url);
@@ -74,7 +75,42 @@ public class Api2Impl implements Api2 {
 
             if (response.getResponseCode() == 200 || response.getResponseCode() == 409) {
                 AuthorizeResponse authorizedResponse = new AuthorizeResponse(response.getResponseText());
-                cache.addAuthorizedResponse(app_id, authorizedResponse, app_key, referrer, usage_metrics);
+                cache.addAuthorizedResponse(app_id, authorizedResponse, app_key, referrer, null, usage_metrics);
+                return authorizedResponse;
+            } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
+                throw new ApiException(response.getResponseText());
+            } else {
+                throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
+            }
+        } else {
+            return cached_response;
+        }
+    }
+
+
+    /**
+     * Fetch the current statistics for an application, using an app_id.
+     * @param user_key User_key or null, one of app_id, or user_key must be set.
+     * @param referrer Optional referrer ip address (or null)'
+     * @return AuthorizeResponse containing the current usage metrics.
+     * @throws ApiException if there is an error connection to the server
+     */
+    public AuthorizeResponse authorizeWithUserKey(String user_key, String referrer, HashMap<String, String> usage_metrics) throws ApiException {
+
+        String app_key = null; // Should always be null
+        
+        AuthorizeResponse cached_response = cache.getAuthorizeFor(null, app_key, referrer, user_key, usage_metrics);
+        if (cached_response == null) {
+            String url = formatGetUrl(null, app_key, referrer, user_key, usage_metrics);
+            log.info("Sending GET to sever with url: " + url);
+
+            ApiHttpResponse response = sender.sendGetToServer(url);
+
+            log.info("response code was: " + response.getResponseCode());
+
+            if (response.getResponseCode() == 200 || response.getResponseCode() == 409) {
+                AuthorizeResponse authorizedResponse = new AuthorizeResponse(response.getResponseText());
+                cache.addAuthorizedResponse(null, authorizedResponse, app_key, referrer, null, usage_metrics);
                 return authorizedResponse;
             } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
                 throw new ApiException(response.getResponseText());
@@ -111,19 +147,28 @@ public class Api2Impl implements Api2 {
 
 // Private Methods
 
-    private String formatGetUrl(String app_id, String app_key, String referrer, HashMap<String, String> usage) {
+    private String formatGetUrl(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
         StringBuffer url = new StringBuffer();
 
         url.append(host_url)
                 .append("/transactions/authorize.xml")
-                .append("?app_id=").append(app_id)
-                .append("&provider_key=")
+                .append("?provider_key=")
                 .append(provider_key);
+        if (app_id != null) {
+            url.append("&app_id=").append(app_id);
 
+        }
         if (app_key != null) {
             url.append("&app_key=")
                     .append(app_key);
         }
+
+
+        if (user_key != null) {
+            url.append("&user_key=")
+                    .append(user_key);
+        }
+
 
         if (referrer != null) {
             url.append("&referrer=")
@@ -133,9 +178,11 @@ public class Api2Impl implements Api2 {
         if (usage != null) {
             Set<Map.Entry<String,String>> entries = usage.entrySet();
             for (Map.Entry<String, String> entry : entries) {
-                url.append("&usage[" + entry.getKey() + "]=" + entry.getValue());
+                url.append("&usage[")
+                   .append(entry.getKey())
+                   .append("]=")
+                   .append(entry.getValue());
             }
-
         }
 
         return url.toString();

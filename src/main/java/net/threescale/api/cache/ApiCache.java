@@ -18,10 +18,10 @@ public interface ApiCache {
      * @param app_id
      * @param app_key
      * @param referrer
-     * @param usage
-     * @return
+     * @param user_key
+     *@param usage  @return
      */
-    AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, HashMap<String, String> usage);
+    AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage);
 
     /**
      * Add authorized response to the cache.
@@ -29,9 +29,10 @@ public interface ApiCache {
      * @param authorizedResponse Response data to add.
      * @param app_key
      * @param referrer
+     * @param user_key
      * @param usage
      */
-    void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, HashMap<String, String> usage);
+    void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage);
 
     /**
      * Close the cache.

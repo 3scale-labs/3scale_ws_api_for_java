@@ -34,15 +34,15 @@ public abstract class CacheImplCommonBase extends CommonBase {
 
     @Test
     public void testGetAuthorizeForReturnsNullOnFirstAccess() throws Exception {
-        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null);
+        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, null);
         assertNull(authorizeResponse);
     }
 
     @Test
     public void testGetAuthorizeForReturnsOriginalResponseOnSecondAccess() throws Exception {
         AuthorizeResponse originalResponse = new AuthorizeResponse(HAPPY_PATH_RESPONSE);
-        cache.addAuthorizedResponse(APP_ID, originalResponse, APP_KEY, REFERRER, null);
-        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null);
+        cache.addAuthorizedResponse(APP_ID, originalResponse, APP_KEY, REFERRER, null, null);
+        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, null);
         assertEquals(originalResponse, authorizeResponse);
     }
 
@@ -50,7 +50,7 @@ public abstract class CacheImplCommonBase extends CommonBase {
     public void testGetAuthorizeForCachesASingleMetricReturnsNullOnfirstAccess() throws Exception {
         HashMap<String, String> metrics = new HashMap<String, String>();
         metrics.put("hits", "1");
-        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, metrics);
+        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, metrics);
         assertNull(authorizeResponse);
     }
 
@@ -60,8 +60,8 @@ public abstract class CacheImplCommonBase extends CommonBase {
         metrics.put("hits", "1");
 
         AuthorizeResponse originalResponse = new AuthorizeResponse(HAPPY_PATH_RESPONSE);
-        cache.addAuthorizedResponse(APP_ID, originalResponse, APP_KEY, REFERRER, metrics);
-        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, metrics);
+        cache.addAuthorizedResponse(APP_ID, originalResponse, APP_KEY, REFERRER, null, metrics);
+        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, metrics);
         assertEquals(originalResponse, authorizeResponse);
     }
 
@@ -69,10 +69,10 @@ public abstract class CacheImplCommonBase extends CommonBase {
     public void testGetAuthorizeForCachesADifferentMetricCorrectly() throws Exception {
         HashMap<String, String> metrics = new HashMap<String, String>();
         metrics.put("hits", "1");
-        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, metrics);
+        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, metrics);
         metrics.put("transfer", "3");
 
-        authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, metrics);
+        authorizeResponse = cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, metrics);
         assertNull(authorizeResponse);
     }
 
@@ -82,16 +82,16 @@ public abstract class CacheImplCommonBase extends CommonBase {
         metrics1.put("hits", "1");
 
         AuthorizeResponse originalResponse1 = new AuthorizeResponse(HAPPY_PATH_RESPONSE);
-        cache.addAuthorizedResponse(APP_ID, originalResponse1, APP_KEY, REFERRER, metrics1);
+        cache.addAuthorizedResponse(APP_ID, originalResponse1, APP_KEY, REFERRER, null, metrics1);
 
         HashMap<String, String> metrics2 = new HashMap<String, String>();
         metrics2.put("hits", "1");
         metrics2.put("transfer", "3");
         AuthorizeResponse originalResponse2 = new AuthorizeResponse(HAPPY_PATH_RESPONSE2);
-        cache.addAuthorizedResponse(APP_ID, originalResponse2, APP_KEY, REFERRER, metrics2);
+        cache.addAuthorizedResponse(APP_ID, originalResponse2, APP_KEY, REFERRER, null, metrics2);
 
-        assertEquals(originalResponse1, cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, metrics1));
-        assertEquals(originalResponse2, cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, metrics2));
+        assertEquals(originalResponse1, cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, metrics1));
+        assertEquals(originalResponse2, cache.getAuthorizeFor(APP_ID, APP_KEY, REFERRER, null, metrics2));
     }
 
     @Test
@@ -99,13 +99,13 @@ public abstract class CacheImplCommonBase extends CommonBase {
         cache.setAuthorizeExpirationInterval(50L);
 
         AuthorizeResponse originalResponse = new AuthorizeResponse(HAPPY_PATH_RESPONSE);
-        cache.addAuthorizedResponse(APP_ID, originalResponse, null, null, null);
-        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, null, null, null);
+        cache.addAuthorizedResponse(APP_ID, originalResponse, null, null, null, null);
+        AuthorizeResponse authorizeResponse = cache.getAuthorizeFor(APP_ID, null, null, null, null);
         assertEquals(originalResponse, authorizeResponse);
 
         Thread.sleep(500L);
 
-        authorizeResponse = cache.getAuthorizeFor(APP_ID, null, null, null);
+        authorizeResponse = cache.getAuthorizeFor(APP_ID, null, null, null, null);
         assertNull(authorizeResponse);
     }
 

@@ -30,16 +30,43 @@ public class Api2ImplTest extends CommonBase {
     }
 
     @Test
-    public void test_authorize_happy_path() throws ApiException {
+    public void test_authorize_with_app_id_happy_path() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
-                "?app_id=" + APP_ID +
-                "&provider_key=" + PROVIDER_KEY +
-                "&app_key=" + APP_KEY))
+                "?provider_key=" + PROVIDER_KEY +
+                "&app_id=" + APP_ID +
+                 "&app_key=" + APP_KEY))
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, null);
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, null, null);
+        assertEquals(true, response.getAuthorized());
+        assertEquals("Basic", response.getPlan());
+        assertEquals("", response.getReason());
+        assertEquals(2, response.getUsageReports().size());
+
+        assertUsageRecord(response.getUsageReports().get(0), "hits", "month",
+                "2010-08-01 00:00:00 +00:00",
+                "2010-09-01 00:00:00 +00:00",
+                "17344", "20000", false);
+
+        assertUsageRecord(response.getUsageReports().get(1), "hits", "day",
+                "2010-08-04 00:00:00 +00:00",
+                "2010-08-05 00:00:00 +00:00",
+                "732", "1000", false);
+
+    }
+
+    @Test
+    public void test_authorize_with_user_key_happy_path() throws ApiException {
+
+        when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
+                "?provider_key=" + PROVIDER_KEY +
+                "&user_key=" + USER_KEY))
+                .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
+
+
+        AuthorizeResponse response = server.authorizeWithUserKey(USER_KEY, null, null);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -61,13 +88,13 @@ public class Api2ImplTest extends CommonBase {
     public void test_authorize_exceeded_path() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
-                "?app_id=" + APP_ID +
-                "&provider_key=" + PROVIDER_KEY +
+                "?provider_key=" + PROVIDER_KEY +
+                "&app_id=" + APP_ID +
                 "&app_key=" + APP_KEY))
                 .thenReturn(new ApiHttpResponse(200, EXCEEDED_PATH_RESPONSE));
 
 
-        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, null);
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, null, null);
         assertEquals(false, response.getAuthorized());
         assertEquals("Pro", response.getPlan());
         assertEquals("Usage limits are exceeded", response.getReason());
@@ -89,14 +116,14 @@ public class Api2ImplTest extends CommonBase {
     public void test_referrer_is_sent_for_authorize() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
-                "?app_id=" + APP_ID +
-                "&provider_key=" + PROVIDER_KEY +
+                "?provider_key=" + PROVIDER_KEY +
+                "&app_id=" + APP_ID +
                 "&app_key=" + APP_KEY +
                 "&referrer=" + REFERRER))
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
 
-        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, REFERRER);
+        AuthorizeResponse response = server.authorize(APP_ID, APP_KEY, REFERRER, null);
         assertEquals(true, response.getAuthorized());
         assertEquals("Basic", response.getPlan());
         assertEquals("", response.getReason());
@@ -106,8 +133,8 @@ public class Api2ImplTest extends CommonBase {
      public void test_metrics_are_sent_for_authorization() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
-                 "?app_id=" + APP_ID +
-                 "&provider_key=" + PROVIDER_KEY +
+                 "?provider_key=" + PROVIDER_KEY +
+                 "&app_id=" + APP_ID +
                  "&app_key=" + APP_KEY +
                  "&usage[transfer]=1024&usage[hits]=1"))
             .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
@@ -125,13 +152,12 @@ public class Api2ImplTest extends CommonBase {
     public void test_application_not_found_on_authorize() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
-                "?app_id=" + APP_ID +
-                "&provider_key=" + PROVIDER_KEY))
+                "?provider_key=" + PROVIDER_KEY +
+                "&app_id=" + APP_ID))
                 .thenReturn(new ApiHttpResponse(404, APPLICATION_ID_ERROR_RESPONSE));
 
-        AuthorizeResponse response = null;
         try {
-            response = server.authorize(APP_ID, null, null);
+            server.authorize(APP_ID, null, null, null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals("application_not_found", e.getErrorCode());
@@ -144,13 +170,12 @@ public class Api2ImplTest extends CommonBase {
     public void test_provider_key_invalid_on_authorize() throws ApiException {
 
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
-                "?app_id=" + APP_ID +
-                "&provider_key=" + PROVIDER_KEY))
+                "?provider_key=" + PROVIDER_KEY +
+                "&app_id=" + APP_ID))
                 .thenReturn(new ApiHttpResponse(403, PROVIDER_KEY_INVALID_ERROR_RESPONSE));
 
-        AuthorizeResponse response = null;
         try {
-            response = server.authorize(APP_ID, null, null);
+            server.authorize(APP_ID, null, null, null);
             fail("Should have thrown ApiException");
         } catch (ApiException e) {
             assertEquals("provider_key_invalid", e.getErrorCode());
@@ -177,7 +202,7 @@ public class Api2ImplTest extends CommonBase {
         transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
         transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
 
-        assertEquals(RESPONSE_HAPPY_PATH_DATA, ApiUtil.formatPostData(PROVIDER_KEY, transactions).toString());
+        assertEquals(RESPONSE_HAPPY_PATH_DATA, ApiUtil.formatPostData(PROVIDER_KEY, transactions));
 
         server.report(transactions);
     }
