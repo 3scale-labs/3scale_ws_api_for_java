@@ -32,7 +32,21 @@ public abstract class AuthorizationCommon extends CommonBase {
     protected Holder holder;
 
     @Test
-    public void testValidatesWithCorrectAppId() throws Exception {
+    public void testValidatesOkWithCorrectUserKey() throws Exception {
+
+        setProviderKey(PROVIDER_KEY);
+
+        tester.start();
+
+        when(tsServer.authorizeWithUserKey("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?user_key=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals(200, this.response.getStatus());
+    }
+
+    @Test
+    public void testValidatesOkWithCorrectAppId() throws Exception {
 
         setProviderKey(PROVIDER_KEY);
 

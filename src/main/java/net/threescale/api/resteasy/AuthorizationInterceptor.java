@@ -40,6 +40,7 @@ public class AuthorizationInterceptor implements PreProcessInterceptor {
 
     private String ts_app_id = "app_id";
     private String ts_app_key = "app_key";
+    private String ts_user_key = "user_key";
     private String ts_referrer = "referrer";
     private String ts_url = null;
     private String ts_provider_key = null;
@@ -80,6 +81,7 @@ public class AuthorizationInterceptor implements PreProcessInterceptor {
         MultivaluedMap<String, String> parameters = uriInfo.getQueryParameters();
         String api_id = parameters.getFirst(ts_app_id);
         String api_key = parameters.getFirst(ts_app_key);
+        String user_key = parameters.getFirst(ts_user_key);
         String referrer = parameters.getFirst(ts_referrer);
         HttpSession session = servletRequest.getSession();
 
@@ -100,7 +102,24 @@ public class AuthorizationInterceptor implements PreProcessInterceptor {
             } catch (ApiException e) {
                 return filterResponse.sendFailedResponse(servletRequest, 404, e);
             }
-        } else {
+        } else if (user_key != null) {
+            try {
+            AuthorizeResponse response = server.authorizeWithUserKey(user_key, referrer, null);
+            if (response.getAuthorized()) {
+                context.log("Authorized ok for : " + api_id);
+                session.setAttribute(ts_authorize_response, response);
+                return null;
+            } else {
+                context.log("Authorize failed for: " + api_id);
+                return filterResponse.sendFailedResponse(servletRequest, 409, response);
+
+            }
+        } catch (ApiException e) {
+            return filterResponse.sendFailedResponse(servletRequest, 404, e);
+        }
+
+        }
+        else {
             context.log("api_id missing in request");
             return filterResponse.sendFailedResponse(servletRequest, 404, new ApiException(MISSING_API_ID_ERROR_XML));
         }

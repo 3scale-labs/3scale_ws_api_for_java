@@ -89,6 +89,7 @@ public class AuthorizeServletFilter implements Filter {
 
     private String ts_app_id = "app_id";
     private String ts_app_key = "app_key";
+    private String ts_user_key = "user_key";
     private String ts_referrer = "referrer";
     private String ts_url = "http://su1.3scale.net";
     private String ts_provider_key = null;
@@ -138,6 +139,7 @@ public class AuthorizeServletFilter implements Filter {
 
         String api_id = httpRequest.getParameter(ts_app_id);
         String api_key = httpRequest.getParameter(ts_app_key);
+        String user_key = httpRequest.getParameter(ts_user_key);
         String referrer = httpRequest.getParameter(ts_referrer);
         HttpSession session = httpRequest.getSession();
 
@@ -158,6 +160,22 @@ public class AuthorizeServletFilter implements Filter {
             } catch (ApiException e) {
                 filterResponse.sendFailedResponse(httpRequest, httpResponse, 404, e);
             }
+        } else if (user_key != null) {
+            try {
+
+                AuthorizeResponse response = server.authorizeWithUserKey(user_key, referrer, null);
+                if (response.getAuthorized()) {
+                    context.log("Authorized ok for : " + api_id);
+                    session.setAttribute(ts_authorize_response, response);
+                    filterChain.doFilter(servletRequest, servletResponse);
+                } else {
+                    context.log("Authorize failed for: " + api_id);
+                    filterResponse.sendFailedResponse(httpRequest, httpResponse, 409, response);
+
+                }
+            } catch (ApiException e) {
+            filterResponse.sendFailedResponse(httpRequest, httpResponse, 404, e);
+        }
         } else {
             context.log("api_id missing in request");
             filterResponse.sendFailedResponse(httpRequest, httpResponse, 404, new ApiException(MISSING_API_ID_ERROR_XML));
