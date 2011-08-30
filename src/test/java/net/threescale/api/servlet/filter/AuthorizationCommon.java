@@ -278,6 +278,23 @@ public abstract class AuthorizationCommon extends CommonBase {
     }
 
     @Test
+    public void testSettingACustomUserKeyParmValidatesWithCorrectAppId() throws Exception {
+
+        holder.setInitParameter("ts_user_key_param_name", "my_user_key");
+        tester.getContext().getSessionHandler().addEventListener(sessionListener);
+        setProviderKey(PROVIDER_KEY);
+
+        tester.start();
+
+
+        when(tsServer.authorizeWithUserKey("23454321", null, null)).thenReturn(new AuthorizeResponse(HAPPY_PATH_RESPONSE));
+        this.request.setURI("/?my_user_key=23454321");
+
+        this.response.parse(tester.getResponses(request.generate()));
+        assertEquals(200, this.response.getStatus());
+    }
+
+     @Test
     public void testSettingCustomAuthResponseAttributeName() throws Exception {
 
         holder.setInitParameter("ts_authorize_response_attr_name", "my_response");

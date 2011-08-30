@@ -152,6 +152,7 @@ public class AuthorizationInterceptor implements PreProcessInterceptor {
         ts_url = Helper.processInitParam(config, "ts_url", "http://su1.3scale.net");
         ts_app_id = Helper.processInitParam(config, "ts_app_id_param_name", "app_id");
         ts_app_key = Helper.processInitParam(config, "ts_app_key_param_name", "app_key");
+        ts_user_key = Helper.processInitParam(config, "ts_user_key_param_name", "user_key");
         ts_referrer = Helper.processInitParam(config, "ts_referrer_param_name", "referrer");
         ts_authorize_response = Helper.processInitParam(config, "ts_authorize_response_attr_name", "authorize_response");
     }
