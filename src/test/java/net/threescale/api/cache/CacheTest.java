@@ -2,17 +2,15 @@ package net.threescale.api.cache;
 
 import net.threescale.api.ApiFactory;
 import net.threescale.api.CommonBase;
-import net.threescale.api.v2.Api2;
-import net.threescale.api.v2.ApiHttpResponse;
-import net.threescale.api.v2.AuthorizeResponse;
-import net.threescale.api.v2.HttpSender;
+import net.threescale.api.v2.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.mockito.Mockito.*;
+import java.util.HashMap;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -25,7 +23,7 @@ public class CacheTest extends CommonBase {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        server = ApiFactory.createV2ApiWithCache("su1.3scale.net", APP_ID, PROVIDER_KEY, sender, cache);
+        server = ApiFactory.createV2ApiWithCache("su1.3scale.net", PROVIDER_KEY, sender, cache);
     }
 
     private Api2 server;
@@ -37,18 +35,37 @@ public class CacheTest extends CommonBase {
     @Test
     public void authorisatonAccessesServerIfNotInCache() throws Exception {
         when(sender.sendGetToServer(SERVER_URL + "/transactions/authorize.xml" +
-                "?app_id=" + APP_ID +
-                "&provider_key=" + PROVIDER_KEY +
+                "?provider_key=" + PROVIDER_KEY +
+                "&app_id=" + APP_ID +
                 "&app_key=" + APP_KEY))
                 .thenReturn(new ApiHttpResponse(200, HAPPY_PATH_RESPONSE));
 
-        when(cache.getAuthorizeFor(APP_KEY))
+        when(cache.getAuthorizeFor(APP_ID, APP_KEY, null, null, null))
                 .thenReturn(null);
 
-        AuthorizeResponse authorizeResponse = server.authorize(APP_KEY, null);
+        AuthorizeResponse authorizeResponse = server.authorize(APP_ID, APP_KEY, null, null);
 
-        verify(cache).getAuthorizeFor(APP_KEY);
-        verify(cache).addAuthorizedResponse(APP_KEY, authorizeResponse);
+        verify(cache).getAuthorizeFor(APP_ID, APP_KEY, null, null, null);
+        verify(cache).addAuthorizedResponse(APP_ID, authorizeResponse, APP_KEY, null, null, null);
     }
 
+    @Test
+    public void reportWithTransactionsAddTransactionsToCache() throws Exception {
+
+        ApiTransaction[] transactions = new ApiTransaction[2];
+        HashMap<String, String> metrics0 = new HashMap<String, String>();
+        metrics0.put("hits", "1");
+        metrics0.put("transfer", "4500");
+
+        HashMap<String, String> metrics1 = new HashMap<String, String>();
+        metrics1.put("hits", "1");
+        metrics1.put("transfer", "2840");
+
+        transactions[0] = new ApiTransactionForAppId("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransactionForAppId("bad7e480", "2009-01-01 18:11:59", metrics1);
+
+        server.report(transactions);
+
+        verify(cache).report(transactions);
+    }
 }

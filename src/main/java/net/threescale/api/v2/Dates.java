@@ -5,9 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * User: cpatni
- * Date: Feb 3, 2011
- * Time: 8:39:13 AM
+ * Utilty class for data formatting.
  */
 public class Dates {
     private static final String YYYY_MM_DD_HH_MM_SS_Z = "yyyy-MM-dd HH:mm:ss Z";

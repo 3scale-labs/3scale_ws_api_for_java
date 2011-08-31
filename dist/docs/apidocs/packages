@@ -1,0 +1,5 @@
+net.threescale.api
+net.threescale.api.cache
+net.threescale.api.resteasy
+net.threescale.api.servlet.filter
+net.threescale.api.v2

@@ -2,23 +2,14 @@ package net.threescale.api.v2;
 
 import net.threescale.api.ApiFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static net.threescale.api.v2.ApiTransaction.buildHitsMetricApiTransaction;
-
+import static net.threescale.api.v2.ApiTransactionForAppId.buildHitsMetricApiTransaction;
 /**
- * User: cpatni
- * Date: 2/1/11
- * Time: 1:53 PM
+ * Example Servlet Filter Class for Api access.
  */
 public class ApiFilter implements Filter {
 
@@ -52,7 +43,7 @@ public class ApiFilter implements Filter {
         String api_rate = getHeader(request, "X-App-Rate", "1");
         try {
             Api2 server = ApiFactory.createV2Api(app_id, provider_private_key);
-            AuthorizeResponse apiResponse = server.authorize(app_key, null);
+            AuthorizeResponse apiResponse = server.authorize(app_id, app_key, null, null);
 
             if (apiResponse.getAuthorized()) {
                 ApiUsageMetric hitsMetric = apiResponse.firstHitsMetric();
@@ -95,14 +86,6 @@ public class ApiFilter implements Filter {
             return defaultValue;
         }
         return header;
-    }
-
-    private int parseStatusCode(ApiException e) {
-        try {
-            return Integer.parseInt(e.getErrorCode());
-        } catch (NumberFormatException e1) {
-            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        }
     }
 
     public void destroy() {

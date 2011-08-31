@@ -16,9 +16,11 @@ import java.util.logging.Logger;
 /**
  * Response from server containing current statistics.
  */
-public class AuthorizeResponse {
+public class AuthorizeResponse  implements ApiResponse {
 
     private Logger log = LogFactory.getLogger(this);
+
+    private String originalMessage;
 
     private Boolean authorized = new Boolean(false);
     private String plan = "";
@@ -27,6 +29,8 @@ public class AuthorizeResponse {
 
 
     public AuthorizeResponse(String xml) {
+
+        this.originalMessage = xml;
 
         try {
             log.info("Parsing response: " + xml);
@@ -69,6 +73,10 @@ public class AuthorizeResponse {
         builder.append("]");
         builder.append("]");
         return builder.toString();
+    }
+
+    public String getRawMessage() {
+        return this.originalMessage;
     }
 
     /**
@@ -149,6 +157,7 @@ public class AuthorizeResponse {
 
     /**
      * Returns the first hits metric. Hits metric is the default metric used by 3scale
+     *
      * @return returns the first hits metric or null, if the metric is not found
      */
     public ApiUsageMetric firstHitsMetric() {
@@ -158,6 +167,7 @@ public class AuthorizeResponse {
 
     /**
      * Returns the first metric which by name
+     *
      * @param metric_key name of the metric
      * @return returns the first hits metric or null, if the metric is not found
      */
@@ -172,6 +182,7 @@ public class AuthorizeResponse {
     }
 
     // Find a specific metric/period usage metric
+
     public ApiUsageMetric findMetricForPeriod(String metric_key, String period_key) {
         for (ApiUsageMetric metric : usage_reports) {
             if (metric.getMetric().equals(metric_key) && metric.getPeriod().equals(period_key)) {

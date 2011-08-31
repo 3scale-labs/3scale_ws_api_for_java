@@ -77,8 +77,11 @@
 	</target>
 
 	<target name="javadoc" description="Create the Javadoc">
-		<javadoc author="off" destdir="${build.javadoc}">
-			<sourcepath path="${src.home}" />
+		<javadoc author="off" destdir="${build.javadoc}"
+                 excludepackagenames="org.jboss.*"
+                 extdirs="">
+            <sourcepath path="${src.home}" />
+            <classpath refid="build.classpath" />
 		</javadoc>
 	</target>
 

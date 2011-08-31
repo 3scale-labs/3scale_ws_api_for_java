@@ -3,10 +3,7 @@ package net.threescale.api.v2;
 import java.util.Date;
 
 /**
- * Created by IntelliJ IDEA.
- * User: geoffd
- * Date: 27-Sep-2010
- * Time: 14:50:04
+ * DTO for metric data.
  */
 public class ApiUsageMetric {
 
@@ -18,6 +15,16 @@ public class ApiUsageMetric {
     private String max_value;
     private Boolean exceeded;
 
+    /**
+     * Construct metric data
+     * @param metric Name of metric
+     * @param period Period type e.g. week, day, hour etc.
+     * @param period_start  Start of period timestamp
+     * @param period_end  End of period timestamp
+     * @param max_value   Maximum allowed value
+     * @param current_value  Currently used amount
+     * @param exceeded   true if this metric has exceed its allowance.
+     */
     public ApiUsageMetric(String metric, String period, String period_start, String period_end, String max_value, String current_value, String exceeded) {
         this.metric = metric;
         this.period = period;
@@ -32,7 +39,7 @@ public class ApiUsageMetric {
         StringBuilder builder = new StringBuilder();
         builder.append("ApiUsageMetric: [");
         builder.append("metric: \"").append(getMetric()).append("\", ");
-        builder.append("period: \"").append(getPeriod()).append("\", ");    
+        builder.append("period: \"").append(getPeriod()).append("\", ");
         builder.append("period_start: \"").append(getPeriodStart()).append("\", ");
         builder.append("period_end: \"").append(getPeriodEnd()).append("\", ");
         builder.append("max_value: \"").append(getMaxValue()).append("\", ");
@@ -83,7 +90,7 @@ public class ApiUsageMetric {
         return margin();
     }
 
-    public Date getPeriodEndDate()  {
+    public Date getPeriodEndDate() {
         return Dates.parseDate(getPeriodEnd());
     }
 
@@ -93,7 +100,7 @@ public class ApiUsageMetric {
         return date == null ? 0 : (date.getTime() + 500) / 1000L;
     }
 
-    public Date getPeriodStartDate()  {
+    public Date getPeriodStartDate() {
         return Dates.parseDate(getPeriodEnd());
     }
 

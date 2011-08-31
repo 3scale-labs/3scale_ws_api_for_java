@@ -2,68 +2,27 @@
 <html>
 <head></head>
 <body>
-  <p>This API is used to encapsulate the communication with the 3scale backend server 
-  for validating and reporting transactions between the user and the provider of 
-  a service. For the definitive specification of the interface refer to 
-  <a href="http://www.3scale.net/home/providertech">The 3scale Management API specification</a></p>
-  
-  <h2>Using the API</h2>
-  <ul>
-  	<li>You instansiate an API object using a factory. 
-  	    This can be done once in your application, or in each transaction.</li>
-  	<li>Send a 'start' to the server containing key supplied by the user.</li>
-  	<li>Perform the transaction.</li>
-  	<li>Send a 'confirm' for the transaction detailing what resources were used.</li>
-  </ul>
-  <p>If you decide to abort the transaction you send a 'cancel' instead of a 'confirm'.</p>
-  
-  
-  <h2>Example code</h2>
-  
-  <pre>
- 		Api api = ApiFactory.createApi("http://www.3scale.net", "My Provider Key");
-		
-		
-		try {
-			ApiStartResponse transaction = api.start("Users Contract Key from your http request");
+<p>This API is used to encapsulate the communication with the 3scale backend server
+    for validating and reporting transactions between the user and the provider of
+    a service. For the definitive specification of the interface refer to
+    <a href="http://www.3scale.net/support/api-service-management-v2-0/">The 3scale Management API specification</a></p>
 
-			try {
-				// Perform your transaction
-				
-				Map<String, String> metrics = new HashMap<String, String>();
-				
-				// Set metrics used by the transaction. You define these in your contract.
-				metrics.put("requests", "1");
-				metrics.put("bytestransfered", "51983");
-				
-				try {
-					api.confirm(transaction.getTransactionId(), metrics);
-				} catch (ApiException ex){
-					// Log application error
-					ex.printStackTrace();
-				}
-			}
-			catch (Exception ex) {
-				// Handle exception from application
-				try {
-					api.cancel(transaction.getTransactionId());
-				} catch (ApiException ex2){
-					// Log application error
-					ex2.printStackTrace();
-				}
-			}
-			
-		} catch (ApiException e) {
-			if (e.getResponseCode() == 403) {
-				// Analyse error and return error message to user
-			}
-		}
-	}
-  </pre>
-  
-  <h2>Jar file</h2>
-  
-  <p>The runtime Api is in the distribution tarball in dist/threescale-api.jar.</p>
-  
+<h2>Using the API</h2>
+<ul>
+    <li>You instansiate an API object using a factory.
+        This can be done once in your application, or in each transaction.
+    </li>
+    <li>Send a 'start' to the server containing app_id supplied by the user.</li>
+    <li>Perform the transaction.</li>
+    <li>Send a 'confirm' for the transaction detailing what resources were used.</li>
+</ul>
+<p>If you decide to abort the transaction you send a 'cancel' instead of a 'confirm'.</p>
+
+@see net/threescale/api/v2/Example.java For code examples.
+
+<h2>Jar file</h2>
+
+<p>The latest runtime Api is in the distribution tarball in dist/threescale-api.jar.</p>
+
 </body>
 </html>

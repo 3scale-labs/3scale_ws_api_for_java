@@ -1,11 +1,9 @@
 package net.threescale.api.v2;
 
-import net.threescale.api.*;
-import net.threescale.api.ApiException;
+import net.threescale.api.LogFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -27,6 +25,7 @@ public class HttpSenderImpl implements HttpSender {
 
     /**
      * Constructor that overrides factory.  Used for testing.
+     *
      * @param factory
      */
     public HttpSenderImpl(HttpConnectionFactory factory) {
@@ -110,6 +109,7 @@ public class HttpSenderImpl implements HttpSender {
 
     /**
      * Reads error message from response and returns it as a string.
+     *
      * @param con current connection
      * @return String with error message contents.
      * @throws IOException
@@ -132,6 +132,7 @@ public class HttpSenderImpl implements HttpSender {
 
     /**
      * Extract data from message.
+     *
      * @param con
      * @return
      * @throws IOException
@@ -162,13 +163,13 @@ public class HttpSenderImpl implements HttpSender {
         }
     }
 
-    private final String  IOERROR_RESPONSE =
-        "<?xml version=\"1.0\" encoding=\"utf-8\" ?> " +
-        "<error code=\"ioerror\">IO Error connecting to the server</error>";
+    private final String IOERROR_RESPONSE =
+            "<?xml version=\"1.0\" encoding=\"utf-8\" ?> " +
+                    "<error code=\"ioerror\">IO Error connecting to the server</error>";
 
-    private final String  ERROR_CONNECTING_RESPONSE =
-        "<?xml version=\"1.0\" encoding=\"utf-8\" ?> " +
-        "<error code=\"server_error\">Could not connect to the server</error>";
+    private final String ERROR_CONNECTING_RESPONSE =
+            "<?xml version=\"1.0\" encoding=\"utf-8\" ?> " +
+                    "<error code=\"server_error\">Could not connect to the server</error>";
 
     /**
      * Private class to get new live connection to the server.

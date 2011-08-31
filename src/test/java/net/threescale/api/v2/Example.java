@@ -22,32 +22,54 @@ public class Example {
 
     public static void main(String args[]) {
 
-        new Example().version2_happy_path_example();
-        new Example().version2_invalid_app_id();
-        new Example().version2_invalid_provider_key_on_authorize();
+        new Example().happy_path_example_with_no_cache();
+        new Example().happy_path_example_using_local_cache();
+        new Example().happy_path_example_using_remote_or_custom_cache();
+
+        new Example().example_with_invalid_app_id();
+        new Example().example_with_invalid_provider_key_on_authorize();
     }
+
+    private void happy_path_example_with_no_cache() {
+        Api2 server = ApiFactory.createV2Api(app_url, provider_private_key);
+        executeHappyPath(server);
+    }
+
+    private void happy_path_example_using_local_cache() {
+        Api2 server = ApiFactory.createV2ApiWithLocalCache(app_url, provider_private_key);
+        executeHappyPath(server);
+    }
+
+
+    private void happy_path_example_using_remote_or_custom_cache() {
+
+        /* Remote caches are usually quite specific to the application. Please refer to the JBoss Cache
+           documentation on how to setup a remote cache and the options available.
+        */
+        Api2 server = ApiFactory.createV2ApiWithRemoteCache(app_url, provider_private_key, "etc/config-samples/buddy-replication.xml");
+        executeHappyPath(server);
+    }
+
 
     /**
      * Executes
      */
-    private void version2_happy_path_example() {
-        Api2 server = ApiFactory.createV2Api(app_url, app_id, provider_private_key);
-
+    private void executeHappyPath(Api2 server) {
         try {
             //
-            AuthorizeResponse response = server.authorize(null, null);
+            AuthorizeResponse response = server.authorize(app_id, null, null, null);
             System.out.println("response: " + response.toString());
 
             // Check that caller has available resources
-            if ((currentDailyHits(response) + 10) < maxDailyHits(response)) {
+            if ((currentDailyHits(response) + 1) < maxDailyHits(response)) {
 
                 // Process your api call here
 
                 ApiTransaction[] transactions = new ApiTransaction[1];
-                HashMap<String, String> metrics0 = new HashMap<String,  String>();
+                HashMap<String, String> metrics0 = new HashMap<String, String>();
                 metrics0.put("hits", "10");
 
-                transactions[0] = new ApiTransaction(app_id, nowTimeStamp(new Date()), metrics0);
+                transactions[0] = new ApiTransactionForAppId(app_id, nowTimeStamp(new Date()), metrics0);
 
                 server.report(transactions);
             } else {
@@ -69,29 +91,32 @@ public class Example {
         }
     }
 
-    private void version2_invalid_app_id() {
-        Api2 server = ApiFactory.createV2Api(app_url, invalid_app_id, provider_private_key);
+    private void example_with_invalid_app_id() {
+        Api2 server = ApiFactory.createV2Api(app_url,  provider_private_key);
 
         try {
-            AuthorizeResponse response = server.authorize(app_key, null);
+            AuthorizeResponse response = server.authorize(invalid_app_id, app_key, null, null);
             System.out.println("response" + response.toString());
         } catch (ApiException e) {
             System.out.println("ApiException: responseCode was: " + e.getErrorCode() +
-                               " Message was : " + e.getErrorMessage()); 
+                    " Message was : " + e.getErrorMessage());
         }
     }
 
-    private void version2_invalid_provider_key_on_authorize() {
-        Api2 server = ApiFactory.createV2Api(app_url, app_id, invalid_provider_private_key);
+    private void example_with_invalid_provider_key_on_authorize() {
+        Api2 server = ApiFactory.createV2Api(app_url, invalid_provider_private_key);
 
         try {
-            AuthorizeResponse response = server.authorize(app_key, null);
+            AuthorizeResponse response = server.authorize(app_id, app_key, null, null);
             System.out.println("response" + response.toString());
         } catch (ApiException e) {
             System.out.println("ApiException: responseCode was: " + e.getErrorCode() +
-                               " Message was : " + e.getErrorMessage());
+                    " Message was : " + e.getErrorMessage());
         }
     }
+
+
+
 
     private String nowTimeStamp(Date timestamp) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -109,12 +134,13 @@ public class Example {
     }
 
     private ApiUsageMetric findMetricForHitsPerDay(AuthorizeResponse response) {
-        return findMetricForPeriod(response.getUsageReports(), "hits", "day");
+        return findMetricForPeriod(response.getUsageReports(), "hits", "minute");
     }
 
     // Find a specific metric/period usage metric
+
     private ApiUsageMetric findMetricForPeriod(ArrayList<ApiUsageMetric> usage_reports, String metric_key, String period_key) {
-        for( ApiUsageMetric metric : usage_reports) {
+        for (ApiUsageMetric metric : usage_reports) {
             if (metric.getMetric().equals(metric_key) && metric.getPeriod().equals(period_key)) {
                 return metric;
             }

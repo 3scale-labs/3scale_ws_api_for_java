@@ -1,6 +1,100 @@
 Release Notes
 -------------
 
+v2.0.3.b3
+---------
+
+Added RESTEasy AuthorisationInterceptor.
+Added init-param of ts_url to allow overriding of 3scale server address.
+Added RESTEasy AuthorisationInterceptor.
+
+The parameters are the same as the Authorization Servlet, but use context-param instead of init-param.
+
+v2.0.3.b2
+---------
+
+Added extra keys to ensure the cache stores extra information
+Added metrics hash to authorize call.
+
+
+
+v2.0.3.b1
+---------
+
+Initial version of 2.0.3 for beta testing.
+
+Added new AuthorizationServletFilter.
+Removed V1 API functionality.
+Refactored app_id/app_key to more closely follow the api spec.
+
+To add the filter to your filter chain you need to add some lines to your web.xml file.  This is an example.
+
+   <filter>
+     <filter-name>AuthorizationFilter</filter-name>
+
+     <filter-class>net.threescale.api.servlet.filter.AuthorizeServletFilter</filter-class>
+
+     <init-param>
+       <param-name>ts_provider_key</param-name>
+       <param-value>your 3scale provider key</param-value>
+     </init-param>
+
+     <init-param>
+       <param-name>ts_redirect_url</param-name>
+       <param-value>http://myexample.org/api_error.jsp</param-value>
+     </init-param>
+
+     <init-param>
+       <param-name>ts_app_id_param_name</param-name>
+       <param-value>api_app_id</param-value>
+     </init-param>
+
+     <init-param>
+       <param-name>ts_app_key_param_name</param-name>
+       <param-value>api_app_key</param-value>
+     </init-param>
+
+     <init-param>
+       <param-name>ts_referrer_param_name</param-name>
+       <param-value>api_referrer</param-value>
+     </init-param>
+
+     <init-param>
+       <param-name>ts_authorize_response_attr_name</param-name>
+       <param-value>api_auth_response</param-value>
+     </init-param>
+
+   </filter>
+
+
+The ts_redirect_url is the page the request is redirected to if an authorization error occurs. If
+this is not set the error information is returned to the user in the response body.
+If this is set then the authorization_response session attribute will contain either an AuthorizationResponse
+or an ApiException depending on the type of failure.  For a failed authorization due to limits exceeded etc. it
+will be an AuthorizationResponse, anything else will set an ApiException.
+
+In this example the ts_app_id, ts_app_key, ts_referrer override the default names for the request parameters.
+If you omit them they default to: 'app_id', 'app_key' and 'referrer'.
+
+The ts_authorize_response is the attribute name used in the request's session for the Authorize response object
+and defaults to 'authorize_response'
+
+Then add a mapping for the request urls:
+
+   <filter-mapping>
+     <filter-name>AuthorizationFilter</filter-name>
+     <url-pattern>/api/*</url-pattern>
+   </filter-mapping>
+
+You also need to place the threescale-api.jar in your classpath.
+
+
+v2.0.2
+------
+
+Added caching for responses.  Now transaction data will be cached at written to the server in one batch.
+
+
 v2.0.1
 ------
 
