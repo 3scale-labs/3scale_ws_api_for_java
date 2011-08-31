@@ -7,8 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static net.threescale.api.v2.ApiTransaction.buildHitsMetricApiTransaction;
-
+import static net.threescale.api.v2.ApiTransactionForAppId.buildHitsMetricApiTransaction;
 /**
  * Example Servlet Filter Class for Api access.
  */
@@ -87,14 +86,6 @@ public class ApiFilter implements Filter {
             return defaultValue;
         }
         return header;
-    }
-
-    private int parseStatusCode(ApiException e) {
-        try {
-            return Integer.parseInt(e.getErrorCode());
-        } catch (NumberFormatException e1) {
-            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        }
     }
 
     public void destroy() {

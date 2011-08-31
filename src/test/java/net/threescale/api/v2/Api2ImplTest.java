@@ -185,9 +185,9 @@ public class Api2ImplTest extends CommonBase {
     }
 
     @Test
-    public void test_report_happy_path() throws ApiException {
+    public void test_report_happy_path_for_app_id() throws ApiException {
 
-        when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA))
+        when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA_WITH_APP_ID))
                 .thenReturn(new ApiHttpResponse(202, null));
 
         ApiTransaction[] transactions = new ApiTransaction[2];
@@ -199,10 +199,33 @@ public class Api2ImplTest extends CommonBase {
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 
-        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
-        transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
+        transactions[0] = new ApiTransactionForAppId("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransactionForAppId("bad7e480", "2009-01-01 18:11:59", metrics1);
 
-        assertEquals(RESPONSE_HAPPY_PATH_DATA, ApiUtil.formatPostData(PROVIDER_KEY, transactions));
+        assertEquals(RESPONSE_HAPPY_PATH_DATA_WITH_APP_ID, ApiUtil.formatPostData(PROVIDER_KEY, transactions));
+
+        server.report(transactions);
+    }
+
+    @Test
+    public void test_report_happy_path_for_user_key() throws ApiException {
+
+        when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA_WITH_USER_KEY))
+                .thenReturn(new ApiHttpResponse(202, null));
+
+        ApiTransaction[] transactions = new ApiTransaction[2];
+        HashMap<String, String> metrics0 = new HashMap<String, String>();
+        metrics0.put("hits", "1");
+        metrics0.put("transfer", "4500");
+
+        HashMap<String, String> metrics1 = new HashMap<String, String>();
+        metrics1.put("hits", "1");
+        metrics1.put("transfer", "2840");
+
+        transactions[0] = new ApiTransactionForUserKey("asdfsdf", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransactionForUserKey("dsssddd", "2009-01-01 18:11:59", metrics1);
+
+        assertEquals(RESPONSE_HAPPY_PATH_DATA_WITH_USER_KEY, ApiUtil.formatPostData(PROVIDER_KEY, transactions));
 
         server.report(transactions);
     }
@@ -211,7 +234,7 @@ public class Api2ImplTest extends CommonBase {
     @Test
     public void test_report_returns_provider_id_error() {
 
-        when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA))
+        when(sender.sendPostToServer(SERVER_URL, RESPONSE_HAPPY_PATH_DATA_WITH_APP_ID))
                 .thenReturn(new ApiHttpResponse(403, PROVIDER_KEY_INVALID_ERROR_RESPONSE));
 
         ApiTransaction[] transactions = new ApiTransaction[2];
@@ -223,8 +246,8 @@ public class Api2ImplTest extends CommonBase {
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 
-        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
-        transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
+        transactions[0] = new ApiTransactionForAppId("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransactionForAppId("bad7e480", "2009-01-01 18:11:59", metrics1);
 
         try {
             server.report(transactions);

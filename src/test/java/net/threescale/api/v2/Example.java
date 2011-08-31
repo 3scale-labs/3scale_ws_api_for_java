@@ -69,7 +69,7 @@ public class Example {
                 HashMap<String, String> metrics0 = new HashMap<String, String>();
                 metrics0.put("hits", "10");
 
-                transactions[0] = new ApiTransaction(app_id, nowTimeStamp(new Date()), metrics0);
+                transactions[0] = new ApiTransactionForAppId(app_id, nowTimeStamp(new Date()), metrics0);
 
                 server.report(transactions);
             } else {

@@ -38,17 +38,36 @@ public class ApiUtil {
         post_data.append("provider_key=").append(provider_key);
         for (int index = 0; index < transactions.length; index++) {
             post_data.append("&");
-            post_data.append(formatTransactionDataForPost(index, transactions[index]));
+            if (transactions[index].getTransactionType() == ApiTransaction.APP_ID_TRANSACTION) {
+                post_data.append(formatTransactionDataForPostWithAppId(index, transactions[index]));
+            } else {
+                post_data.append(formatTransactionDataForPostWithUserKey(index, transactions[index]));
+            }
         }
         return post_data.toString();
     }
 
-    public static String formatTransactionDataForPost(int index, ApiTransaction transaction) {
+    public static String formatTransactionDataForPostWithAppId(int index, ApiTransaction transaction) {
         StringBuffer data = new StringBuffer();
         String prefix = "transactions[" + index + "]";
 
         data.append(prefix);
         data.append("[app_id]=").append(transaction.getApp_id());
+        data.append(formatMetrics(prefix, transaction.getMetrics()));
+        if (transaction.getTimestamp() != null) {
+            data.append("&").append(prefix);
+            data.append("[timestamp]=").append(ApiUtil.urlEncodeField(transaction.getTimestamp()));
+        }
+
+        return data.toString();
+    }
+
+    public static String formatTransactionDataForPostWithUserKey(int index, ApiTransaction transaction) {
+        StringBuffer data = new StringBuffer();
+        String prefix = "transactions[" + index + "]";
+
+        data.append(prefix);
+        data.append("[user_key]=").append(transaction.getApp_id());
         data.append(formatMetrics(prefix, transaction.getMetrics()));
         if (transaction.getTimestamp() != null) {
             data.append("&").append(prefix);
@@ -83,7 +102,7 @@ public class ApiUtil {
         post_data.append("provider_key=").append(provider_key);
         for (int index = 0; index < transactionsToSend.size(); index++) {
             post_data.append("&");
-            post_data.append(formatTransactionDataForPost(index, transactionsToSend.get(index)));
+            post_data.append(formatTransactionDataForPostWithAppId(index, transactionsToSend.get(index)));
         }
         return post_data.toString();
     }

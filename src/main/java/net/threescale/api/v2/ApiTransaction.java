@@ -7,8 +7,11 @@ import java.util.Map;
 /**
  * Data to be sent for the server for a transaction
  */
-public class ApiTransaction {
-    private final String app_id;
+public abstract class ApiTransaction {
+
+    public static String APP_ID_TRANSACTION = "app_id";
+    public static String USER_KEY_TRANSACTION = "user_key";
+
     private final String timestamp;
     private final Map<String, String> metrics;
 
@@ -16,12 +19,10 @@ public class ApiTransaction {
     /**
      * Constructor
      *
-     * @param app_id    Application ID for this report
      * @param timestamp When the transaction took place
      * @param metrics   What resources were used.
      */
-    public ApiTransaction(String app_id, String timestamp, Map<String, String> metrics) {
-        this.app_id = app_id;
+    protected ApiTransaction(String timestamp, Map<String, String> metrics) {
         this.timestamp = timestamp;
         this.metrics = metrics;
     }
@@ -29,28 +30,19 @@ public class ApiTransaction {
     /**
      * Constructor
      *
-     * @param app_id  Application ID for this report
      * @param metrics What resources were used.
      */
-    public ApiTransaction(String app_id, Map<String, String> metrics) {
-        this.app_id = app_id;
+    protected ApiTransaction(Map<String, String> metrics) {
         this.timestamp = Dates.formatDate(new Date());
         this.metrics = metrics;
     }
 
-    public static ApiTransaction buildSingletonMetricApiTransaction(String app_id, String metricName, String metricValue) {
-        Map<String, String> metrics = Collections.singletonMap(metricName, metricValue);
-        return new ApiTransaction(app_id, metrics);
-    }
-
-    public static ApiTransaction buildHitsMetricApiTransaction(String app_id, String metricValue) {
-        Map<String, String> metrics = Collections.singletonMap("hits", metricValue);
-        return new ApiTransaction(app_id, metrics);
-    }
-
     public String getApp_id() {
-        return app_id;
+        return getId();
     }
+    
+    public abstract String getId();
+    public abstract String getTransactionType();
 
     public String getTimestamp() {
         return timestamp;

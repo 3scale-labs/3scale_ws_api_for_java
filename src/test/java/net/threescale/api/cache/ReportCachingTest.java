@@ -3,6 +3,7 @@ package net.threescale.api.cache;
 import net.threescale.api.CommonBase;
 import net.threescale.api.LogFactory;
 import net.threescale.api.v2.ApiTransaction;
+import net.threescale.api.v2.ApiTransactionForAppId;
 import net.threescale.api.v2.HttpSender;
 import org.junit.Before;
 import org.junit.Test;
@@ -146,8 +147,8 @@ public class ReportCachingTest extends CommonBase {
         metrics1.put("hits", "1");
         metrics1.put("transfer", "2840");
 
-        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:08", metrics0);
-        transactions[1] = new ApiTransaction("bad7e480", "2009-01-01 18:11:59", metrics1);
+        transactions[0] = new ApiTransactionForAppId("bce4c8f4", "2009-01-01 14:23:08", metrics0);
+        transactions[1] = new ApiTransactionForAppId("bad7e480", "2009-01-01 18:11:59", metrics1);
         return transactions;
     }
 
@@ -161,8 +162,8 @@ public class ReportCachingTest extends CommonBase {
         metrics1.put("hits", "11");
         metrics1.put("transfer", "2800");
 
-        transactions[0] = new ApiTransaction("bce4c8f4", "2009-01-01 14:23:20", metrics0);
-        transactions[1] = new ApiTransaction("bad7e443", "2009-01-01 18:11:58", metrics1);
+        transactions[0] = new ApiTransactionForAppId("bce4c8f4", "2009-01-01 14:23:20", metrics0);
+        transactions[1] = new ApiTransactionForAppId("bad7e443", "2009-01-01 18:11:58", metrics1);
         return transactions;
     }
 

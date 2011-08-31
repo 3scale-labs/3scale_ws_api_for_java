@@ -74,13 +74,24 @@ public class CommonBase {
                     "</status>";
 
 
-    protected static final String RESPONSE_HAPPY_PATH_DATA =
+    protected static final String RESPONSE_HAPPY_PATH_DATA_WITH_APP_ID =
             "provider_key=" + PROVIDER_KEY + "&" +
                     "transactions[0][app_id]=bce4c8f4&" +
                     "transactions[0][usage][transfer]=4500&" +
                     "transactions[0][usage][hits]=1&" +
                     "transactions[0][timestamp]=2009-01-01+14%3A23%3A08&" +
                     "transactions[1][app_id]=bad7e480&" +
+                    "transactions[1][usage][transfer]=2840&" +
+                    "transactions[1][usage][hits]=1&" +
+                    "transactions[1][timestamp]=2009-01-01+18%3A11%3A59";
+
+    protected static final String RESPONSE_HAPPY_PATH_DATA_WITH_USER_KEY =
+            "provider_key=" + PROVIDER_KEY + "&" +
+                    "transactions[0][user_key]=asdfsdf&" +
+                    "transactions[0][usage][transfer]=4500&" +
+                    "transactions[0][usage][hits]=1&" +
+                    "transactions[0][timestamp]=2009-01-01+14%3A23%3A08&" +
+                    "transactions[1][user_key]=dsssddd&" +
                     "transactions[1][usage][transfer]=2840&" +
                     "transactions[1][usage][hits]=1&" +
                     "transactions[1][timestamp]=2009-01-01+18%3A11%3A59";
