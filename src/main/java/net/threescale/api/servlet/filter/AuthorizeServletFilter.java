@@ -165,7 +165,7 @@ public class AuthorizeServletFilter implements Filter {
 
                 AuthorizeResponse response = server.authorizeWithUserKey(user_key, referrer, null);
                 if (response.getAuthorized()) {
-                    context.log("Authorized ok for : " + api_id);
+                    context.log("Authorized ok for : " + user_key);
                     session.setAttribute(ts_authorize_response, response);
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {

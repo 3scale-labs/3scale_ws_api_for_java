@@ -49,4 +49,15 @@ public class ApiTransactionForUserKey extends ApiTransaction {
     public static ApiTransaction buildHitsMetricApiTransaction(String app_id, String metricValue) {
         Map<String, String> metrics = Collections.singletonMap("hits", metricValue);
         return new ApiTransactionForUserKey(app_id, metrics);
-    }}
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        ApiTransactionForUserKey second = (ApiTransactionForUserKey) o;
+        if (super.equals(o) && (this.user_key == second.user_key))
+            return true;
+        else
+            return false;
+    }
+}
