@@ -3,6 +3,7 @@ package net.threescale.api.v2;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Data to be sent for the server for a transaction
@@ -50,5 +51,28 @@ public abstract class ApiTransaction {
 
     public Map<String, String> getMetrics() {
         return metrics;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        ApiTransaction second = (ApiTransaction) o;
+
+        if (this.timestamp == second.timestamp && metricsMatch(this.metrics, second.metrics))
+            return true;
+        else
+            return false;
+    }
+
+
+    private boolean metricsMatch(Map<String, String> original, Map<String, String> against) {
+
+        if (original.size() != against.size()) return false;
+
+        for (String key : original.keySet()) {
+            if (!against.containsKey(key)) return false;
+            if (original.get(key) != against.get(key)) return false;
+        }
+        return true;
     }
 }
