@@ -14,6 +14,8 @@ public class Example {
 
     // This is YOUR key from your api contract.
     private static String provider_private_key = "d6989898d7e34a23753b8dcbfa12cbb";
+
+    // This is the keys of your API users against your API's, put app_key to NULL if you don't use app_keys
     private static String app_id = "e6581720";
     private static String app_key = "3f51378261d4870669acd2fd80c0b4af";
 
@@ -57,7 +59,7 @@ public class Example {
     private void executeHappyPath(Api2 server) {
         try {
             //
-            AuthorizeResponse response = server.authorize(app_id, null, null, null);
+            AuthorizeResponse response = server.authorize(app_id, app_key, null, null);
             System.out.println("response: " + response.toString());
 
             // Check that caller has available resources
@@ -134,7 +136,7 @@ public class Example {
     }
 
     private ApiUsageMetric findMetricForHitsPerDay(AuthorizeResponse response) {
-        return findMetricForPeriod(response.getUsageReports(), "hits", "minute");
+        return findMetricForPeriod(response.getUsageReports(), "hits", "day");
     }
 
     // Find a specific metric/period usage metric
