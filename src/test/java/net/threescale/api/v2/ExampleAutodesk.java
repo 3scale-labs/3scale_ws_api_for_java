@@ -8,37 +8,43 @@ import java.util.Date;
 import java.util.HashMap;
 
 
-public class Example {
+public class ExampleAutodesk {
 
     private static String app_url = "http://su1.3scale.net";
 
     // This is YOUR key from your api contract.
-    private static String provider_private_key = "d6989898d7e34a23753b8dcbfa12cbb";
-
-    // This is the keys of your API users against your API's, put app_key to NULL if you don't use app_keys
-    private static String app_id = "e6581720";
-    private static String app_key = "3f51378261d4870669acd2fd80c0b4af";
+    private static String provider_private_key = "autodesk-1d2d2b4d0211e685607693ea61a98d8a";
+    private static String app_id = "94bd2de3";
+    private static String app_key = "190e58d31f4f8fe173d8cbfc7b59cf93";
 
     private static String invalid_app_id = "e6581744";
     private static String invalid_provider_private_key = "d6989898d7e34a23753b8dcbfa12cdd";
 
     public static void main(String args[]) {
 
-        new Example().happy_path_example_with_no_cache();
-        new Example().happy_path_example_using_local_cache();
-        new Example().happy_path_example_using_remote_or_custom_cache();
+        //new Example().happy_path_example_with_no_cache();
+        new ExampleAutodesk().happy_path_example_using_local_cache();
+        //new Example().happy_path_example_using_remote_or_custom_cache();
 
-        new Example().example_with_invalid_app_id();
-        new Example().example_with_invalid_provider_key_on_authorize();
+        //new Example().example_with_invalid_app_id();
+        //new Example().example_with_invalid_provider_key_on_authorize();
     }
 
     private void happy_path_example_with_no_cache() {
         Api2 server = ApiFactory.createV2Api(app_url, provider_private_key);
-        executeHappyPath(server);
+        for (int i = 0; i < 2; i++) {
+            executeHappyPath(server);
+        }
     }
 
     private void happy_path_example_using_local_cache() {
         Api2 server = ApiFactory.createV2ApiWithLocalCache(app_url, provider_private_key);
+        for (int i = 0; i < 10; i++) {
+            sleep(10L, 600L);
+            System.out.println("NOTE ******** iteration: " + i + "****************************************************");
+            executeHappyPath(server);
+        }
+        sleep(1000L, 2000L);
         executeHappyPath(server);
     }
 
@@ -60,16 +66,17 @@ public class Example {
         try {
             //
             AuthorizeResponse response = server.authorize(app_id, app_key, null, null);
-            System.out.println("response: " + response.toString());
+            System.out.println("response: hits = " + response.currentHits());
 
             // Check that caller has available resources
-            if ((currentDailyHits(response) + 1) < maxDailyHits(response)) {
+            //if ((currentDailyHits(response) + 1) < maxDailyHits(response)) {
+            if (true) {
 
                 // Process your api call here
 
                 ApiTransaction[] transactions = new ApiTransaction[1];
                 HashMap<String, String> metrics0 = new HashMap<String, String>();
-                metrics0.put("hits", "10");
+                metrics0.put("hits", "1");
 
                 transactions[0] = new ApiTransactionForAppId(app_id, nowTimeStamp(new Date()), metrics0);
 
@@ -127,7 +134,7 @@ public class Example {
 
     private int maxDailyHits(AuthorizeResponse response) {
         ApiUsageMetric metric = findMetricForHitsPerDay(response);
-        return (metric != null) ? Integer.parseInt(metric.getMaxValue()) : 0;
+        return (metric != null) ? Integer.parseInt(metric.getMaxValue()) : 1000000;
     }
 
     private int currentDailyHits(AuthorizeResponse response) {
@@ -136,7 +143,7 @@ public class Example {
     }
 
     private ApiUsageMetric findMetricForHitsPerDay(AuthorizeResponse response) {
-        return findMetricForPeriod(response.getUsageReports(), "hits", "day");
+        return findMetricForPeriod(response.getUsageReports(), "hits", "minute");
     }
 
     // Find a specific metric/period usage metric
@@ -148,5 +155,16 @@ public class Example {
             }
         }
         return null;
+    }
+    
+    private void sleep(long minMillseconds, long maxMilliseconds){
+        long possibleSleepTime = (long)(Math.random()* maxMilliseconds);  
+        long sleepTime = (possibleSleepTime > minMillseconds)? possibleSleepTime : minMillseconds;
+
+        try {
+                Thread.currentThread().sleep(sleepTime);  
+                } catch (Exception e) {
+                    // do nothing
+                }
     }
 }
