@@ -52,7 +52,7 @@ public abstract class CacheImplCommon implements ApiCache {
 
     public AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
         Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, user_key, usage);
-
+        System.out.println("::::: getAuthorizeFor");
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
 
@@ -113,16 +113,25 @@ public abstract class CacheImplCommon implements ApiCache {
 
     public void report(ApiTransaction[] transactions) throws ApiException {
         for (ApiTransaction transaction : transactions) {
+            
+            System.out.println(">>>>>>>>>> transaction: " + transaction.getApp_id());
             Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + transaction.getApp_id());
 
             Node reportNode = data_cache.getNode(reportFqn);
             if (reportNode == null) {
+                System.out.println("yep");
                 reportNode = data_cache.getRoot().addChild(reportFqn);
             }
+            else {
+                System.out.println("nope");
+                
+            }
+           
 
             reportNode.put(transaction.getTimestamp(), transaction);
             reportNode.put("expiration", nextExpirationTime);
-
+            
+            
             log.fine("Put transaction into cache as " + reportFqn + "/" + transaction.getTimestamp());
         }
     }
