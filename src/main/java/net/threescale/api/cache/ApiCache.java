@@ -66,12 +66,12 @@ public interface ApiCache {
     List<ApiTransaction> getTransactionFor(String app_id);
 
     /**
-     * Get a specific transaction (mainly for testing).
+     * Get a specific transaction (only for testing).
      * @param app_id  App Id
      * @param when   Timestamp
      * @return  Transaction or null it one does not exist.
      */
-    ApiTransaction getTransactionFor(String app_id, String when);
+    ApiTransaction[] getTransactionFor(String app_id, String when);
 
     /**
      * Get the time that the next set of transactions will expire for a given app id.
