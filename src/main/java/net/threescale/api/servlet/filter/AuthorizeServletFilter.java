@@ -12,21 +12,25 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 /**
+ *
  * This class intercepts the incoming request and checks for a parameter containing the users
  * api key and (optionally) app id and / or referrer.
  *
  * If no key/id is present, or does not authorize correctly it returns an error response.
  *
- * If the key/id does authorize the AuthorizeResponse is placed in the session attributes
+ * If the key/id does authorize the {@link AuthorizeResponse} is placed in the session attributes
  * and the next filter in the chain is called.
  *
- * The parameter names for the api_key, app_id, referrer and the authorization response may be overridden in the
+ * The parameter names for the <b>api_key</b>, <b>app_id</b>, <b>referrer</b> and the <b>authorization response</b> may be overridden in the
  * configuration.
  *
  *
  * To add the filter to your filter chain you need to add some lines to your web.xml file.  This is an example.
  *
- *    <filter>
+ * <pre>
+ * {@code
+ *
+ *<filter>
  *      <filter-name>AuthorizationFilter</filter-name>
  *
  *      <filter-class>net.threescale.api.servlet.filter.AuthorizeServletFilter</filter-class>
@@ -61,27 +65,34 @@ import java.lang.reflect.Method;
  *        <param-value>api_auth_response</param-value>
  *      </init-param>
  *
- *    </filter>
+ *</filter>
+ * }
+ * </pre>
  *
- *
- * The ts_redirect_url is the page the request is redirected to if an authorization error occurs. If
+ * The {@code ts_redirect_url} is the page the request is redirected to if an authorization error occurs. If
  * this is not set the error information is returned to the user in the response body.
- * If this is set then the authorization_response session attribute will contain either an AuthorizationResponse
- * or an ApiException depending on the type of failure.  For a failed authorization due to limits exceeded etc. it
- * will be an AuthorizationResponse, anything else will set an ApiException.
+ * If this is set then the {@code authorization_response} session attribute will contain either an {@link AuthorizeResponse}
+ * or an {@link ApiException} depending on the type of failure.  For a failed authorization due to limits exceeded etc. it
+ * will be an {@link AuthorizeResponse}, anything else will set an {@link ApiException}.
  *
- * In this example the ts_app_id, ts_app_key, ts_referrer override the default names for the request parameters.
+ * In this example the {@code ts_app_id}, {@code ts_app_key}, {@code ts_referrer} override the default names for the request parameters.
  * If you omit them they default to: 'app_id', 'app_key' and 'referrer'.
  *
- * The ts_authorize_response is the attribute name used in the request's session for the Authorize response object
- * and defaults to 'authorize_response'
+ * The {@code ts_authorize_response} is the attribute name used in the request's session for the Authorize response object
+ * and defaults to <i>'authorize_response'</i>.
  *
  * Then add a mapping for the request urls:
  *
- *    <filter-mapping>
+ * <pre>
+ * {@code
+ *
+ *<filter-mapping>
  *      <filter-name>AuthorizationFilter</filter-name>
  *      <url-pattern>/api/*</url-pattern>
- *    </filter-mapping>
+ *</filter-mapping>
+ *
+ * }
+ * </pre>
  *
  * You also need to place the threescale-api.jar in your classpath.
  */
