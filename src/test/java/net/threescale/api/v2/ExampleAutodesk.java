@@ -46,7 +46,8 @@ public class ExampleAutodesk {
         }
         sleep(1000L, 2000L);
         executeHappyPath(server);
-    }
+        sleep(1000L, 2000L);
+     }
 
 
     private void happy_path_example_using_remote_or_custom_cache() {
@@ -128,7 +129,7 @@ public class ExampleAutodesk {
 
 
     private String nowTimeStamp(Date timestamp) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS ");
         return dateFormatter.format(timestamp);
     }
 
