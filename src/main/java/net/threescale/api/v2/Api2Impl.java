@@ -135,7 +135,11 @@ public class Api2Impl implements Api2 {
      * @throws ApiException if there is an error connection to the server
      */
     public void report(ApiTransaction[] transactions) throws ApiException {
+        for (int i = 0; i < transactions.length; i++) {
+            ApiTransaction t = transactions[i];
+            log.info("------ Transaction Time: " + t.getTimestamp() );
 
+        }
         cache.report(transactions);
     }
 

@@ -52,7 +52,7 @@ public abstract class CacheImplCommon implements ApiCache {
 
     public AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
         Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, user_key, usage);
-        System.out.println("::::: getAuthorizeFor");
+
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
 
@@ -66,15 +66,22 @@ public abstract class CacheImplCommon implements ApiCache {
 
         for (String key : keys) {
             if (!key.equals(EXPIRATION_KEY)) {
-                results.add((ApiTransaction) data.get(key));
+                List<ApiTransaction> currentData = (List<ApiTransaction>) data.get(key);
+                for (ApiTransaction transaction : currentData) {
+                    results.add(transaction);
+                }
             }
         }
         return results;
     }
 
-    public ApiTransaction getTransactionFor(String app_id, String when) {
+    public ApiTransaction[] getTransactionFor(String app_id, String when) {
         Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + app_id);
-        return (ApiTransaction) data_cache.get(reportFqn, when);
+        List<ApiTransaction> data = (List<ApiTransaction>)data_cache.get(reportFqn, when);
+        if (data == null || data.size() == 0)
+            return null;
+        else
+            return  data.toArray(new ApiTransaction[0]);
     }
 
     public Long getTransactionExpirationTimeFor(String app_id) {
@@ -113,25 +120,21 @@ public abstract class CacheImplCommon implements ApiCache {
 
     public void report(ApiTransaction[] transactions) throws ApiException {
         for (ApiTransaction transaction : transactions) {
-            
-            System.out.println(">>>>>>>>>> transaction: " + transaction.getApp_id());
             Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + transaction.getApp_id());
 
             Node reportNode = data_cache.getNode(reportFqn);
             if (reportNode == null) {
-                System.out.println("yep");
                 reportNode = data_cache.getRoot().addChild(reportFqn);
             }
-            else {
-                System.out.println("nope");
-                
-            }
-           
 
-            reportNode.put(transaction.getTimestamp(), transaction);
-            reportNode.put("expiration", nextExpirationTime);
-            
-            
+            List<ApiTransaction> currentList = (List<ApiTransaction>)reportNode.get(transaction.getTimestamp());
+            if (currentList == null) {
+                currentList = new ArrayList<ApiTransaction>();
+            }
+            currentList.add(transaction);
+            reportNode.put(transaction.getTimestamp(), currentList);
+            reportNode.put(EXPIRATION_KEY, nextExpirationTime);
+
             log.fine("Put transaction into cache as " + reportFqn + "/" + transaction.getTimestamp());
         }
     }
