@@ -74,7 +74,7 @@ public class NullCacheImpl implements ApiCache {
         return new ArrayList<ApiTransaction>();
     }
 
-    public ApiTransaction getTransactionFor(String app_id, String when) {
+    public ApiTransaction[] getTransactionFor(String app_id, String when) {
         return null;
     }
 

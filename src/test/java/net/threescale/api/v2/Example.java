@@ -121,7 +121,7 @@ public class Example {
 
 
     private String nowTimeStamp(Date timestamp) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
         return dateFormatter.format(timestamp);
     }
 
