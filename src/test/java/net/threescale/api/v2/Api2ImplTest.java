@@ -46,13 +46,13 @@ public class Api2ImplTest extends CommonBase {
         assertEquals(2, response.getUsageReports().size());
 
         assertUsageRecord(response.getUsageReports().get(0), "hits", "month",
-                "2010-08-01 00:00:00 +00:00",
-                "2010-09-01 00:00:00 +00:00",
+                "2010-08-01 00:00:00 +0000",
+                "2010-09-01 00:00:00 +0000",
                 "17344", "20000", false);
 
         assertUsageRecord(response.getUsageReports().get(1), "hits", "day",
-                "2010-08-04 00:00:00 +00:00",
-                "2010-08-05 00:00:00 +00:00",
+                "2010-08-04 00:00:00 +0000",
+                "2010-08-05 00:00:00 +0000",
                 "732", "1000", false);
 
     }
@@ -73,13 +73,13 @@ public class Api2ImplTest extends CommonBase {
         assertEquals(2, response.getUsageReports().size());
 
         assertUsageRecord(response.getUsageReports().get(0), "hits", "month",
-                "2010-08-01 00:00:00 +00:00",
-                "2010-09-01 00:00:00 +00:00",
+                "2010-08-01 00:00:00 +0000",
+                "2010-09-01 00:00:00 +0000",
                 "17344", "20000", false);
 
         assertUsageRecord(response.getUsageReports().get(1), "hits", "day",
-                "2010-08-04 00:00:00 +00:00",
-                "2010-08-05 00:00:00 +00:00",
+                "2010-08-04 00:00:00 +0000",
+                "2010-08-05 00:00:00 +0000",
                 "732", "1000", false);
 
     }
@@ -101,13 +101,13 @@ public class Api2ImplTest extends CommonBase {
         assertEquals(2, response.getUsageReports().size());
 
         assertUsageRecord(response.getUsageReports().get(0), "hits", "month",
-                "2010-08-01 00:00:00 +00:00",
-                "2010-09-01 00:00:00 +00:00",
+                "2010-08-01 00:00:00 +0000",
+                "2010-09-01 00:00:00 +0000",
                 "17344", "20000", false);
 
         assertUsageRecord(response.getUsageReports().get(1), "hits", "day",
-                "2010-08-04 00:00:00 +00:00",
-                "2010-08-05 00:00:00 +00:00",
+                "2010-08-04 00:00:00 +0000",
+                "2010-08-05 00:00:00 +0000",
                 "732", "1000", true);
 
     }
@@ -278,14 +278,14 @@ public class Api2ImplTest extends CommonBase {
 
                     "  <usage_reports>" +
                     "    <usage_report metric=\"hits\" period=\"month\">" +
-                    "      <period_start>2010-08-01 00:00:00 +00:00</period_start>" +
-                    "      <period_end>2010-09-01 00:00:00 +00:00</period_end>" +
+                    "      <period_start>2010-08-01 00:00:00 +0000</period_start>" +
+                    "      <period_end>2010-09-01 00:00:00 +0000</period_end>" +
                     "      <current_value>17344</current_value>" +
                     "      <max_value>20000</max_value>" +
                     "    </usage_report>" +
                     "    <usage_report metric=\"hits\" period=\"day\" exceeded=\"true\">" +
-                    "      <period_start>2010-08-04 00:00:00 +00:00</period_start>" +
-                    "      <period_end>2010-08-05 00:00:00 +00:00</period_end>" +
+                    "      <period_start>2010-08-04 00:00:00 +0000</period_start>" +
+                    "      <period_end>2010-08-05 00:00:00 +0000</period_end>" +
                     "      <current_value>732</current_value>" +
                     "      <max_value>1000</max_value>" +
                     "    </usage_report>" +

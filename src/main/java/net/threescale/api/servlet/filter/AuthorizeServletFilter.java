@@ -91,6 +91,15 @@ import static java.lang.System.out;
  *        <param-name>ts_authorize_response_attr_name</param-name>
  *        <param-value>api_auth_response</param-value>
  *      </init-param>
+ *      <!-- optional. If enabled the following metrics will be included in the Request Header
+ *          X-FeatureRateLimit-Limit
+ *          X-FeatureRateLimit-Remaining
+ *          X-FeatureRateLimit-Reset
+ *      -->
+ *      <init-param>
+ *        <param-name>ts_app_metrics_on_header</param-name>
+ *        <param-value>true</param-value>
+ *      </init-param>
  *      <!-- optional. 3Scale's URL you should be fine with the default value. -->
  *      <init-param>
  *          <param-name>ts_url</param-name>
@@ -137,6 +146,12 @@ public class AuthorizeServletFilter implements Filter {
     public static final String DEFAULT_TS_AUTHORIZE_RESPONSE_ATTR_NAME = "authorize_response";
 
     public static final String DEFAULT_TS_APP_METRICS_ON_HEADER = "true";
+
+    public static final String RESPONSE_HEADER_USAGE_REPORT_FRL_LIMIT_KEY = "X-FeatureRateLimit-Limit";
+    public static final String RESPONSE_HEADER_USAGE_REPORT_FRL_CURRENT_KEY = "X-FeatureRateLimit-Current";
+    public static final String RESPONSE_HEADER_USAGE_REPORT_FRL_REMAINING_KEY =  "X-FeatureRateLimit-Remaining";
+    public static final String RESPONSE_HEADER_USAGE_REPORT_FRL_PERIOD_START_EPOCH_KEY = "X-FeatureRateLimit-Period-Start-Epoch";
+    public static final String RESPONSE_HEADER_USAGE_REPORT_FRL_PERIOD_END_EPOCH_KEY = "X-FeatureRateLimit-Period-End-Epoch";
 
     private static Class<? extends ApiFactory> factoryClass;
 
@@ -256,7 +271,7 @@ public class AuthorizeServletFilter implements Filter {
             }
 
         } else {
-            context.log("api_id missing in request");
+            context.log("Request doesn't have an App ID or User Key.");
 
             filterResponse.sendFailedResponse(httpRequest,
                     httpResponse, 404, new ApiException(getMissingApiIdErrorMessag(httpRequest)));
@@ -436,15 +451,18 @@ public class AuthorizeServletFilter implements Filter {
      * @param httpResponse
      */
     final void addTsAppMetricsToResponse(AuthorizeResponse authResponse, HttpServletResponse httpResponse) {
-        if (!this.tsAppMetricsOnHeader) {
+        if (! this.tsAppMetricsOnHeader) {
             return;
         }
 
         ApiUsageMetric hitsMetric = authResponse.firstHitsMetric();
 
-        httpResponse.setHeader("X-FeatureRateLimit-Limit", hitsMetric.getMaxValue());
-        httpResponse.setHeader("X-FeatureRateLimit-Remaining", String.valueOf(hitsMetric.getRemaining()));
-        httpResponse.setHeader("X-FeatureRateLimit-Reset", String.valueOf(hitsMetric.getPeriodEndEpoch()));
+        httpResponse.setHeader(RESPONSE_HEADER_USAGE_REPORT_FRL_LIMIT_KEY, hitsMetric.getMaxValue());
+        httpResponse.setHeader(RESPONSE_HEADER_USAGE_REPORT_FRL_CURRENT_KEY, String.valueOf(hitsMetric.getCurrentValue()));
+        httpResponse.setHeader(RESPONSE_HEADER_USAGE_REPORT_FRL_REMAINING_KEY, String.valueOf(hitsMetric.getRemaining()));
+        httpResponse.setHeader(RESPONSE_HEADER_USAGE_REPORT_FRL_PERIOD_START_EPOCH_KEY, String.valueOf(hitsMetric.getPeriodStartEpoch()));
+        httpResponse.setHeader(RESPONSE_HEADER_USAGE_REPORT_FRL_PERIOD_END_EPOCH_KEY, String.valueOf(hitsMetric.getPeriodEndEpoch()));
+
 
     }
 
