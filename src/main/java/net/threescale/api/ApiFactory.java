@@ -12,6 +12,7 @@ import net.threescale.api.v2.HttpSenderImpl;
  * Factory class to create 3scale Api objects.
  */
 public class ApiFactory {
+    /** Default URL of 3Scale Provider {@value}*/
     public static String DEFAULT_3SCALE_PROVIDER_API_URL = "http://su1.3scale.net";
 
     /**

@@ -96,12 +96,12 @@ public class ApiUsageMetric {
 
 
     public long getPeriodEndEpoch() {
-        Date date = getPeriodStartDate();
+        Date date = getPeriodEndDate();
         return date == null ? 0 : (date.getTime() + 500) / 1000L;
     }
 
     public Date getPeriodStartDate() {
-        return Dates.parseDate(getPeriodEnd());
+        return Dates.parseDate(getPeriodStart());
     }
 
 
