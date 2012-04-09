@@ -136,7 +136,9 @@
                   <reportOutputDirectory>${basedir}/dist/docs</reportOutputDirectory>
                   <author>false</author>
                   <excludePackageNames>org.jboss.*</excludePackageNames>
+                  <aggregate>true</aggregate>
               </configuration>
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
