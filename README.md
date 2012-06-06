@@ -1,3 +1,9 @@
+[![Build Status](https://secure.travis-ci.org/3scale/3scale_ws_api_for_java.png?branch=master)](http://travis-ci.org/3scale/3scale_ws_api_for_java)
+
+
+3scale is an API Infrastructure service which handles API Keys, Rate Limiting, Analytics, Billing Payments and Developer Management. Includes a configurable API dashboard and developer portal CMS. More product stuff at http://www.3scale.net/, support information at http://support.3scale.net/.
+
+
 Please see the embedded documentation in dist/docs.
 
 Copyright (c) 2008-2011 3scale networks S.L., released under the MIT license.
