@@ -8,7 +8,7 @@ Please see the embedded documentation in dist/docs.
 
 Copyright (c) 2008-2011 3scale networks S.L., released under the MIT license.
 
-V2.0.3 Introduced a new Servlet Filter, AuthorizeServletFilter.  This performs the 3Scale
+V2.0.3 Introduced a new Servlet Filter, AuthorizeServletFilter.  This performs the 3scale
 authorize call to the server and if successful the next AuthorizeResponse is placed in the session
  data and the next filter in the chain is called.
 
