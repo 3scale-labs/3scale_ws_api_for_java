@@ -14,21 +14,22 @@ See the @see AuthorizeServletFilter comments for more details.
  
 
 To configure ServletFilter
+<filter>
+        <filter-name>3Scale AuthorizationFilter</filter-name>
+        <filter-class>net.threescale.api.servlet.filter.AuthorizeServletFilter</filter-class>
+        <init-param>
+            <param-name>ts_provider_key</param-name>
+           <!-- your provider key -->
+            <param-value>yourcompany-abcdefasdfasdfasdfasdfasdfasdfasd</param-value>
+        </init-param>
+ </filter>
+<!-- where your API is deployed at <context>/api -->
+<filter-mapping>
+        <filter-name>3Scale AuthorizationFilter</filter-name>
+        <url-pattern>api/*</url-pattern>
+</filter-mapping>
 
-    <context-param>
-        <param-name>3scale.provider_private_key</param-name>
-        <param-value>abc-e313daaa98cfd7bb6bc4c906fe233c4b</param-value>
-    </context-param>
-    <filter>
-        <filter-name>Api Filter</filter-name>
-        <filter-class>net.threescale.api.v2.ApiFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>Api Filter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 
 To test
 
-    for f in {1..2}; do curl -H"X-App-Id: a07cc69b" -H"X-App-Key: a424d9790800b149948dd4b7a0c61d41" \
-    -H"X-App-Rate: 10" -I "http://localhost:8083/v2/videos.json"; done
+http://localhost:8080/api/service?fromDate=2010-09-07T00:00:00-0700&toDate=2010-10-01T00:00:00-0700&app_id=asdfasdfasdf&app_key=asdfasdfasdfasdfasdfasdf
