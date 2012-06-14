@@ -1,8 +1,12 @@
+[![Build Status](https://secure.travis-ci.org/3scale/3scale_ws_api_for_java.png?branch=master)](http://travis-ci.org/3scale/3scale_ws_api_for_java)
+
+
+3scale is an API Infrastructure service which handles API Keys, Rate Limiting, Analytics, Billing Payments and Developer Management. Includes a configurable API dashboard and developer portal CMS. More product stuff at http://www.3scale.net/, support information at http://support.3scale.net/.
+
+
 Please see the embedded documentation in dist/docs.
 
-Copyright (c) 2008-2011 3scale networks S.L., released under the MIT license.
-
-V2.0.3 Introduced a new Servlet Filter, AuthorizeServletFilter.  This performs the 3Scale
+V2.0.3 Introduced a new Servlet Filter, AuthorizeServletFilter.  This performs the 3scale
 authorize call to the server and if successful the next AuthorizeResponse is placed in the session
  data and the next filter in the chain is called.
 
