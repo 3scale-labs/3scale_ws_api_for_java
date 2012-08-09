@@ -31,5 +31,11 @@ To configure ServletFilter
 
 
 To test
+=======
 
 http://localhost:8080/api/service?fromDate=2010-09-07T00:00:00-0700&toDate=2010-10-01T00:00:00-0700&app_id=asdfasdfasdf&app_key=asdfasdfasdfasdfasdfasdf
+
+Ant
+===
+
+Ant build is not longer supported, use maven one instead.
