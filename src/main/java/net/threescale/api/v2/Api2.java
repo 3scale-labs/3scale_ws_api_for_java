@@ -6,7 +6,7 @@ import java.util.HashMap;
  * Version 2 of the 3Scale API.
  * <p/>
  * This version is not compatible with Version 1.
- * See http://www.3scale.net/support/api-service-management-v2-0/ for more details
+ * See https://support.3scale.net/reference/activedocs#/service_management_api for more details
  */
 public interface Api2 {
 
