@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 public abstract class CacheImplCommon implements ApiCache {
 
     public static final String authorize_prefix = "/authorize";
+    public static final String oauth_authorize_prefix = "/oauth_authorize";
     public static final String authorizeResponseKey = "/auth_response";
 
     public static final String responseKey = "/response";
@@ -56,6 +57,11 @@ public abstract class CacheImplCommon implements ApiCache {
         return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
     }
 
+    public AuthorizeResponse getOAuthAuthorizeFor(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
+        Fqn<String> authorizeFqn = oauth_authorizeKeyFrom(app_id, app_key, referrer, user_key, usage);
+
+        return (AuthorizeResponse) data_cache.get(authorizeFqn, authorizeResponseKey);
+    }
 
     public List<ApiTransaction> getTransactionFor(String app_id) {
         Fqn<String> reportFqn = Fqn.fromString(responseKey + "/" + app_id);
@@ -91,6 +97,19 @@ public abstract class CacheImplCommon implements ApiCache {
 
     public void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
         Fqn<String> authorizeFqn = authorizeKeyFrom(app_id, app_key, referrer, user_key, usage);
+        Node root = data_cache.getRoot();
+        Node authorizeNode = data_cache.getNode(authorizeFqn);
+        if (authorizeNode == null) {
+            authorizeNode = root.addChild(authorizeFqn);
+        }
+
+        Long future = System.currentTimeMillis() + authorizeExpirationTimeInMillis;
+        authorizeNode.put(authorizeResponseKey, authorizedResponse);
+        authorizeNode.put(EXPIRATION_KEY, future);
+    }
+
+    public void addOAuthAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
+        Fqn<String> authorizeFqn = oauth_authorizeKeyFrom(app_id, app_key, referrer, user_key, usage);
         Node root = data_cache.getRoot();
         Node authorizeNode = data_cache.getNode(authorizeFqn);
         if (authorizeNode == null) {
@@ -171,6 +190,28 @@ public abstract class CacheImplCommon implements ApiCache {
         }
 
         return Fqn.fromString(authorize_prefix + "/" + app_id + "/" + app_key + "/"+ user_key + "/" + referrer + "/" + usage_as_string);
+    }
+
+    private Fqn<String> oauth_authorizeKeyFrom(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage) {
+        String usage_as_string;
+
+        app_key = valueOrNone(app_key);
+        user_key = valueOrNone(user_key);
+        referrer = valueOrNone(referrer);
+
+        if (usage == null) {
+            usage_as_string = "none";
+        } else {
+            StringBuffer sb = new StringBuffer();
+            Set<String> keys = usage.keySet();
+            for (String key : keys) {
+                sb.append("&");
+                sb.append(key);
+            }
+            usage_as_string = sb.toString();
+        }
+
+        return Fqn.fromString(oauth_authorize_prefix + "/" + app_id + "/" + app_key + "/"+ user_key + "/" + referrer + "/" + usage_as_string);
     }
 
     private String valueOrNone(String app_key) {
