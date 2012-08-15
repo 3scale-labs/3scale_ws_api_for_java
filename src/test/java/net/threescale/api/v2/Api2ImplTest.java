@@ -258,7 +258,6 @@ public class Api2ImplTest extends CommonBase {
         }
     }
 
-
     private void assertUsageRecord(net.threescale.api.v2.ApiUsageMetric usage, String metric, String period, String period_start, String period_end, String current_value, String max_value, Boolean exceeded) {
         assertEquals(metric, usage.getMetric());
         assertEquals(period, usage.getPeriod());

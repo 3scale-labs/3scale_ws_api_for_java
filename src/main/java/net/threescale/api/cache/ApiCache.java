@@ -2,6 +2,7 @@ package net.threescale.api.cache;
 
 import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.ApiTransaction;
+import net.threescale.api.v2.ApplicationResponse;
 import net.threescale.api.v2.AuthorizeResponse;
 
 import java.util.HashMap;
@@ -55,6 +56,9 @@ public interface ApiCache {
      */
     void addOAuthAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage);
 
+    ApplicationResponse getApplicationFor(String application_id, String user_key, String app_id);
+    
+    void addApplicationFor(ApplicationResponse app_response, String application_id, String user_key, String app_id);
     /**
      * Close the cache.
      */

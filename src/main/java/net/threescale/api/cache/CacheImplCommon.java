@@ -3,6 +3,7 @@ package net.threescale.api.cache;
 import net.threescale.api.LogFactory;
 import net.threescale.api.v2.ApiException;
 import net.threescale.api.v2.ApiTransaction;
+import net.threescale.api.v2.ApplicationResponse;
 import net.threescale.api.v2.AuthorizeResponse;
 import net.threescale.api.v2.HttpSender;
 import org.jboss.cache.Cache;
@@ -24,7 +25,8 @@ public abstract class CacheImplCommon implements ApiCache {
     public static final String authorize_prefix = "/authorize";
     public static final String oauth_authorize_prefix = "/oauth_authorize";
     public static final String authorizeResponseKey = "/auth_response";
-
+    public static final String applicationResponseKey = "/app_response";
+    public static final String application_prefix = "/application";
     public static final String responseKey = "/response";
     private String EXPIRATION_KEY = "expiration";
 
@@ -39,7 +41,7 @@ public abstract class CacheImplCommon implements ApiCache {
 
     private long authorizeExpirationTimeInMillis = 500L;
     private long reportExpirationTimeInMillis = 500L;
-
+    private long applicationExpirationTimeInMillis = 60000L;
     private long nextExpirationTime = new Date().getTime() + reportExpirationTimeInMillis;
 
 
@@ -119,6 +121,25 @@ public abstract class CacheImplCommon implements ApiCache {
         Long future = System.currentTimeMillis() + authorizeExpirationTimeInMillis;
         authorizeNode.put(authorizeResponseKey, authorizedResponse);
         authorizeNode.put(EXPIRATION_KEY, future);
+    }
+
+    public void addApplicationFor(ApplicationResponse app_response, String application_id, String user_key, String app_id){
+    	Fqn<String> authorizeFqn = applicationKeyFrom(application_id,user_key, app_id);
+        Node root = data_cache.getRoot();
+        Node authorizeNode = data_cache.getNode(authorizeFqn);
+        if (authorizeNode == null) {
+            authorizeNode = root.addChild(authorizeFqn);
+        }
+
+        Long future = System.currentTimeMillis() + applicationExpirationTimeInMillis;
+        authorizeNode.put(applicationResponseKey, app_response);
+        authorizeNode.put(EXPIRATION_KEY, future);
+    }
+    
+    public ApplicationResponse getApplicationFor(String application_id, String user_key, String app_id){
+    Fqn<String> applicationFqn = applicationKeyFrom(application_id,user_key, app_id);
+
+        return (ApplicationResponse) data_cache.get(applicationFqn, applicationResponseKey);
     }
 
     public void close() {
@@ -212,6 +233,13 @@ public abstract class CacheImplCommon implements ApiCache {
         }
 
         return Fqn.fromString(oauth_authorize_prefix + "/" + app_id + "/" + app_key + "/"+ user_key + "/" + referrer + "/" + usage_as_string);
+    }
+
+    private Fqn<String> applicationKeyFrom(String application_id, String user_key, String app_id) {
+        application_id = valueOrNone(application_id);
+        user_key = valueOrNone(user_key);
+        app_id = valueOrNone(app_id);
+        return Fqn.fromString(oauth_authorize_prefix + "/" + app_id + "/" + application_id + "/"+ user_key);
     }
 
     private String valueOrNone(String app_key) {

@@ -17,6 +17,7 @@ public class Api2Impl implements Api2 {
     private Logger log = LogFactory.getLogger(this);
 
     private final String host_url;
+    private String admin_url;
     private final String provider_key;
     private final HttpSender sender;
     private ApiCache cache;
@@ -177,7 +178,35 @@ public class Api2Impl implements Api2 {
     public String getServerUrl() {
         return host_url;
     }
+    
+    @Override
+    public void setAdminUrl(String url) {
+        admin_url = url;
+    }
 
+    @Override
+    public ApplicationResponse applications_find(String application_id, String user_key, String app_id) throws ApiException {
+    	ApplicationResponse app_response = null;
+    	app_response = cache.getApplicationFor(application_id, user_key, app_id);
+    	if (null == app_response){
+	    	String url = formatApplicationFindUrl(application_id, user_key, app_id);
+	        log.info("Sending GET to sever with url: " + url);
+	        ApiHttpResponse response = sender.sendGetToServer(url);
+	        if (null == response)
+	        	throw new ApiException("failed getting application");
+	        log.info("response code was: " + response.getResponseCode());
+	        if (response.getResponseCode() == 200 || response.getResponseCode() == 409) {
+	        	app_response = new ApplicationResponse(response.getResponseText());
+	            cache.addApplicationFor(app_response, application_id, user_key, app_id);
+	            return app_response;
+	        } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
+	            throw new ApiException(response.getResponseText());
+	        } else {
+	            throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
+	        }
+    	}
+    	return app_response;
+    }
 
 // Private Methods
 
@@ -255,6 +284,31 @@ public class Api2Impl implements Api2 {
             }
         }
 
+        return url.toString();
+    }
+
+    private String formatApplicationFindUrl(String application_id, String user_key, String app_id) {
+        StringBuffer url = new StringBuffer();
+
+        if (null != admin_url)
+        	url.append(admin_url);
+        	else 
+        		url.append(host_url);
+        url.append("/admin/api/applications/find.xml")
+                .append("?provider_key=")
+                .append(provider_key);
+        if (app_id != null) {
+            url.append("&app_id=").append(app_id);
+
+        }
+        if (application_id != null) {
+            url.append("&application_id=")
+                    .append(application_id);
+        }
+        if (user_key != null) {
+            url.append("&user_key=")
+                    .append(user_key);
+        }
         return url.toString();
     }
 

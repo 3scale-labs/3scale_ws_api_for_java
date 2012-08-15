@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.cache.Fqn;
+import org.jboss.cache.Node;
+
 /**
  * Null Cache that sends everything straight to the server.
  * @see net.threescale.api.cache.ApiCache
@@ -76,6 +79,13 @@ public class NullCacheImpl implements ApiCache {
         } else {
             throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
         }
+    }
+
+    public void addApplicationFor(ApplicationResponse app_response, String application_id, String user_key, String app_id){
+    }
+    
+    public ApplicationResponse getApplicationFor(String application_id, String user_key, String app_id){
+    	return null;
     }
 
     public List<ApiTransaction> getTransactionFor(String app_id) {

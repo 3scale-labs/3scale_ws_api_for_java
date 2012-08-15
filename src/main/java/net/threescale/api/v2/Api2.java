@@ -58,4 +58,12 @@ public interface Api2 {
      * @return  The current server url
      */
     String getServerUrl();
+    
+    /**
+     * Sets the admin base url to be used for admin requests (like applications/find)
+     * @param url
+     */
+    void setAdminUrl(String url);
+    
+    ApplicationResponse applications_find(String application_id, String user_key, String app_id) throws ApiException;
 }
