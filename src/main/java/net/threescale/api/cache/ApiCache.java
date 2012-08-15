@@ -24,6 +24,16 @@ public interface ApiCache {
     AuthorizeResponse getAuthorizeFor(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage);
 
     /**
+     * Get oauthorauth ize for a user key.
+     * @param app_id
+     * @param app_key
+     * @param referrer
+     * @param user_key
+     *@param usage  @return
+     */
+    AuthorizeResponse getOAuthAuthorizeFor(String app_id, String app_key, String referrer, String user_key, HashMap<String, String> usage);
+
+    /**
      * Add authorized response to the cache.
      * @param app_id App Id
      * @param authorizedResponse Response data to add.
@@ -33,6 +43,17 @@ public interface ApiCache {
      * @param usage
      */
     void addAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage);
+
+    /**
+     * Add oauth authorized response to the cache.
+     * @param app_id App Id
+     * @param authorizedResponse Response data to add.
+     * @param app_key
+     * @param referrer
+     * @param user_key
+     * @param usage
+     */
+    void addOAuthAuthorizedResponse(String app_id, AuthorizeResponse authorizedResponse, String app_key, String referrer, String user_key, HashMap<String, String> usage);
 
     /**
      * Close the cache.

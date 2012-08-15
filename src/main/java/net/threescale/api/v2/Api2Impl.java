@@ -87,6 +87,40 @@ public class Api2Impl implements Api2 {
         }
     }
 
+    /**
+     * Fetch the current statistics for an application, using an app_id.
+     *
+     * @param app_id  Application id (or null)
+     * @param app_key  Optional Application Key (or null)
+     * @param referrer Optional referrer ip address (or null)'
+     * @return AuthorizeResponse containing the current usage metrics.
+     * @throws ApiException if there is an error connection to the server
+     */
+    public AuthorizeResponse oauth_authorize(String app_id, String app_key, String referrer, HashMap<String, String> usage_metrics) throws ApiException {
+
+        AuthorizeResponse cached_response = cache.getOAuthAuthorizeFor(app_id, app_key, referrer, null, usage_metrics);
+        if (cached_response == null) {
+            String url = formatOAuthGetUrl(app_id, referrer, null, usage_metrics);
+            log.info("Sending GET to sever with url: " + url);
+
+            ApiHttpResponse response = sender.sendGetToServer(url);
+
+            log.info("response code was: " + response.getResponseCode());
+
+            if (response.getResponseCode() == 200 || response.getResponseCode() == 409) {
+                AuthorizeResponse authorizedResponse = new AuthorizeResponse(response.getResponseText());
+                cache.addOAuthAuthorizedResponse(app_id, authorizedResponse, app_key, referrer, null, usage_metrics);
+                return authorizedResponse;
+            } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
+                throw new ApiException(response.getResponseText());
+            } else {
+                throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
+            }
+        } else {
+            return cached_response;
+        }
+    }
+
 
     /**
      * Fetch the current statistics for an application, using an app_id.
@@ -164,6 +198,42 @@ public class Api2Impl implements Api2 {
         }
 
 
+        if (user_key != null) {
+            url.append("&user_key=")
+                    .append(user_key);
+        }
+
+
+        if (referrer != null) {
+            url.append("&referrer=")
+                    .append(referrer);
+        }
+
+        if (usage != null) {
+            Set<Map.Entry<String,String>> entries = usage.entrySet();
+            for (Map.Entry<String, String> entry : entries) {
+                url.append("&usage[")
+                   .append(entry.getKey())
+                   .append("]=")
+                   .append(entry.getValue());
+            }
+        }
+
+        return url.toString();
+    }
+
+    private String formatOAuthGetUrl(String app_id, String referrer, String user_key, HashMap<String, String> usage) {
+        StringBuffer url = new StringBuffer();
+
+        url.append(host_url)
+                .append("/transactions/oauth_authorize.xml")
+                .append("?provider_key=")
+                .append(provider_key);
+        if (app_id != null) {
+            url.append("&app_id=").append(app_id);
+
+        }
+        
         if (user_key != null) {
             url.append("&user_key=")
                     .append(user_key);
