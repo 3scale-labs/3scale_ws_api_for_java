@@ -200,7 +200,11 @@ public class Api2Impl implements Api2 {
 	            cache.addApplicationFor(app_response, application_id, user_key, app_id);
 	            return app_response;
 	        } else if (response.getResponseCode() == 403 || response.getResponseCode() == 404) {
-	            throw new ApiException(response.getResponseText());
+	        	String responseText = response.getResponseText();
+	        	if (null != responseText)
+	        		throw new ApiException(responseText);
+	        	else 
+	        		throw new ApiException("" + response.getResponseCode(), "application no found");
 	        } else {
 	            throw ApiUtil.createExceptionForUnexpectedResponse(log, response);
 	        }

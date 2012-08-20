@@ -26,7 +26,7 @@ public class AuthorizeResponse  implements ApiResponse {
     private String plan = "";
     private String reason = "";
     private ArrayList<ApiUsageMetric> usage_reports = new ArrayList<ApiUsageMetric>();
-
+    private String redirect_url = "";
 
     public AuthorizeResponse(String xml) {
 
@@ -60,6 +60,10 @@ public class AuthorizeResponse  implements ApiResponse {
         return plan;
     }
 
+    public String getRedirect_url(){
+    	return redirect_url;
+    }
+    
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("AuthorizeResponse: [");
@@ -133,7 +137,9 @@ public class AuthorizeResponse  implements ApiResponse {
             } else if (localName.equalsIgnoreCase("usage_report")) {
                 usage_reports.add(new ApiUsageMetric(metric, period, period_start, period_end, max_value, current_value, exceeded));
             }
-
+            else if (localName.equalsIgnoreCase("redirect_url")) {
+                redirect_url = data;
+            } 
             characters.setLength(0);
         }
 
