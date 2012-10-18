@@ -14,6 +14,7 @@ See the @see AuthorizeServletFilter comments for more details.
  
 
 To configure ServletFilter
+```
 <filter>
         <filter-name>3Scale AuthorizationFilter</filter-name>
         <filter-class>net.threescale.api.servlet.filter.AuthorizeServletFilter</filter-class>
@@ -28,7 +29,7 @@ To configure ServletFilter
         <filter-name>3Scale AuthorizationFilter</filter-name>
         <url-pattern>api/*</url-pattern>
 </filter-mapping>
-
+```
 
 To test
 =======
