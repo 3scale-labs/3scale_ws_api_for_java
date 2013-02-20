@@ -1,16 +1,19 @@
 package threescale.v3.api;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * User: geoffd
  * Date: 15/02/2013
  */
 public interface Client {
-    public AuthorizeResponse authrep(HashMap<String, String> options);
+    String DEFAULT_HOST = "127.0.0.1";
 
-    public void report(ArrayList<HashMap<String, String>> transactions);
+    public AuthorizeResponse authrep(ParameterMap metrics);
 
-    public Response authorize(HashMap<String, String> options);
+    public ReportResponse report(ParameterMap... transactions);
+
+    public AuthorizeResponse authorize(ParameterMap parameters);
+
+    public String getHost();
+
+    public AuthorizeResponse oauth_authorize(ParameterMap params);
 }

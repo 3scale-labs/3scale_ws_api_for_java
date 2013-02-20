@@ -7,15 +7,15 @@ package threescale.v3.api;
 public interface UsageReport {
     public String getMetric();
 
-    public Object getPeriod();
+    public String getPeriod();
 
     public String getCurrentValue();
 
     public String getMaxValue();
 
-    public Object periodStart();
+    public String getPeriodStart();
 
-    public Object periodEnd();
+    public String getPeriodEnd();
 
     public boolean hasExceeded();
 }

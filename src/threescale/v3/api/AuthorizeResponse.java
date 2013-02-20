@@ -10,4 +10,13 @@ public interface AuthorizeResponse {
     public String getAppKey();
 
     public String getRedirectUrl();
+
+    public UsageReport[] getUsageReports();
+
+    public boolean success();
+
+    public String getErrorCode();
+
+    public String getErrorMessage();
+
 }
