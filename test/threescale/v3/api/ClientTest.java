@@ -89,7 +89,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_successful_authorize() {
+    public void test_successful_authorize() throws ServerError {
         final String body = "<status>" +
                 "<authorized>true</authorized>" +
                 "<plan>Ultimate</plan>" +
@@ -137,7 +137,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_successful_authorize_with_app_keys() {
+    public void test_successful_authorize_with_app_keys() throws ServerError {
         final String body = "<status>" +
                 "<authorized>true</authorized>" +
                 "<plan>Ultimate</plan>" +
@@ -157,7 +157,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_authorize_with_exceeded_usage_limits() {
+    public void test_authorize_with_exceeded_usage_limits() throws ServerError {
         final String body = "<status>" +
                 "<authorized>false</authorized>" +
                 "<reason>usage limits are exceeded</reason>" +
@@ -197,7 +197,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_authorize_with_invalid_app_id() {
+    public void test_authorize_with_invalid_app_id() throws ServerError {
         final String body = "<error code=\"application_not_found\">application with id=\"foo\" was not found</error>";
 
         context.checking(new Expectations() {{
@@ -215,7 +215,7 @@ public class ClientTest {
     }
 
     @Test(expected = ServerError.class)
-    public void test_authorize_with_server_error() {
+    public void test_authorize_with_server_error() throws ServerError {
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
             will(returnValue(new HtmlResponse(500, "OMG! WTF!")));
@@ -229,7 +229,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_successful_oauth_authorize() {
+    public void test_successful_oauth_authorize() throws ServerError {
         final String body = "<status>" +
                 "<authorized>true</authorized>" +
                 "<application>" +
@@ -286,7 +286,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_oauth_authorize_with_exceeded_usage_limits() {
+    public void test_oauth_authorize_with_exceeded_usage_limits() throws ServerError {
         final String body = "<status>" +
                 "<authorized>false</authorized>" +
                 "<reason>usage limits are exceeded</reason>" +
@@ -329,7 +329,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_oauth_authorize_with_invalid_app_id() {
+    public void test_oauth_authorize_with_invalid_app_id() throws ServerError {
         final String body = "<error code=\"application_not_found\">application with id=\"foo\" was not found</error>";
 
         context.checking(new Expectations() {{
@@ -348,7 +348,7 @@ public class ClientTest {
     }
 
     @Test(expected = ServerError.class)
-    public void test_oath_authorize_with_server_error() {
+    public void test_oath_authorize_with_server_error() throws ServerError {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo");
@@ -367,7 +367,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_successful_report() {
+    public void test_successful_report() throws ServerError {
 
 
         context.checking(new Expectations() {{
@@ -389,7 +389,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_report_encodes_transactions() {
+    public void test_report_encodes_transactions() throws ServerError {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post(with(any(String.class)), with(any(String.class)));
@@ -428,7 +428,7 @@ public class ClientTest {
     }
 
     @Test
-    public void test_failed_report() {
+    public void test_failed_report() throws ServerError {
         final String error_body = "<error code=\"provider_key_invalid\">provider key \"foo\" is invalid</error>";
 
         context.checking(new Expectations() {{
@@ -452,7 +452,7 @@ public class ClientTest {
     }
 
     @Test(expected = ServerError.class)
-    public void test_report_with_server_error() {
+    public void test_report_with_server_error() throws ServerError {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post("http://" + host + "/transactions.xml", with(any(String.class)));

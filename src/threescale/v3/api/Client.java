@@ -5,7 +5,7 @@ package threescale.v3.api;
  * Date: 15/02/2013
  */
 public interface Client {
-    String DEFAULT_HOST = "127.0.0.1";
+    String DEFAULT_HOST = "su1.3scale.net";
 
     public AuthorizeResponse authrep(ParameterMap metrics);
 
