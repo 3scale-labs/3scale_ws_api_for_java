@@ -7,13 +7,13 @@ package threescale.v3.api;
 public interface Client {
     String DEFAULT_HOST = "su1.3scale.net";
 
-    public AuthorizeResponse authrep(ParameterMap metrics);
+    public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError;
 
     public ReportResponse report(ParameterMap... transactions);
 
-    public AuthorizeResponse authorize(ParameterMap parameters);
+    public AuthorizeResponse authorize(ParameterMap parameters) throws ServerError;
 
     public String getHost();
 
-    public AuthorizeResponse oauth_authorize(ParameterMap params);
+    public AuthorizeResponse oauth_authorize(ParameterMap params) throws ServerError;
 }

@@ -1,9 +1,8 @@
 package threescale.v3.api.impl;
 
-import threescale.v3.api.AuthorizeResponse;
-import threescale.v3.api.Client;
-import threescale.v3.api.ParameterMap;
-import threescale.v3.api.ReportResponse;
+import threescale.v3.api.*;
+
+import java.util.Set;
 
 /**
  * User: geoffd
@@ -14,21 +13,42 @@ public class ClientDriver implements Client {
     private String provider_key = null;
     private String host = DEFAULT_HOST;
 
-    public ClientDriver() {
+    private HtmlClient server;
+
+    public ClientDriver(HtmlClient server) {
+        this.server = server;
     }
 
-    public ClientDriver(String provider_key) {
+    public ClientDriver(HtmlClient server, String provider_key) {
         this.provider_key = provider_key;
+        this.server = server;
     }
 
-    public ClientDriver(String provider_key, String host) {
+    public ClientDriver(HtmlClient server, String provider_key, String host) {
         this.provider_key = provider_key;
+        this.server = server;
         this.host = host;
     }
 
-    public AuthorizeResponse authrep(ParameterMap metrics) {
+    public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError {
         metrics.add("provider_key", provider_key);
-        return null;
+
+        ParameterMap usage = metrics.getMapValue("usage");
+
+        if (usage == null || usage.getStringValue("hits") == null) {
+            if (usage == null) {
+                usage = new ParameterMap();
+                metrics.add("usage", usage);
+            }
+            usage.add("hits", "1");
+        }
+        String urlParams = encodeAsString(metrics, null);
+
+        final String s = "http://" + getHost() + "/transactions/authrep.xml?" + urlParams;
+//        System.out.println("Actual: " + s);
+
+        HtmlResponse response = server.get(s);
+        return convertXmlToAuthorizeResponse(response);
     }
 
     public ReportResponse report(ParameterMap... transactions) {
@@ -36,7 +56,7 @@ public class ClientDriver implements Client {
         return null;
     }
 
-    public AuthorizeResponse authorize(ParameterMap parameters) {
+    public AuthorizeResponse authorize(ParameterMap parameters) throws ServerError {
         parameters.add("provider_key", provider_key);
         return null;
     }
@@ -45,8 +65,40 @@ public class ClientDriver implements Client {
         return host;
     }
 
-    public AuthorizeResponse oauth_authorize(ParameterMap params) {
+    public AuthorizeResponse oauth_authorize(ParameterMap params) throws ServerError {
         params.add("provider_key", provider_key);
         return null;
+    }
+
+
+    public String encodeAsString(ParameterMap params, String prefix) {
+        boolean first = true;
+        StringBuffer result = new StringBuffer();
+        for (String key : params.getKeys()) {
+            if (params.getType(key) == ParameterMap.STRING) {
+                if (first) {
+                    first = false;
+                } else {
+                    if (prefix == null) {
+                        result.append("&");
+                    }
+                }
+                if (prefix == null) {
+                    result.append(key).append("=").append(params.getStringValue(key));
+                } else {
+                    result.append("&[").append(prefix).append("]");
+                    result.append("[").append(key).append("]").append("=").append(params.getStringValue(key));
+                }
+            } else if (params.getType(key) == ParameterMap.MAP) {
+                result.append(encodeAsString(params.getMapValue(key), key));
+            }
+        }
+
+        return result.toString();
+    }
+
+
+    private AuthorizeResponse convertXmlToAuthorizeResponse(HtmlResponse res) {
+        return new AuthorizeResponse();
     }
 }

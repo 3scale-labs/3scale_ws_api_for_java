@@ -2,6 +2,8 @@ package threescale.v3.api;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,6 +14,8 @@ import static org.junit.Assert.*;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 
+import org.hamcrest.Matcher;
+
 /**
  * User: geoffd
  * Date: 18/02/2013
@@ -21,47 +25,52 @@ public class ClientTest {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
 
+    private final String host = Client.DEFAULT_HOST;
+    private final String provider_key = "1234abcd";
 
     private Client client;
-    private String host;
     private HtmlClient htmlServer;
+
+    DateTimeFormatter fmt;
 
     @Before
     public void setup() {
-        client = new ClientDriver("1234abcd");
-        host = Client.DEFAULT_HOST;
         htmlServer = context.mock(HtmlClient.class);
+        client = new ClientDriver(htmlServer, provider_key);
+
+        fmt = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss Z");
     }
 
     @Test
     public void test_default_host() {
-        client = new ClientDriver();
+        client = new ClientDriver(htmlServer);
 
         assertEquals("su1.3scale.net", client.getHost());
     }
 
     @Test
     public void test_custom_host() {
-        client = new ClientDriver("1234abcd", "example.com");
+        client = new ClientDriver(htmlServer, "1234abcd", "example.com");
 
         assertEquals("example.com", client.getHost());
     }
 
     @Test
-    public void test_authrep_usage_is_encoded() {
-        assertAuthrepUrlWithParams("&%5Busage%5D%5Bmethod%5D=666");
+    public void test_authrep_usage_is_encoded() throws ServerError {
+        assertAuthrepUrlWithParams("&[usage][hits]=1&[usage][method]=666");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
-        usage.add("method", "1");
+        usage.add("method", "666");
         params.add("usage", usage);
 
         client.authrep(params);
     }
 
     @Test
-    public void test_authrep_usage_values_are_encoded() {
-        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=%230");
+    public void test_authrep_usage_values_are_encoded() throws ServerError {
+
+        assertAuthrepUrlWithParams("&[usage][hits]=#0");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -72,15 +81,19 @@ public class ClientTest {
     }
 
     @Test
-    public void test_authrep_usage_defaults_to_hits_1() {
-        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=1");
+    public void test_authrep_usage_defaults_to_hits_1() throws ServerError {
 
-        client.authrep(null);
+        assertAuthrepUrlWithParams("&[usage][hits]=1&app_id=appid");
+
+        ParameterMap params = new ParameterMap();
+        params.add("app_id", "appid");
+
+        client.authrep(params);
     }
 
     @Test
-    public void test_authrep_supports_app_id_app_key_auth_mode() {
-        assertAuthrepUrlWithParams("&app_id=appid&app_key=appkey&%5Busage%5D%5Bhits%5D=1");
+    public void test_authrep_supports_app_id_app_key_auth_mode() throws ServerError {
+        assertAuthrepUrlWithParams("&[usage][hits]=1&app_key=appkey&app_id=appid");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
@@ -111,7 +124,8 @@ public class ClientTest {
                 "</status>";
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+            oneOf(htmlServer).get(with("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo"));
+//            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
             will(returnValue(new HtmlResponse(200, body)));
         }});
 
@@ -124,14 +138,14 @@ public class ClientTest {
         assertEquals(2, response.getUsageReports().length);
 
         assertEquals("day", response.getUsageReports()[0].getPeriod());
-        assertEquals(new DateTime(2010, 4, 26, 00, 00, DateTimeZone.UTC).toString(), response.getUsageReports()[0].getPeriodStart());
-        assertEquals(new DateTime(2010, 4, 27, 00, 00, DateTimeZone.UTC).toString(), response.getUsageReports()[0].getPeriodEnd());
+        assertEquals(fmt.print(new DateTime(2010, 4, 26, 00, 00, DateTimeZone.UTC)), response.getUsageReports()[0].getPeriodStart());
+        assertEquals(fmt.print(new DateTime(2010, 4, 27, 00, 00, DateTimeZone.UTC)), response.getUsageReports()[0].getPeriodEnd());
         assertEquals("10023", response.getUsageReports()[0].getCurrentValue());
         assertEquals("50000", response.getUsageReports()[0].getMaxValue());
 
         assertEquals("month", response.getUsageReports()[1].getPeriod());
-        assertEquals(new DateTime(2010, 4, 1, 0, 0, DateTimeZone.UTC), response.getUsageReports()[1].getPeriodStart());
-        assertEquals(new DateTime(2010, 5, 1, 0, 0, DateTimeZone.UTC), response.getUsageReports()[1].getPeriodEnd());
+        assertEquals(fmt.print(new DateTime(2010, 4, 1, 0, 0, DateTimeZone.UTC)), response.getUsageReports()[1].getPeriodStart());
+        assertEquals(fmt.print(new DateTime(2010, 5, 1, 0, 0, DateTimeZone.UTC)), response.getUsageReports()[1].getPeriodEnd());
         assertEquals("999872", response.getUsageReports()[1].getCurrentValue());
         assertEquals("150000", response.getUsageReports()[1].getMaxValue());
     }
@@ -273,14 +287,14 @@ public class ClientTest {
         assertEquals(2, response.getUsageReports().length);
 
         assertEquals("week", response.getUsageReports()[0].getPeriod());
-        assertEquals(new DateTime(2012, 1, 30, 0, 0, DateTimeZone.UTC).toString(), response.getUsageReports()[0].getPeriodStart());
-        assertEquals(new DateTime(2012, 02, 06, 0, 0, DateTimeZone.UTC).toString(), response.getUsageReports()[0].getPeriodEnd());
+        assertEquals(fmt.print(new DateTime(2012, 1, 30, 0, 0, DateTimeZone.UTC)), response.getUsageReports()[0].getPeriodStart());
+        assertEquals(fmt.print(new DateTime(2012, 02, 06, 0, 0, DateTimeZone.UTC)), response.getUsageReports()[0].getPeriodEnd());
         assertEquals("1", response.getUsageReports()[0].getCurrentValue());
         assertEquals("5000", response.getUsageReports()[0].getMaxValue());
 
         assertEquals("minute", response.getUsageReports()[1].getPeriod());
-        assertEquals(new DateTime(2012, 2, 03, 0, 0, DateTimeZone.UTC).toString(), response.getUsageReports()[1].getPeriodStart());
-        assertEquals(new DateTime(2012, 2, 03, 0, 0, DateTimeZone.UTC).toString(), response.getUsageReports()[1].getPeriodEnd());
+        assertEquals(fmt.print(new DateTime(2012, 2, 03, 0, 0, DateTimeZone.UTC)), response.getUsageReports()[1].getPeriodStart());
+        assertEquals(fmt.print(new DateTime(2012, 2, 03, 0, 0, DateTimeZone.UTC)), response.getUsageReports()[1].getPeriodEnd());
         assertEquals("0", response.getUsageReports()[1].getCurrentValue());
         assertEquals("0", response.getUsageReports()[1].getMaxValue());
     }
@@ -363,7 +377,7 @@ public class ClientTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_report_raises_an_exception_if_no_transactions_given() {
-        client.report(null);
+        client.report(null, null);
     }
 
     @Test
@@ -377,7 +391,7 @@ public class ClientTest {
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
-        params.add("timestamp", new DateTime(2010, 4, 27, 15, 0).toString());
+        params.add("timestamp", fmt.print(new DateTime(2010, 4, 27, 15, 0)));
 
         ParameterMap usage = new ParameterMap();
         usage.add("hits", "1");
@@ -436,7 +450,7 @@ public class ClientTest {
             will(returnValue(new HtmlResponse(403, error_body)));
         }});
 
-        client = new ClientDriver("foo");
+        client = new ClientDriver(htmlServer, "foo");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "abc");
@@ -468,26 +482,17 @@ public class ClientTest {
     }
 
 
-    private void assertAuthrepUrlWithParams(String params) {
+    private void assertAuthrepUrlWithParams(final String params) throws ServerError {
+        final String authrep_url = "http://" + host + "/transactions/authrep.xml?provider_key=" + provider_key + params;
 
+        final String body = "<status>" +
+                "<authorized>true</authorized>" +
+                "<plan>Ultimate</plan>" +
+                "</status>";
+//        System.out.println("Expect: "+ authrep_url);
+        context.checking(new Expectations() {{
+            oneOf(htmlServer).get(authrep_url);
+            will(returnValue(new HtmlResponse(200, body)));
+        }});
     }
-//      #OPTIMIZE this tricky test helper relies on fakeweb catching the urls requested by the client
-//      # it is brittle: it depends in the correct order or params in the url
-//      #
-//      def assert_authrep_url_with_params(str)
-//        authrep_url = "http://#{@host}/transactions/authrep.xml?provider_key=#{@client.provider_key}"
-//        params = str # unless str.scan(/log/)
-//        params << "&%5Busage%5D%5Bhits%5D=1" unless params.scan(/usage.*hits/)
-//        parsed_authrep_url = URI.parse(authrep_url + params)
-//        # set to have the client working
-//        body = '<status>
-//                  <authorized>true</authorized>
-//                  <plan>Ultimate</plan>
-//                </status>'
-//
-//        # this is the actual assertion, if fakeweb raises the client is submiting with wrong params
-//        FakeWeb.register_uri(:get, parsed_authrep_url, :status => ['200', 'OK'], :body => body)
-//      end
-//    end
-
 }

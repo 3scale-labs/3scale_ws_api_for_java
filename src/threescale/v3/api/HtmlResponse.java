@@ -6,8 +6,8 @@ package threescale.v3.api;
  */
 public class HtmlResponse {
 
-    int status;
-    String body;
+    private int status;
+    private String body;
 
     public HtmlResponse(int status, String body) {
         this.status = status;

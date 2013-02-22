@@ -4,19 +4,33 @@ package threescale.v3.api;
  * User: geoffd
  * Date: 15/02/2013
  */
-public interface AuthorizeResponse {
-    public String getPlan();
+public class AuthorizeResponse {
+    public String getPlan() {
+        return "";
+    }
 
-    public String getAppKey();
+    public String getAppKey() {
+        return "";
+    }
 
-    public String getRedirectUrl();
+    public String getRedirectUrl() {
+        return "";
+    }
 
-    public UsageReport[] getUsageReports();
+    public UsageReport[] getUsageReports() {
+        return new UsageReport[0];
+    }
 
-    public boolean success();
+    public boolean success() {
+        return false;
+    }
 
-    public String getErrorCode();
+    public String getErrorCode() {
+        return "";
+    }
 
-    public String getErrorMessage();
+    public String getErrorMessage() {
+        return "";
+    }
 
 }
