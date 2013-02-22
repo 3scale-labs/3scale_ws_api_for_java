@@ -5,31 +5,48 @@ package threescale.v3.api;
  * Date: 15/02/2013
  */
 public class UsageReport {
+
+    private String metric = "";
+    private String period = "";
+    private String periodStart = "";
+    private String periodEnd = "";
+    private String currentValue = "";
+    private String maxValue = "";
+
+    public UsageReport(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue) {
+        this.metric = metric;
+        this.period = period;
+        this.periodStart = periodStart;
+        this.periodEnd = periodEnd;
+        this.currentValue = currentValue;
+        this.maxValue = maxValue;
+    }
+
     public String getMetric() {
-        return "";
+        return metric;
     }
 
     public String getPeriod() {
-        return "";
+        return period;
     }
 
     public String getCurrentValue() {
-        return "";
+        return currentValue;
     }
 
     public String getMaxValue() {
-        return "";
+        return maxValue;
     }
 
     public String getPeriodStart() {
-        return "";
+        return periodStart;
     }
 
     public String getPeriodEnd() {
-        return "";
+        return periodEnd;
     }
 
     public boolean hasExceeded() {
-        return true;
+        return false;
     }
 }

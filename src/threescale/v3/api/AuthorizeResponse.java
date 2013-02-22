@@ -70,9 +70,26 @@ public class AuthorizeResponse {
     }
 
     private void processUsageReport(ArrayList<UsageReport> reports, Element usageEl) {
-        reports.add(new UsageReport());
-    }
+        final Attribute metricEl = usageEl.getAttribute("metric");
+        final Attribute periodEl = usageEl.getAttribute("period");
+        final Element periodStartEl = usageEl.getFirstChildElement("period_start");
+        final Element periodEndEl = usageEl.getFirstChildElement("period_end");
+        final Element currentValue = usageEl.getFirstChildElement("current_value");
+        final Element maxValue = usageEl.getFirstChildElement("max_value");
 
+        reports.add(new UsageReport(metricEl.getValue(), periodEl.getValue(),
+                periodStartEl.getValue(), periodEndEl.getValue(),
+                currentValue.getValue(), maxValue.getValue()
+        ));
+    }
+/*
+<usage_report metric="hits" period="day">" +
+                "      <period_start>2010-04-26 00:00:00 +0000</period_start>" +
+                "      <period_end>2010-04-27 00:00:00 +0000</period_end>" +
+                "      <current_value>10023</current_value>" +
+                "      <max_value>50000</max_value>" +
+                "    </usage_report>" +
+ */
 
     public String getPlan() {
         return plan;
