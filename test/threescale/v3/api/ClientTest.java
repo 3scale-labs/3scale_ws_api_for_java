@@ -124,8 +124,7 @@ public class ClientTest {
                 "</status>";
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).get(with("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo"));
-//            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
             will(returnValue(new HtmlResponse(200, body)));
         }});
 

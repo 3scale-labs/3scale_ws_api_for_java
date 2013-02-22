@@ -4,18 +4,32 @@ package threescale.v3.api;
  * User: geoffd
  * Date: 15/02/2013
  */
-public interface UsageReport {
-    public String getMetric();
+public class UsageReport {
+    public String getMetric() {
+        return "";
+    }
 
-    public String getPeriod();
+    public String getPeriod() {
+        return "";
+    }
 
-    public String getCurrentValue();
+    public String getCurrentValue() {
+        return "";
+    }
 
-    public String getMaxValue();
+    public String getMaxValue() {
+        return "";
+    }
 
-    public String getPeriodStart();
+    public String getPeriodStart() {
+        return "";
+    }
 
-    public String getPeriodEnd();
+    public String getPeriodEnd() {
+        return "";
+    }
 
-    public boolean hasExceeded();
+    public boolean hasExceeded() {
+        return true;
+    }
 }

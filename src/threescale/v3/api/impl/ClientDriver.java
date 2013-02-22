@@ -1,8 +1,13 @@
 package threescale.v3.api.impl;
 
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.ParsingException;
 import threescale.v3.api.*;
 
-import java.util.Set;
+import nu.xom.Builder;
+
+import java.io.IOException;
 
 /**
  * User: geoffd
@@ -59,7 +64,11 @@ public class ClientDriver implements Client {
 
     public AuthorizeResponse authorize(ParameterMap parameters) throws ServerError {
         parameters.add("provider_key", provider_key);
-        return null;
+        String urlParams = encodeAsString(parameters, null);
+
+        final String s = "http://" + getHost() + "/transactions/authorize.xml?" + urlParams;
+        HtmlResponse response = server.get(s);
+        return convertXmlToAuthorizeResponse(response);
     }
 
     public String getHost() {
@@ -99,9 +108,10 @@ public class ClientDriver implements Client {
     }
 
 
-    private AuthorizeResponse convertXmlToAuthorizeResponse(HtmlResponse res) {
-        return new AuthorizeResponse();
+    private AuthorizeResponse convertXmlToAuthorizeResponse(HtmlResponse res) throws ServerError {
+        return new AuthorizeResponse(res.getStatus(), res.getBody());
     }
+
 
     public ClientDriver setServer(HtmlClient server) {
         this.server = server;

@@ -1,16 +1,93 @@
 package threescale.v3.api;
 
+import nu.xom.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
 /**
  * User: geoffd
  * Date: 15/02/2013
  */
 public class AuthorizeResponse {
+
+    private boolean status = false;
+    private String plan = "";
+    private String appKey = "";
+    private UsageReport[] usageReports = new UsageReport[0];
+
+    public AuthorizeResponse(int httpStatus, String httpContent) throws ServerError {
+        if (httpStatus == 200 || httpStatus == 409) {
+            createAuthorizedOKOrExceeded(httpStatus, httpContent);
+        } else {
+            createAuthorizationFailed(httpStatus, httpContent);
+        }
+
+    }
+
+
+    private void createAuthorizationFailed(int httpStatus, String httpContent) {
+        try {
+            Builder parser = new Builder();
+            Document doc = parser.build(httpContent, null);
+            Element root = doc.getRootElement();
+            root.getFirstChildElement("status");
+        } catch (ParsingException ex) {
+            System.err.println("Cafe con Leche is malformed today. How embarrassing!");
+        } catch (IOException ex) {
+            System.err.println("Could not connect to Cafe con Leche. The site may be down.");
+        }
+    }
+
+    private void createAuthorizedOKOrExceeded(int httpStatus, String httpContent) throws ServerError {
+        try {
+            Builder parser = new Builder();
+            Document doc = parser.build(httpContent, null);
+            Element root = doc.getRootElement();
+
+            Element authorizedEl = root.getFirstChildElement("authorized");
+            setStatus(authorizedEl.getValue());
+
+            Element planEl = root.getFirstChildElement("plan");
+            setPlan(planEl.getValue());
+
+            ArrayList<UsageReport> reports = new ArrayList<UsageReport>();
+            Element usageReportsEl = root.getFirstChildElement("usage_reports");
+            if (usageReportsEl != null) {
+                Elements usageReports = usageReportsEl.getChildElements("usage_report");
+                for (int upindex = 0; upindex < usageReports.size(); upindex++) {
+                    processUsageReport(reports, usageReports.get(upindex));
+                }
+            }
+            setUsageReports(reports);
+            return;
+        } catch (ParsingException ex) {
+            System.err.println("Cafe con Leche is malformed today. How embarrassing!");
+        } catch (IOException ex) {
+            System.err.println("Could not connect to Cafe con Leche. The site may be down.");
+        }
+        throw new ServerError();
+    }
+
+    private void processUsageReport(ArrayList<UsageReport> reports, Element usageEl) {
+        reports.add(new UsageReport());
+    }
+
+
     public String getPlan() {
-        return "";
+        return plan;
+    }
+
+    private void setPlan(String plan) {
+        this.plan = plan;
     }
 
     public String getAppKey() {
-        return "";
+        return appKey;
+    }
+
+    private void setAppKey(String appKey) {
+        this.appKey = appKey;
     }
 
     public String getRedirectUrl() {
@@ -18,11 +95,16 @@ public class AuthorizeResponse {
     }
 
     public UsageReport[] getUsageReports() {
-        return new UsageReport[0];
+        return usageReports;
+    }
+
+    private void setUsageReports(ArrayList<UsageReport> reports) {
+        usageReports = new UsageReport[reports.size()];
+        usageReports = reports.toArray(new UsageReport[0]);
     }
 
     public boolean success() {
-        return false;
+        return status;
     }
 
     public String getErrorCode() {
@@ -31,6 +113,14 @@ public class AuthorizeResponse {
 
     public String getErrorMessage() {
         return "";
+    }
+
+    private void setStatus(String status) {
+        if (status.toLowerCase().equals("true")) {
+            this.status = true;
+        } else {
+            this.status = false;
+        }
     }
 
 }
