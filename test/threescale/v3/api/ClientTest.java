@@ -14,8 +14,6 @@ import static org.junit.Assert.*;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 
-import org.hamcrest.Matcher;
-
 /**
  * User: geoffd
  * Date: 18/02/2013
@@ -157,7 +155,7 @@ public class ClientTest {
                 "</status>";
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo&app_key=toosecret");
+            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_key=toosecret&app_id=foo");
             will(returnValue(new HtmlResponse(200, body)));
         }});
 
@@ -205,7 +203,7 @@ public class ClientTest {
         AuthorizeResponse response = client.authorize(params);
 
         assertFalse(response.success());
-        assertTrue("usage limits are exceeded".equals(response.getErrorMessage()));
+        assertTrue("usage limits are exceeded".equals(response.getReason()));
         assertTrue(response.getUsageReports()[0].hasExceeded());
     }
 
@@ -224,7 +222,7 @@ public class ClientTest {
 
         assertFalse(response.success());
         assertTrue("application_not_found".equals(response.getErrorCode()));
-        assertTrue("application with id=\"foo\" was not found".equals(response.getErrorMessage()));
+        assertTrue("application with id=\"foo\" was not found".equals(response.getReason()));
     }
 
     @Test(expected = ServerError.class)
@@ -337,7 +335,7 @@ public class ClientTest {
         AuthorizeResponse response = client.oauth_authorize(params);
 
         assertTrue(response.success());
-        assertEquals("usage limits are exceeded", response.getErrorMessage());
+        assertEquals("usage limits are exceeded", response.getReason());
         assertTrue(response.getUsageReports()[0].hasExceeded());
     }
 
@@ -357,7 +355,7 @@ public class ClientTest {
 
         assertFalse(response.success());
         assertEquals("application_not_found", response.getErrorCode());
-        assertEquals("application with id=\"foo\" was not found", response.getErrorMessage());
+        assertEquals("application with id=\"foo\" was not found", response.getReason());
     }
 
     @Test(expected = ServerError.class)

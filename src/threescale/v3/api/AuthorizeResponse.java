@@ -15,6 +15,7 @@ public class AuthorizeResponse {
     private String plan = "";
     private String appKey = "";
     private UsageReport[] usageReports = new UsageReport[0];
+    private String reason = "";
 
     public AuthorizeResponse(int httpStatus, String httpContent) throws ServerError {
         if (httpStatus == 200 || httpStatus == 409) {
@@ -47,6 +48,12 @@ public class AuthorizeResponse {
 
             Element authorizedEl = root.getFirstChildElement("authorized");
             setStatus(authorizedEl.getValue());
+            if (success() == false) {
+                Element reasonEl = root.getFirstChildElement("reason");
+                if (reasonEl != null) {
+                    setReason(reasonEl.getValue());
+                }
+            }
 
             Element planEl = root.getFirstChildElement("plan");
             setPlan(planEl.getValue());
@@ -72,6 +79,7 @@ public class AuthorizeResponse {
     private void processUsageReport(ArrayList<UsageReport> reports, Element usageEl) {
         final Attribute metricEl = usageEl.getAttribute("metric");
         final Attribute periodEl = usageEl.getAttribute("period");
+        final Attribute exceededEl = usageEl.getAttribute("exceeded");
         final Element periodStartEl = usageEl.getFirstChildElement("period_start");
         final Element periodEndEl = usageEl.getFirstChildElement("period_end");
         final Element currentValue = usageEl.getFirstChildElement("current_value");
@@ -79,7 +87,8 @@ public class AuthorizeResponse {
 
         reports.add(new UsageReport(metricEl.getValue(), periodEl.getValue(),
                 periodStartEl.getValue(), periodEndEl.getValue(),
-                currentValue.getValue(), maxValue.getValue()
+                currentValue.getValue(), maxValue.getValue(),
+                (exceededEl == null) ? "false" : exceededEl.getValue()
         ));
     }
 /*
@@ -128,8 +137,8 @@ public class AuthorizeResponse {
         return "";
     }
 
-    public String getErrorMessage() {
-        return "";
+    public String getReason() {
+        return reason;
     }
 
     private void setStatus(String status) {
@@ -138,6 +147,10 @@ public class AuthorizeResponse {
         } else {
             this.status = false;
         }
+    }
+
+    private void setReason(String reason) {
+        this.reason = reason;
     }
 
 }

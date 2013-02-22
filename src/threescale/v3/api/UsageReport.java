@@ -12,14 +12,24 @@ public class UsageReport {
     private String periodEnd = "";
     private String currentValue = "";
     private String maxValue = "";
+    private boolean hasExceeded = false;
 
-    public UsageReport(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue) {
+    public UsageReport(String metric, String period, String periodStart, String periodEnd, String currentValue, String maxValue, String hasExceeded) {
         this.metric = metric;
         this.period = period;
         this.periodStart = periodStart;
         this.periodEnd = periodEnd;
         this.currentValue = currentValue;
         this.maxValue = maxValue;
+        setHasExceeded(hasExceeded);
+    }
+
+    private void setHasExceeded(String hasExceeded) {
+        if (hasExceeded.toLowerCase().equals("true")) {
+            this.hasExceeded = true;
+        } else {
+            this.hasExceeded = false;
+        }
     }
 
     public String getMetric() {
@@ -47,6 +57,6 @@ public class UsageReport {
     }
 
     public boolean hasExceeded() {
-        return false;
+        return hasExceeded;
     }
 }
