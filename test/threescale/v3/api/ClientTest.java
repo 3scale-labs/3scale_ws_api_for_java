@@ -36,21 +36,21 @@ public class ClientTest {
     @Before
     public void setup() {
         htmlServer = context.mock(HtmlClient.class);
-        client = new ClientDriver(htmlServer, provider_key);
+        client = new ClientDriver(provider_key).setServer(htmlServer);
 
         fmt = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss Z");
     }
 
     @Test
     public void test_default_host() {
-        client = new ClientDriver(htmlServer);
+        client = new ClientDriver();
 
         assertEquals("su1.3scale.net", client.getHost());
     }
 
     @Test
     public void test_custom_host() {
-        client = new ClientDriver(htmlServer, "1234abcd", "example.com");
+        client = new ClientDriver("1234abcd", "example.com");
 
         assertEquals("example.com", client.getHost());
     }
@@ -450,7 +450,7 @@ public class ClientTest {
             will(returnValue(new HtmlResponse(403, error_body)));
         }});
 
-        client = new ClientDriver(htmlServer, "foo");
+        client = new ClientDriver("foo");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "abc");

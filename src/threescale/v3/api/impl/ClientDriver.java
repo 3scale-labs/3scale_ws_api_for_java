@@ -13,21 +13,22 @@ public class ClientDriver implements Client {
     private String provider_key = null;
     private String host = DEFAULT_HOST;
 
-    private HtmlClient server;
+    private HtmlClient server = new RemoteDriver(getHost());
 
-    public ClientDriver(HtmlClient server) {
-        this.server = server;
+    public ClientDriver() {
+        this.server = new RemoteDriver(getHost());
+
     }
 
-    public ClientDriver(HtmlClient server, String provider_key) {
+    public ClientDriver(String provider_key) {
         this.provider_key = provider_key;
-        this.server = server;
+        this.server = new RemoteDriver(getHost());
     }
 
-    public ClientDriver(HtmlClient server, String provider_key, String host) {
+    public ClientDriver(String provider_key, String host) {
         this.provider_key = provider_key;
-        this.server = server;
         this.host = host;
+        this.server = new RemoteDriver(getHost());
     }
 
     public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError {
@@ -100,5 +101,10 @@ public class ClientDriver implements Client {
 
     private AuthorizeResponse convertXmlToAuthorizeResponse(HtmlResponse res) {
         return new AuthorizeResponse();
+    }
+
+    public ClientDriver setServer(HtmlClient server) {
+        this.server = server;
+        return this;
     }
 }
