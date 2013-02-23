@@ -16,6 +16,7 @@ public class AuthorizeResponse {
     private String appKey = "";
     private UsageReport[] usageReports = new UsageReport[0];
     private String reason = "";
+    private String errorCode = "";
 
     public AuthorizeResponse(int httpStatus, String httpContent) throws ServerError {
         if (httpStatus == 200 || httpStatus == 409) {
@@ -32,12 +33,21 @@ public class AuthorizeResponse {
             Builder parser = new Builder();
             Document doc = parser.build(httpContent, null);
             Element root = doc.getRootElement();
-            root.getFirstChildElement("status");
+
+            final Attribute codeEl = root.getAttribute("code");
+            setErrorCode(codeEl.getValue());
+            setReason(root.getValue());
+            setStatus("false");
+
         } catch (ParsingException ex) {
             System.err.println("Cafe con Leche is malformed today. How embarrassing!");
         } catch (IOException ex) {
             System.err.println("Could not connect to Cafe con Leche. The site may be down.");
         }
+    }
+
+    private void setErrorCode(String code) {
+        errorCode = code;
     }
 
     private void createAuthorizedOKOrExceeded(int httpStatus, String httpContent) throws ServerError {
@@ -134,7 +144,7 @@ public class AuthorizeResponse {
     }
 
     public String getErrorCode() {
-        return "";
+        return errorCode;
     }
 
     public String getReason() {
