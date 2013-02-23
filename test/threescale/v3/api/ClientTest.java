@@ -266,7 +266,7 @@ public class ClientTest {
                 "</status>";
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo&redirect_url=http%3A%2F%2Flocalhost%3A8080%2Foauth%2Foauth_redirect");
+            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?redirect_url=http://localhost:8080/oauth/oauth_redirect&provider_key=1234abcd&app_id=foo");
             will(returnValue(new HtmlResponse(200, body)));
         }});
 
@@ -321,7 +321,7 @@ public class ClientTest {
                 "    <current_value>999872</current_value>" +
                 "    <max_value>150000</max_value>" +
                 "  </usage_report>" +
-                "/usage_reports>" +
+                "</usage_reports>" +
                 "</status>";
 
         context.checking(new Expectations() {{
@@ -334,7 +334,7 @@ public class ClientTest {
         params.add("app_id", "foo");
         AuthorizeResponse response = client.oauth_authorize(params);
 
-        assertTrue(response.success());
+        assertFalse(response.success());
         assertEquals("usage limits are exceeded", response.getReason());
         assertTrue(response.getUsageReports()[0].hasExceeded());
     }

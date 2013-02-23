@@ -17,6 +17,7 @@ public class AuthorizeResponse {
     private UsageReport[] usageReports = new UsageReport[0];
     private String reason = "";
     private String errorCode = "";
+    private String redirectUrl = "";
 
     public AuthorizeResponse(int httpStatus, String httpContent) throws ServerError {
         if (httpStatus == 200 || httpStatus == 409) {
@@ -68,6 +69,21 @@ public class AuthorizeResponse {
             Element planEl = root.getFirstChildElement("plan");
             setPlan(planEl.getValue());
 
+            Element applicationEl = root.getFirstChildElement("application");
+            if (applicationEl != null) {
+                Element keyEl = applicationEl.getFirstChildElement("key");
+                if (keyEl != null) {
+                    setAppKey(keyEl.getValue());
+                }
+
+                Element redirectUrlEl = applicationEl.getFirstChildElement("redirect_url");
+                if (redirectUrlEl != null) {
+                    setRedirectUrl(redirectUrlEl.getValue());
+                }
+            } else {
+                appKey = "";
+                redirectUrl = "";
+            }
             ArrayList<UsageReport> reports = new ArrayList<UsageReport>();
             Element usageReportsEl = root.getFirstChildElement("usage_reports");
             if (usageReportsEl != null) {
@@ -127,7 +143,7 @@ public class AuthorizeResponse {
     }
 
     public String getRedirectUrl() {
-        return "";
+        return redirectUrl;
     }
 
     public UsageReport[] getUsageReports() {
@@ -161,6 +177,10 @@ public class AuthorizeResponse {
 
     private void setReason(String reason) {
         this.reason = reason;
+    }
+
+    private void setRedirectUrl(String url) {
+        this.redirectUrl = url;
     }
 
 }

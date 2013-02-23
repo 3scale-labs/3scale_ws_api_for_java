@@ -17,6 +17,7 @@ public class ClientDriver implements Client {
 
     private String provider_key = null;
     private String host = DEFAULT_HOST;
+    private String redirect_url = "http://localhost:8080/oauth/oauth_redirect";
 
     private HtmlClient server = new RemoteDriver(getHost());
 
@@ -83,7 +84,17 @@ public class ClientDriver implements Client {
 
     public AuthorizeResponse oauth_authorize(ParameterMap params) throws ServerError {
         params.add("provider_key", provider_key);
-        return null;
+
+        String urlParams = encodeAsString(params, null);
+
+        final String s = "http://" + getHost() + "/transactions/oauth_authorize.xml?" + urlParams;
+//        System.out.println("Actual: " + s);
+
+        HtmlResponse response = server.get(s);
+        if (response.getStatus() == 500) {
+            throw new ServerError(response.getBody());
+        }
+        return convertXmlToAuthorizeResponse(response);
     }
 
 
