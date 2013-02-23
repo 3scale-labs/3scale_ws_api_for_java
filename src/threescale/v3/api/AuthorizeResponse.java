@@ -83,7 +83,7 @@ public class AuthorizeResponse {
         } catch (IOException ex) {
             System.err.println("Could not connect to Cafe con Leche. The site may be down.");
         }
-        throw new ServerError();
+        throw new ServerError("error");
     }
 
     private void processUsageReport(ArrayList<UsageReport> reports, Element usageEl) {

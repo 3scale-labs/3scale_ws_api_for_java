@@ -54,6 +54,9 @@ public class ClientDriver implements Client {
 //        System.out.println("Actual: " + s);
 
         HtmlResponse response = server.get(s);
+        if (response.getStatus() == 500) {
+            throw new ServerError(response.getBody());
+        }
         return convertXmlToAuthorizeResponse(response);
     }
 
@@ -68,6 +71,9 @@ public class ClientDriver implements Client {
 
         final String s = "http://" + getHost() + "/transactions/authorize.xml?" + urlParams;
         HtmlResponse response = server.get(s);
+        if (response.getStatus() == 500) {
+            throw new ServerError(response.getBody());
+        }
         return convertXmlToAuthorizeResponse(response);
     }
 
