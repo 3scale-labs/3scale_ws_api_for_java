@@ -34,11 +34,10 @@ public class ReportResponse {
             errorMessage = root.getValue();
             return;
         } catch (ParsingException ex) {
-            System.err.println("Cafe con Leche is malformed today. How embarrassing!");
+            throw new ServerError("The xml received was invalid: " + response.getBody());
         } catch (IOException ex) {
-            System.err.println("Could not connect to Cafe con Leche. The site may be down.");
+            throw new ServerError("Unable to connection to 3scale server");
         }
-        throw new ServerError("error");
     }
 
     public String getErrorCode() {
