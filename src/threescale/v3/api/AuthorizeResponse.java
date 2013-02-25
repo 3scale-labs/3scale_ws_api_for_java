@@ -21,15 +21,15 @@ public class AuthorizeResponse {
 
     public AuthorizeResponse(int httpStatus, String httpContent) throws ServerError {
         if (httpStatus == 200 || httpStatus == 409) {
-            createAuthorizedOKOrExceeded(httpStatus, httpContent);
+            createAuthorizedOKOrExceeded(httpContent);
         } else {
-            createAuthorizationFailed(httpStatus, httpContent);
+            createAuthorizationFailed(httpContent);
         }
 
     }
 
 
-    private void createAuthorizationFailed(int httpStatus, String httpContent) {
+    private void createAuthorizationFailed(String httpContent) {
         try {
             Builder parser = new Builder();
             Document doc = parser.build(httpContent, null);
@@ -51,7 +51,7 @@ public class AuthorizeResponse {
         errorCode = code;
     }
 
-    private void createAuthorizedOKOrExceeded(int httpStatus, String httpContent) throws ServerError {
+    private void createAuthorizedOKOrExceeded(String httpContent) throws ServerError {
         try {
             Builder parser = new Builder();
             Document doc = parser.build(httpContent, null);
@@ -116,14 +116,6 @@ public class AuthorizeResponse {
                 (exceededEl == null) ? "false" : exceededEl.getValue()
         ));
     }
-/*
-<usage_report metric="hits" period="day">" +
-                "      <period_start>2010-04-26 00:00:00 +0000</period_start>" +
-                "      <period_end>2010-04-27 00:00:00 +0000</period_end>" +
-                "      <current_value>10023</current_value>" +
-                "      <max_value>50000</max_value>" +
-                "    </usage_report>" +
- */
 
     public String getPlan() {
         return plan;
