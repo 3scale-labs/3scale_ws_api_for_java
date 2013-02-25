@@ -12,6 +12,7 @@ public class ParameterMap {
 
     public static final String STRING = "string";
     public static final String MAP = "map";
+    public static final String ARRAY = "array";
 
     private HashMap<String, Object> data;
 
@@ -27,6 +28,10 @@ public class ParameterMap {
         data.put(key, map);
     }
 
+    public void add(String key, ParameterMap[] array) {
+        data.put(key, array);
+    }
+
     public Set<String> getKeys() {
         return data.keySet();
     }
@@ -35,6 +40,9 @@ public class ParameterMap {
         Class clazz = data.get(key).getClass();
         if (clazz == String.class) {
             return STRING;
+        }
+        if (clazz == ParameterMap[].class) {
+            return ARRAY;
         }
         if (clazz == ParameterMap.class) {
             return MAP;
@@ -48,5 +56,13 @@ public class ParameterMap {
 
     public ParameterMap getMapValue(String key) {
         return (ParameterMap) data.get(key);
+    }
+
+    public ParameterMap[] getArrayValue(String key) {
+        return (ParameterMap[]) data.get(key);
+    }
+
+    public int size() {
+        return data.size();
     }
 }

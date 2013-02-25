@@ -19,22 +19,22 @@ public class ClientDriver implements Client {
     private String host = DEFAULT_HOST;
     private String redirect_url = "http://localhost:8080/oauth/oauth_redirect";
 
-    private HtmlClient server = new RemoteDriver(getHost());
+    private HtmlClient server = null;
 
     public ClientDriver() {
-        this.server = new RemoteDriver(getHost());
+        this.server = new RemoteDriver();
 
     }
 
     public ClientDriver(String provider_key) {
         this.provider_key = provider_key;
-        this.server = new RemoteDriver(getHost());
+        this.server = new RemoteDriver();
     }
 
     public ClientDriver(String provider_key, String host) {
         this.provider_key = provider_key;
         this.host = host;
-        this.server = new RemoteDriver(getHost());
+        this.server = new RemoteDriver();
     }
 
     public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError {
@@ -51,7 +51,7 @@ public class ClientDriver implements Client {
         }
         String urlParams = encodeAsString(metrics, null);
 
-        final String s = "http://" + getHost() + "/transactions/authrep.xml?" + urlParams;
+        final String s = getFullHostUrl() + "/transactions/authrep.xml?" + urlParams;
 //        System.out.println("Actual: " + s);
 
         HtmlResponse response = server.get(s);
@@ -76,7 +76,7 @@ public class ClientDriver implements Client {
             index++;
         }
 
-        HtmlResponse response = server.post("http://" + getHost() + "/transactions.xml", encodeAsString(params, null));
+        HtmlResponse response = server.post(getFullHostUrl() + "/transactions.xml", encodeAsString(params, null));
         if (response.getStatus() == 500) {
             throw new ServerError(response.getBody());
         }
@@ -87,7 +87,7 @@ public class ClientDriver implements Client {
         parameters.add("provider_key", provider_key);
         String urlParams = encodeAsString(parameters, null);
 
-        final String s = "http://" + getHost() + "/transactions/authorize.xml?" + urlParams;
+        final String s = getFullHostUrl() + "/transactions/authorize.xml?" + urlParams;
         HtmlResponse response = server.get(s);
         if (response.getStatus() == 500) {
             throw new ServerError(response.getBody());
@@ -104,7 +104,7 @@ public class ClientDriver implements Client {
 
         String urlParams = encodeAsString(params, null);
 
-        final String s = "http://" + getHost() + "/transactions/oauth_authorize.xml?" + urlParams;
+        final String s = getFullHostUrl() + "/transactions/oauth_authorize.xml?" + urlParams;
 //        System.out.println("Actual: " + s);
 
         HtmlResponse response = server.get(s);
@@ -114,31 +114,71 @@ public class ClientDriver implements Client {
         return convertXmlToAuthorizeResponse(response);
     }
 
+    private String getFullHostUrl() {
+        return "http://" + getHost();
+    }
+
 
     public String encodeAsString(ParameterMap params, String prefix) {
-        boolean first = true;
         StringBuffer result = new StringBuffer();
         for (String key : params.getKeys()) {
             if (params.getType(key) == ParameterMap.STRING) {
-                if (first) {
-                    first = false;
-                } else {
-                    if (prefix == null) {
-                        result.append("&");
-                    }
-                }
-                if (prefix == null) {
-                    result.append(key).append("=").append(params.getStringValue(key));
-                } else {
-                    result.append("&[").append(prefix).append("]");
-                    result.append("[").append(key).append("]").append("=").append(params.getStringValue(key));
-                }
+                processString(params, key, result);
             } else if (params.getType(key) == ParameterMap.MAP) {
-                result.append(encodeAsString(params.getMapValue(key), key));
+                processMap(params, key, result);
+            } else if (params.getType(key) == ParameterMap.ARRAY) {
+                processArray(params, key, result);
             }
         }
-
         return result.toString();
+    }
+
+    private void processString(ParameterMap params, String key, StringBuffer result) {
+        appendAmpIfFirstParameter(result);
+        result.append(key).append("=").append(params.getStringValue(key));
+    }
+
+
+    private void processMap(ParameterMap params, String mapKey, StringBuffer result) {
+        ParameterMap map = params.getMapValue(mapKey);
+        boolean first = true;
+        int index = 0;
+        for (String key : map.getKeys()) {
+            if (map.getType(key) == ParameterMap.STRING) {
+                appendAmpIfFirstParameter(result);
+                result.append("[").append(mapKey).append("]").append("[").append(key).append("]=").append(map.getStringValue(key));
+            } else if (map.getType(key) == ParameterMap.MAP) {
+                processMap(map, key, result);
+            } else if (map.getType(key) == ParameterMap.ARRAY) {
+                processArray(map, key, result);
+            }
+            index++;
+        }
+    }
+
+    private void processArray(ParameterMap params, String mapKey, StringBuffer result) {
+        ParameterMap[] array = params.getArrayValue(mapKey);
+        int index = 0;
+        for (ParameterMap parameterMap : array) {
+            result.append(mapKey).append("[").append(index).append("]");
+            for (String key : parameterMap.getKeys()) {
+                if (parameterMap.getType(key) == ParameterMap.STRING) {
+                    result.append("[").append(key).append("]=").append(parameterMap.getStringValue(key));
+                }
+                if (parameterMap.getType(key) == ParameterMap.MAP) {
+
+                }
+            }
+            index++;
+        }
+    }
+
+    private boolean appendAmpIfFirstParameter(StringBuffer result) {
+        if (result.length() != 0) {
+            result.append("&");
+            return true;
+        }
+        return false;
     }
 
 

@@ -47,10 +47,6 @@ public class AuthorizeResponse {
         }
     }
 
-    private void setErrorCode(String code) {
-        errorCode = code;
-    }
-
     private void createAuthorizedOKOrExceeded(String httpContent) throws ServerError {
         try {
             Builder parser = new Builder();
@@ -152,6 +148,10 @@ public class AuthorizeResponse {
 
     public String getErrorCode() {
         return errorCode;
+    }
+
+    private void setErrorCode(String code) {
+        errorCode = code;
     }
 
     public String getReason() {

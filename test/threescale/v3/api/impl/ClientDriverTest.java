@@ -4,10 +4,12 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import threescale.v3.api.ParameterMap;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * User: geoffd
@@ -29,7 +31,7 @@ public class ClientDriverTest {
         ParameterMap param = new ParameterMap();
         param.add("provider_key", "123abc");
 
-        Assert.assertEquals("provider_key=123abc", cd.encodeAsString(param, null));
+        assertEquals("provider_key=123abc", cd.encodeAsString(param, null));
     }
 
     @Test
@@ -38,7 +40,7 @@ public class ClientDriverTest {
         param.add("provider_key", "123abc");
         param.add("app_id", "3456aaa");
 
-        Assert.assertEquals("provider_key=123abc&app_id=3456aaa", cd.encodeAsString(param, null));
+        assertEquals("provider_key=123abc&app_id=3456aaa", cd.encodeAsString(param, null));
     }
 
     @Test
@@ -51,7 +53,7 @@ public class ClientDriverTest {
         usage.add("hits", "111");
         param.add("usage", usage);
 
-        Assert.assertEquals("provider_key=123abc&[usage][hits]=111&app_id=3456aaa", cd.encodeAsString(param, null));
+        assertEquals("provider_key=123abc&[usage][hits]=111&app_id=3456aaa", cd.encodeAsString(param, null));
     }
 
     @Test
@@ -66,9 +68,43 @@ public class ClientDriverTest {
         param.add("usage", usage);
 
 
-        Assert.assertEquals(
+        assertEquals(
                 "provider_key=123abc&[usage][timestamp]=2010-04-27 15:00:00 +0000&[usage][hits]=111&app_id=3456aaa",
                 cd.encodeAsString(param, null));
     }
 
+    @Test
+    public void testEncodingAnArray() throws Exception {
+        final String expected =
+                "transactions[0][app_id]=foo&transactions[0][usage][hits]=1&transactions[0][timestamp]=2010-04-27 15:42:17 0200" +
+                        "&transactions[1][app_id]=bar&transactions[1][usage][hits]=1&transactions[1][timestamp]=2010-04-27 15:55:12 0200" +
+                        "&provider_key=1234abcd";
+
+        ParameterMap app1 = new ParameterMap();
+        app1.add("app_id", "foo");
+        app1.add("timestamp", "2010-04-27 15:42:17 0200");
+
+        ParameterMap usage1 = new ParameterMap();
+        usage1.add("hits", "1");
+        app1.add("usage", usage1);
+
+        ParameterMap app2 = new ParameterMap();
+        app2.add("app_id", "bar");
+        app2.add("timestamp", "2010-04-27 15:55:12 0200");
+
+        ParameterMap usage2 = new ParameterMap();
+        usage2.add("hits", "1");
+        app2.add("usage", usage2);
+
+        ParameterMap[] transactions = new ParameterMap[2];
+        transactions[0] = app1;
+        transactions[1] = app2;
+
+        ParameterMap params = new ParameterMap();
+        params.add("provider_key", "1234abcd");
+        params.add("transactions", transactions);
+
+        assertEquals(expected, cd.encodeAsString(params, null));
+
+    }
 }
