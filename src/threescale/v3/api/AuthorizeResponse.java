@@ -29,7 +29,7 @@ public class AuthorizeResponse {
     }
 
 
-    private void createAuthorizationFailed(String httpContent) {
+    private void createAuthorizationFailed(String httpContent) throws ServerError {
         try {
             Builder parser = new Builder();
             Document doc = parser.build(httpContent, null);
@@ -41,9 +41,9 @@ public class AuthorizeResponse {
             setStatus("false");
 
         } catch (ParsingException ex) {
-            System.err.println("Cafe con Leche is malformed today. How embarrassing!");
+            throw new ServerError("The xml received was invalid: " + httpContent);
         } catch (IOException ex) {
-            System.err.println("Could not connect to Cafe con Leche. The site may be down.");
+            throw new ServerError("Unable to connection to 3scale server");
         }
     }
 
