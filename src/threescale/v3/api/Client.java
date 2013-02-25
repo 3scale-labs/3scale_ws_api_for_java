@@ -9,7 +9,7 @@ public interface Client {
 
     public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError;
 
-    public ReportResponse report(ParameterMap... transactions);
+    public ReportResponse report(ParameterMap... transactions) throws ServerError;
 
     public AuthorizeResponse authorize(ParameterMap parameters) throws ServerError;
 

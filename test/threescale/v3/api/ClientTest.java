@@ -373,16 +373,15 @@ public class ClientTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test_report_raises_an_exception_if_no_transactions_given() {
-        client.report(null, null);
+    public void test_report_raises_an_exception_if_no_transactions_given() throws ServerError {
+        client.report(null);
     }
 
     @Test
     public void test_successful_report() throws ServerError {
 
-
         context.checking(new Expectations() {{
-            oneOf(htmlServer).post("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo&redirect_url=http%3A%2F%2Flocalhost%3A8080%2Foauth%2Foauth_redirect", with(any(String.class)));
+            oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
             will(returnValue(new HtmlResponse(200, "")));
         }});
 
@@ -403,7 +402,7 @@ public class ClientTest {
     public void test_report_encodes_transactions() throws ServerError {
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).post(with(any(String.class)), with(any(String.class)));
+            oneOf(htmlServer).post("http://" + host + "/transactions.xml", "implment");
             will(returnValue(new HtmlResponse(200, "")));
         }});
 
@@ -443,11 +442,9 @@ public class ClientTest {
         final String error_body = "<error code=\"provider_key_invalid\">provider key \"foo\" is invalid</error>";
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).post("http://" + host + "/transactions.xml", with(any(String.class)));
+            oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
             will(returnValue(new HtmlResponse(403, error_body)));
         }});
-
-        client = new ClientDriver("foo");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "abc");
@@ -466,7 +463,7 @@ public class ClientTest {
     public void test_report_with_server_error() throws ServerError {
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).post("http://" + host + "/transactions.xml", with(any(String.class)));
+            oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
             will(returnValue(new HtmlResponse(500, "OMG! WTF!")));
         }});
 

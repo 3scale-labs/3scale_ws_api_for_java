@@ -61,9 +61,26 @@ public class ClientDriver implements Client {
         return convertXmlToAuthorizeResponse(response);
     }
 
-    public ReportResponse report(ParameterMap... transactions) {
-        transactions[0].add("provider_key", provider_key);
-        return null;
+    public ReportResponse report(ParameterMap... transactions) throws ServerError {
+        if (transactions == null || transactions.length == 0)
+            throw new IllegalArgumentException("No transactions provided");
+
+        ParameterMap params = new ParameterMap();
+        params.add("provider_key", provider_key);
+        ParameterMap trans = new ParameterMap();
+        params.add("transactions", trans);
+
+        int index = 0;
+        for (ParameterMap transaction : transactions) {
+            trans.add("" + index, transaction);
+            index++;
+        }
+
+        HtmlResponse response = server.post("http://" + getHost() + "/transactions.xml", encodeAsString(params, null));
+        if (response.getStatus() == 500) {
+            throw new ServerError(response.getBody());
+        }
+        return new ReportResponse(response);
     }
 
     public AuthorizeResponse authorize(ParameterMap parameters) throws ServerError {
