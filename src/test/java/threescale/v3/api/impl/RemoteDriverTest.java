@@ -47,7 +47,6 @@ public class RemoteDriverTest {
             assertEquals("application with id=\"30709826\" was not found", response.getErrorMessage());
 
         } catch (ServerError serverError) {
-            serverError.printStackTrace();
         }
     }
 }

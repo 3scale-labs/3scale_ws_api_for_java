@@ -398,6 +398,7 @@ public class ClientTest {
         assertTrue(response.success());
     }
 
+
     @Test
     public void test_report_encodes_transactions() throws ServerError {
 
