@@ -76,7 +76,7 @@ public class ClientDriverTest {
     @Test
     public void testEncodingAnArray() throws Exception {
         final String expected =
-                "transactions[0][app_id]=foo&transactions[0][usage][hits]=1&transactions[0][timestamp]=2010-04-27 15:42:17 0200" +
+                "transactions[0][timestamp]=2010-04-27 15:42:17 0200&transactions[0][usage][hits]=1&transactions[0][app_id]=foo" +
                         "&transactions[1][app_id]=bar&transactions[1][usage][hits]=1&transactions[1][timestamp]=2010-04-27 15:55:12 0200" +
                         "&provider_key=1234abcd";
 
