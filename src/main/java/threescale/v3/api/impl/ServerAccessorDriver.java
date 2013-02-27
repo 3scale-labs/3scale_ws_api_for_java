@@ -1,6 +1,6 @@
 package threescale.v3.api.impl;
 
-import threescale.v3.api.HtmlClient;
+import threescale.v3.api.ServerAccessor;
 import threescale.v3.api.HtmlResponse;
 import threescale.v3.api.ServerError;
 
@@ -14,9 +14,9 @@ import java.net.URLEncoder;
  * User: geoffd
  * Date: 21/02/2013
  */
-public class RemoteDriver implements HtmlClient {
+public class ServerAccessorDriver implements ServerAccessor {
 
-    public RemoteDriver() {
+    public ServerAccessorDriver() {
     }
 
     public HtmlResponse get(String urlParams) throws ServerError {

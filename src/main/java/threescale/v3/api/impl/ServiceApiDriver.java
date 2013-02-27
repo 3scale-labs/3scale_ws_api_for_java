@@ -6,28 +6,28 @@ import threescale.v3.api.*;
  * User: geoffd
  * Date: 18/02/2013
  */
-public class ClientDriver implements Client {
+public class ServiceApiDriver implements ServiceApi {
 
     private String provider_key = null;
     private String host = DEFAULT_HOST;
     private String redirect_url = "http://localhost:8080/oauth/oauth_redirect";
 
-    private HtmlClient server = null;
+    private ServerAccessor server = null;
 
-    public ClientDriver() {
-        this.server = new RemoteDriver();
+    public ServiceApiDriver() {
+        this.server = new ServerAccessorDriver();
 
     }
 
-    public ClientDriver(String provider_key) {
+    public ServiceApiDriver(String provider_key) {
         this.provider_key = provider_key;
-        this.server = new RemoteDriver();
+        this.server = new ServerAccessorDriver();
     }
 
-    public ClientDriver(String provider_key, String host) {
+    public ServiceApiDriver(String provider_key, String host) {
         this.provider_key = provider_key;
         this.host = host;
-        this.server = new RemoteDriver();
+        this.server = new ServerAccessorDriver();
     }
 
     public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError {
@@ -123,7 +123,7 @@ public class ClientDriver implements Client {
     }
 
 
-    public ClientDriver setServer(HtmlClient server) {
+    public ServiceApiDriver setServer(ServerAccessor server) {
         this.server = server;
         return this;
     }

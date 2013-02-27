@@ -7,7 +7,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import threescale.v3.api.impl.ClientDriver;
+import threescale.v3.api.impl.ServiceApiDriver;
 
 import static org.junit.Assert.*;
 
@@ -19,38 +19,38 @@ import org.jmock.integration.junit4.JUnitRuleMockery;
  * Date: 18/02/2013
  */
 
-public class ClientTest {
+public class ServiceApiDriverTest {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
 
-    private final String host = Client.DEFAULT_HOST;
+    private final String host = ServiceApi.DEFAULT_HOST;
     private final String provider_key = "1234abcd";
 
-    private Client client;
-    private HtmlClient htmlServer;
+    private ServiceApi serviceApi;
+    private ServerAccessor htmlServer;
 
     DateTimeFormatter fmt;
 
     @Before
     public void setup() {
-        htmlServer = context.mock(HtmlClient.class);
-        client = new ClientDriver(provider_key).setServer(htmlServer);
+        htmlServer = context.mock(ServerAccessor.class);
+        serviceApi = new ServiceApiDriver(provider_key).setServer(htmlServer);
 
         fmt = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss Z");
     }
 
     @Test
     public void test_default_host() {
-        client = new ClientDriver();
+        serviceApi = new ServiceApiDriver();
 
-        assertEquals("su1.3scale.net", client.getHost());
+        assertEquals("su1.3scale.net", serviceApi.getHost());
     }
 
     @Test
     public void test_custom_host() {
-        client = new ClientDriver("1234abcd", "example.com");
+        serviceApi = new ServiceApiDriver("1234abcd", "example.com");
 
-        assertEquals("example.com", client.getHost());
+        assertEquals("example.com", serviceApi.getHost());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ClientTest {
         usage.add("method", "666");
         params.add("usage", usage);
 
-        client.authrep(params);
+        serviceApi.authrep(params);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ClientTest {
         usage.add("hits", "#0");
         params.add("usage", usage);
 
-        client.authrep(params);
+        serviceApi.authrep(params);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ClientTest {
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
 
-        client.authrep(params);
+        serviceApi.authrep(params);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ClientTest {
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
         params.add("app_key", "appkey");
-        client.authrep(params);
+        serviceApi.authrep(params);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class ClientTest {
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
-        AuthorizeResponse response = client.authorize(params);
+        AuthorizeResponse response = serviceApi.authorize(params);
 
         assertTrue(response.success());
         assertEquals("Ultimate", response.getPlan());
@@ -163,7 +163,7 @@ public class ClientTest {
         params.add("app_id", "foo");
         params.add("app_key", "toosecret");
 
-        AuthorizeResponse response = client.authorize(params);
+        AuthorizeResponse response = serviceApi.authorize(params);
         assertTrue(response.success());
     }
 
@@ -200,7 +200,7 @@ public class ClientTest {
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
-        AuthorizeResponse response = client.authorize(params);
+        AuthorizeResponse response = serviceApi.authorize(params);
 
         assertFalse(response.success());
         assertTrue("usage limits are exceeded".equals(response.getReason()));
@@ -218,7 +218,7 @@ public class ClientTest {
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
-        AuthorizeResponse response = client.authorize(params);
+        AuthorizeResponse response = serviceApi.authorize(params);
 
         assertFalse(response.success());
         assertTrue("application_not_found".equals(response.getErrorCode()));
@@ -236,7 +236,7 @@ public class ClientTest {
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
 
-        client.authorize(params);
+        serviceApi.authorize(params);
     }
 
     @Test
@@ -274,7 +274,7 @@ public class ClientTest {
         params.add("app_id", "foo");
         params.add("redirect_url", "http://localhost:8080/oauth/oauth_redirect");
 
-        AuthorizeResponse response = client.oauth_authorize(params);
+        AuthorizeResponse response = serviceApi.oauth_authorize(params);
         assertTrue(response.success());
 
         assertEquals("883bdb8dbc3b6b77dbcf26845560fdbb", response.getAppKey());
@@ -332,7 +332,7 @@ public class ClientTest {
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
-        AuthorizeResponse response = client.oauth_authorize(params);
+        AuthorizeResponse response = serviceApi.oauth_authorize(params);
 
         assertFalse(response.success());
         assertEquals("usage limits are exceeded", response.getReason());
@@ -351,7 +351,7 @@ public class ClientTest {
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
 
-        AuthorizeResponse response = client.oauth_authorize(params);
+        AuthorizeResponse response = serviceApi.oauth_authorize(params);
 
         assertFalse(response.success());
         assertEquals("application_not_found", response.getErrorCode());
@@ -369,12 +369,12 @@ public class ClientTest {
         ParameterMap params = new ParameterMap();
         params.add("app_id", "foo");
 
-        client.oauth_authorize(params);
+        serviceApi.oauth_authorize(params);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_report_raises_an_exception_if_no_transactions_given() throws ServerError {
-        client.report(null);
+        serviceApi.report(null);
     }
 
     @Test
@@ -393,7 +393,7 @@ public class ClientTest {
         usage.add("hits", "1");
         params.add("usage", usage);
 
-        ReportResponse response = client.report(params);
+        ReportResponse response = serviceApi.report(params);
 
         assertTrue(response.success());
     }
@@ -429,7 +429,7 @@ public class ClientTest {
         usage2.add("hits", "1");
         app2.add("usage", usage2);
 
-        client.report(app1, app2);
+        serviceApi.report(app1, app2);
     }
 
     @Test
@@ -447,7 +447,7 @@ public class ClientTest {
         usage.add("hits", "1");
         params.add("usage", usage);
 
-        ReportResponse response = client.report(params);
+        ReportResponse response = serviceApi.report(params);
 
         assertFalse(response.success());
         assertEquals("provider_key_invalid", response.getErrorCode());
@@ -467,7 +467,7 @@ public class ClientTest {
         ParameterMap usage = new ParameterMap();
         usage.add("hits", "1");
         params.add("usage", usage);
-        client.report(params);
+        serviceApi.report(params);
     }
 
 

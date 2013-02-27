@@ -1,6 +1,5 @@
 package threescale.v3.api.impl;
 
-import org.junit.Before;
 import org.junit.Test;
 import threescale.v3.api.*;
 
@@ -10,19 +9,17 @@ import static org.junit.Assert.assertEquals;
  * User: geoffd
  * Date: 25/02/2013
  */
-public class RemoteDriverTest {
+public class ServerAccessorDriverTest {
     @Test
     public void testWeCanPerformAGet() {
 
-        Client server = new ClientDriver("24e03d2127fd2089220d1bbc45a08ae3");
+        ServiceApi serviceApi = new ServiceApiDriver("24e03d2127fd2089220d1bbc45a08ae3");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "30709826");
         try {
 
-            AuthorizeResponse response = server.authrep(params);
-            System.out.println("ErrorCode was: " + response.getErrorCode());
-            System.out.println("Reason was: " + response.getReason());
+            AuthorizeResponse response = serviceApi.authrep(params);
             assertEquals("application_not_found", response.getErrorCode());
             assertEquals("application with id=\"30709826\" was not found", response.getReason());
 
@@ -34,15 +31,13 @@ public class RemoteDriverTest {
     @Test
     public void testWeCanPerformAPost() {
 
-        Client server = new ClientDriver("24e03d2127fd2089220d1bbc45a08ae3");
+        ServiceApi serviceApi = new ServiceApiDriver("24e03d2127fd2089220d1bbc45a08ae3");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "30709826");
         try {
 
-            ReportResponse response = server.report(params);
-            System.out.println("ErrorCode was: " + response.getErrorCode());
-            System.out.println("Reason was: " + response.getErrorMessage());
+            ReportResponse response = serviceApi.report(params);
             assertEquals("application_not_found", response.getErrorCode());
             assertEquals("application with id=\"30709826\" was not found", response.getErrorMessage());
 

@@ -4,7 +4,7 @@ package threescale.v3.api;
  * User: geoffd
  * Date: 15/02/2013
  */
-public interface Client {
+public interface ServiceApi {
     String DEFAULT_HOST = "su1.3scale.net";
 
     public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError;
