@@ -10,9 +10,9 @@ import java.util.Set;
  */
 public class ParameterMap {
 
-    public static final String STRING = "string";
-    public static final String MAP = "map";
-    public static final String ARRAY = "array";
+    public static final int STRING = 0;
+    public static final int MAP = 1;
+    public static final int ARRAY = 2;
 
     private HashMap<String, Object> data;
 
@@ -36,7 +36,7 @@ public class ParameterMap {
         return data.keySet();
     }
 
-    public String getType(String key) {
+    public int getType(String key) {
         Class clazz = data.get(key).getClass();
         if (clazz == String.class) {
             return STRING;

@@ -402,25 +402,16 @@ public class ClientTest {
     @Test
     public void test_report_encodes_transactions() throws ServerError {
 
-        final String urlParams = "provider_key=1234abcd" +
-                "&transactions[0][app_id]=foo&transactions[0][usage][hits]=1&transactions[0][timestamp]=2010-04-27 15:42:17 0200" +
-                "&transactions[1][app_id]=bar&transactions[1][usage][hits]=1&transactions[1][timestamp]=2010-04-27 15:55:12 0200";
+        final String urlParams =
+                "transactions[0][timestamp]=2010-04-27 15:42:17 0200&transactions[0][usage][hits]=1&transactions[0][app_id]=foo&" +
+                        "transactions[1][timestamp]=2010-04-27 15:55:12 0200&transactions[1][usage][hits]=1&transactions[1][app_id]=bar&" +
+                        "provider_key=1234abcd";
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post("http://" + host + "/transactions.xml", urlParams);
             will(returnValue(new HtmlResponse(200, "")));
         }});
 
-//        Net::HTTP.expects(:post_form).
-//          with(anything,
-//               'provider_key'                 => '1234abcd',
-//               'transactions[0][app_id]'      => 'foo',
-//               'transactions[0][usage][hits]' => '1',
-//               'transactions[0][timestamp]'   => CGI.escape('2010-04-27 15:42:17 0200'),
-//               'transactions[1][app_id]'      => 'bar',
-//               'transactions[1][usage][hits]' => '1',
-//               'transactions[1][timestamp]'   => CGI.escape('2010-04-27 15:55:12 0200')).
-//          returns(http_response)
 
         ParameterMap app1 = new ParameterMap();
         app1.add("app_id", "foo");

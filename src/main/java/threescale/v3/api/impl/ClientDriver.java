@@ -1,13 +1,6 @@
 package threescale.v3.api.impl;
 
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.ParsingException;
 import threescale.v3.api.*;
-
-import nu.xom.Builder;
-
-import java.io.IOException;
 
 /**
  * User: geoffd
@@ -49,7 +42,7 @@ public class ClientDriver implements Client {
             }
             usage.add("hits", "1");
         }
-        String urlParams = encodeAsString(metrics, null);
+        String urlParams = encodeAsString(metrics);
 
         final String s = getFullHostUrl() + "/transactions/authrep.xml?" + urlParams;
 //        System.out.println("Actual: " + s);
@@ -68,7 +61,7 @@ public class ClientDriver implements Client {
         ParameterMap params = new ParameterMap();
         params.add("provider_key", provider_key);
         ParameterMap trans = new ParameterMap();
-        params.add("transactions", trans);
+        params.add("transactions", transactions);
 
         int index = 0;
         for (ParameterMap transaction : transactions) {
@@ -76,7 +69,7 @@ public class ClientDriver implements Client {
             index++;
         }
 
-        HtmlResponse response = server.post(getFullHostUrl() + "/transactions.xml", encodeAsString(params, null));
+        HtmlResponse response = server.post(getFullHostUrl() + "/transactions.xml", encodeAsString(params));
         if (response.getStatus() == 500) {
             throw new ServerError(response.getBody());
         }
@@ -85,7 +78,7 @@ public class ClientDriver implements Client {
 
     public AuthorizeResponse authorize(ParameterMap parameters) throws ServerError {
         parameters.add("provider_key", provider_key);
-        String urlParams = encodeAsString(parameters, null);
+        String urlParams = encodeAsString(parameters);
 
         final String s = getFullHostUrl() + "/transactions/authorize.xml?" + urlParams;
         HtmlResponse response = server.get(s);
@@ -102,7 +95,7 @@ public class ClientDriver implements Client {
     public AuthorizeResponse oauth_authorize(ParameterMap params) throws ServerError {
         params.add("provider_key", provider_key);
 
-        String urlParams = encodeAsString(params, null);
+        String urlParams = encodeAsString(params);
 
         final String s = getFullHostUrl() + "/transactions/oauth_authorize.xml?" + urlParams;
 //        System.out.println("Actual: " + s);
@@ -119,66 +112,9 @@ public class ClientDriver implements Client {
     }
 
 
-    public String encodeAsString(ParameterMap params, String prefix) {
-        StringBuffer result = new StringBuffer();
-        for (String key : params.getKeys()) {
-            if (params.getType(key) == ParameterMap.STRING) {
-                processString(params, key, result);
-            } else if (params.getType(key) == ParameterMap.MAP) {
-                processMap(params, key, result);
-            } else if (params.getType(key) == ParameterMap.ARRAY) {
-                processArray(params, key, result);
-            }
-        }
-        return result.toString();
-    }
-
-    private void processString(ParameterMap params, String key, StringBuffer result) {
-        appendAmpIfFirstParameter(result);
-        result.append(key).append("=").append(params.getStringValue(key));
-    }
-
-
-    private void processMap(ParameterMap params, String mapKey, StringBuffer result) {
-        ParameterMap map = params.getMapValue(mapKey);
-        boolean first = true;
-        int index = 0;
-        for (String key : map.getKeys()) {
-            if (map.getType(key) == ParameterMap.STRING) {
-                appendAmpIfFirstParameter(result);
-                result.append("[").append(mapKey).append("]").append("[").append(key).append("]=").append(map.getStringValue(key));
-            } else if (map.getType(key) == ParameterMap.MAP) {
-                processMap(map, key, result);
-            } else if (map.getType(key) == ParameterMap.ARRAY) {
-                processArray(map, key, result);
-            }
-            index++;
-        }
-    }
-
-    private void processArray(ParameterMap params, String mapKey, StringBuffer result) {
-        ParameterMap[] array = params.getArrayValue(mapKey);
-        int index = 0;
-        for (ParameterMap parameterMap : array) {
-            result.append(mapKey).append("[").append(index).append("]");
-            for (String key : parameterMap.getKeys()) {
-                if (parameterMap.getType(key) == ParameterMap.STRING) {
-                    result.append("[").append(key).append("]=").append(parameterMap.getStringValue(key));
-                }
-                if (parameterMap.getType(key) == ParameterMap.MAP) {
-
-                }
-            }
-            index++;
-        }
-    }
-
-    private boolean appendAmpIfFirstParameter(StringBuffer result) {
-        if (result.length() != 0) {
-            result.append("&");
-            return true;
-        }
-        return false;
+    public String encodeAsString(ParameterMap params) {
+        ParameterEncoder encoder = new ParameterEncoder();
+        return encoder.encode(params);
     }
 
 

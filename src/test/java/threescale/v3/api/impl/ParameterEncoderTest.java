@@ -15,14 +15,14 @@ import static org.junit.Assert.assertEquals;
  * User: geoffd
  * Date: 21/02/2013
  */
-public class ClientDriverTest {
+public class ParameterEncoderTest {
 
-    private ClientDriver cd;
+    private ParameterEncoder encoder;
     DateTimeFormatter fmt;
 
     @Before
     public void setup() {
-        cd = new ClientDriver(null);
+        encoder = new ParameterEncoder();
         fmt = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss Z");
     }
 
@@ -31,7 +31,7 @@ public class ClientDriverTest {
         ParameterMap param = new ParameterMap();
         param.add("provider_key", "123abc");
 
-        assertEquals("provider_key=123abc", cd.encodeAsString(param, null));
+        assertEquals("provider_key=123abc", encoder.encode(param));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class ClientDriverTest {
         param.add("provider_key", "123abc");
         param.add("app_id", "3456aaa");
 
-        assertEquals("provider_key=123abc&app_id=3456aaa", cd.encodeAsString(param, null));
+        assertEquals("provider_key=123abc&app_id=3456aaa", encoder.encode(param));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ClientDriverTest {
         usage.add("hits", "111");
         param.add("usage", usage);
 
-        assertEquals("provider_key=123abc&[usage][hits]=111&app_id=3456aaa", cd.encodeAsString(param, null));
+        assertEquals("provider_key=123abc&[usage][hits]=111&app_id=3456aaa", encoder.encode(param));
     }
 
     @Test
@@ -70,15 +70,15 @@ public class ClientDriverTest {
 
         assertEquals(
                 "provider_key=123abc&[usage][timestamp]=2010-04-27 15:00:00 +0000&[usage][hits]=111&app_id=3456aaa",
-                cd.encodeAsString(param, null));
+                encoder.encode(param));
     }
 
     @Test
     public void testEncodingAnArray() throws Exception {
         final String expected =
-                "transactions[0][timestamp]=2010-04-27 15:42:17 0200&transactions[0][usage][hits]=1&transactions[0][app_id]=foo" +
-                        "&transactions[1][app_id]=bar&transactions[1][usage][hits]=1&transactions[1][timestamp]=2010-04-27 15:55:12 0200" +
-                        "&provider_key=1234abcd";
+                "transactions[0][timestamp]=2010-04-27 15:42:17 0200&transactions[0][usage][hits]=1&transactions[0][app_id]=foo&" +
+                        "transactions[1][timestamp]=2010-04-27 15:55:12 0200&transactions[1][usage][hits]=1&transactions[1][app_id]=bar&" +
+                        "provider_key=1234abcd";
 
         ParameterMap app1 = new ParameterMap();
         app1.add("app_id", "foo");
@@ -104,7 +104,7 @@ public class ClientDriverTest {
         params.add("provider_key", "1234abcd");
         params.add("transactions", transactions);
 
-        assertEquals(expected, cd.encodeAsString(params, null));
+        assertEquals(expected, encoder.encode(params));
 
     }
 }
