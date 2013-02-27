@@ -6,8 +6,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * User: geoffd
- * Date: 15/02/2013
+ * Provides information about the success or failure of an Authorize operation.
+ * <p/>
+ * The success response sets:
+ * the Status (true = success false = exceeded/failed)
+ * the Reason if failed.
+ * the Plan
+ * the AppKey
+ * the redirect URL
+ * the Usage reports
+ * <p/>
+ * The failure response sets:
+ * the ErrorCode
+ * Reason.
  */
 public class AuthorizeResponse {
 
@@ -19,16 +30,27 @@ public class AuthorizeResponse {
     private String errorCode = "";
     private String redirectUrl = "";
 
+    /**
+     * Build an AuthorizeResponse using the status and content of an html get.
+     *
+     * @param httpStatus  Status value from the GET
+     * @param httpContent Contents of the GET
+     * @throws ServerError If the received XML is invalid, or cannot process the XML
+     */
     public AuthorizeResponse(int httpStatus, String httpContent) throws ServerError {
         if (httpStatus == 200 || httpStatus == 409) {
             createAuthorizedOKOrExceeded(httpContent);
         } else {
             createAuthorizationFailed(httpContent);
         }
-
     }
 
-
+    /**
+     * Create a failure response.
+     *
+     * @param httpContent
+     * @throws ServerError
+     */
     private void createAuthorizationFailed(String httpContent) throws ServerError {
         try {
             Builder parser = new Builder();
@@ -43,10 +65,16 @@ public class AuthorizeResponse {
         } catch (ParsingException ex) {
             throw new ServerError("The xml received was invalid: " + httpContent);
         } catch (IOException ex) {
-            throw new ServerError("Unable to connection to 3scale server");
+            throw new ServerError("Error processing the XML");
         }
     }
 
+    /**
+     * Creates a success response
+     *
+     * @param httpContent
+     * @throws ServerError
+     */
     private void createAuthorizedOKOrExceeded(String httpContent) throws ServerError {
         try {
             Builder parser = new Builder();
@@ -93,10 +121,16 @@ public class AuthorizeResponse {
         } catch (ParsingException ex) {
             throw new ServerError("The xml received was invalid: " + httpContent);
         } catch (IOException ex) {
-            throw new ServerError("Unable to connection to 3scale server");
+            throw new ServerError("Error processing the XML");
         }
     }
 
+    /**
+     * Parse and build a usage report.
+     *
+     * @param reports
+     * @param usageEl
+     */
     private void processUsageReport(ArrayList<UsageReport> reports, Element usageEl) {
         final Attribute metricEl = usageEl.getAttribute("metric");
         final Attribute periodEl = usageEl.getAttribute("period");
@@ -113,6 +147,11 @@ public class AuthorizeResponse {
         ));
     }
 
+    /**
+     * Get the name of the Plan
+     *
+     * @return Plan name
+     */
     public String getPlan() {
         return plan;
     }
@@ -121,6 +160,11 @@ public class AuthorizeResponse {
         this.plan = plan;
     }
 
+    /**
+     * Get the AppKey
+     *
+     * @return app key
+     */
     public String getAppKey() {
         return appKey;
     }
@@ -129,10 +173,20 @@ public class AuthorizeResponse {
         this.appKey = appKey;
     }
 
+    /**
+     * Get the redirect url
+     *
+     * @return redirect url
+     */
     public String getRedirectUrl() {
         return redirectUrl;
     }
 
+    /**
+     * Get the usage reports for this authoize
+     *
+     * @return
+     */
     public UsageReport[] getUsageReports() {
         return usageReports;
     }
@@ -142,10 +196,20 @@ public class AuthorizeResponse {
         usageReports = reports.toArray(new UsageReport[0]);
     }
 
+    /**
+     * Get the status
+     *
+     * @return true / false
+     */
     public boolean success() {
         return status;
     }
 
+    /**
+     * Get the error code
+     *
+     * @return error code
+     */
     public String getErrorCode() {
         return errorCode;
     }
@@ -154,6 +218,11 @@ public class AuthorizeResponse {
         errorCode = code;
     }
 
+    /**
+     * Get the reason for the failure
+     *
+     * @return reason
+     */
     public String getReason() {
         return reason;
     }

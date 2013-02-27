@@ -1,23 +1,38 @@
 package threescale.v3.api;
 
 /**
- * User: geoffd
- * Date: 20/02/2013
+ * Returns the result of an Http GET / POST
  */
 public class HtmlResponse {
 
     private int status;
     private String body;
 
+    /**
+     * construct an HtmlResponse from the Http Status and Body Content
+     *
+     * @param status Http Status
+     * @param body   Http Body
+     */
     public HtmlResponse(int status, String body) {
         this.status = status;
         this.body = body;
     }
 
+    /**
+     * Return the content
+     *
+     * @return body
+     */
     public String getBody() {
         return body;
     }
 
+    /**
+     * Get the Status.
+     *
+     * @return status.
+     */
     public int getStatus() {
         return status;
     }

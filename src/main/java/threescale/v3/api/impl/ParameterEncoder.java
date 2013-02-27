@@ -14,13 +14,13 @@ public class ParameterEncoder {
         for (String mapKey : params.getKeys()) {
             if (index != 0) result.append("&");
             switch (params.getType(mapKey)) {
-                case ParameterMap.STRING:
+                case STRING:
                     result.append(emitNormalValue(mapKey, params.getStringValue(mapKey)));
                     break;
-                case ParameterMap.MAP:
+                case MAP:
                     result.append((emitNormalMap(mapKey, params.getMapValue(mapKey))));
                     break;
-                case ParameterMap.ARRAY:
+                case ARRAY:
                     result.append(emitNormalArray(mapKey, params.getArrayValue(mapKey)));
                     break;
             }
@@ -48,12 +48,12 @@ public class ParameterEncoder {
 
         for (String key : arrayMap.getKeys()) {
             switch (arrayMap.getType(key)) {
-                case ParameterMap.STRING:
+                case STRING:
                     if (index != 0) b.append("&");
                     b.append(mapKey).append("[").append(arrayIndex).append("]");
                     b.append("[").append(key).append("]=").append(arrayMap.getStringValue(key));
                     break;
-                case ParameterMap.MAP:
+                case MAP:
                     if (index != 0) b.append("&");
                     ParameterMap map = arrayMap.getMapValue(key);
                     for (String itemKey : map.getKeys()) {
@@ -79,7 +79,7 @@ public class ParameterEncoder {
         for (String key : mapValue.getKeys()) {
             if (index != 0) b.append("&");
             switch (mapValue.getType(key)) {
-                case ParameterMap.STRING:
+                case STRING:
                     b.append(emitMapValue(mapKey, key, mapValue.getStringValue(key)));
                     break;
             }
