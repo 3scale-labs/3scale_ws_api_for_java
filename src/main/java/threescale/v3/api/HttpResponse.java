@@ -3,7 +3,7 @@ package threescale.v3.api;
 /**
  * Returns the result of an Http GET / POST
  */
-public class HtmlResponse {
+public class HttpResponse {
 
     private int status;
     private String body;
@@ -14,7 +14,7 @@ public class HtmlResponse {
      * @param status Http Status
      * @param body   Http Body
      */
-    public HtmlResponse(int status, String body) {
+    public HttpResponse(int status, String body) {
         this.status = status;
         this.body = body;
     }

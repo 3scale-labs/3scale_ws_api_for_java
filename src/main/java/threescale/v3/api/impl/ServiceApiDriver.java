@@ -3,8 +3,9 @@ package threescale.v3.api.impl;
 import threescale.v3.api.*;
 
 /**
- * User: geoffd
- * Date: 18/02/2013
+ * Concrete implementation of the ServiceApi.
+ *
+ * @see ServiceApi
  */
 public class ServiceApiDriver implements ServiceApi {
 
@@ -47,7 +48,7 @@ public class ServiceApiDriver implements ServiceApi {
         final String s = getFullHostUrl() + "/transactions/authrep.xml?" + urlParams;
 //        System.out.println("Actual: " + s);
 
-        HtmlResponse response = server.get(s);
+        HttpResponse response = server.get(s);
         if (response.getStatus() == 500) {
             throw new ServerError(response.getBody());
         }
@@ -69,7 +70,7 @@ public class ServiceApiDriver implements ServiceApi {
             index++;
         }
 
-        HtmlResponse response = server.post(getFullHostUrl() + "/transactions.xml", encodeAsString(params));
+        HttpResponse response = server.post(getFullHostUrl() + "/transactions.xml", encodeAsString(params));
         if (response.getStatus() == 500) {
             throw new ServerError(response.getBody());
         }
@@ -81,7 +82,7 @@ public class ServiceApiDriver implements ServiceApi {
         String urlParams = encodeAsString(parameters);
 
         final String s = getFullHostUrl() + "/transactions/authorize.xml?" + urlParams;
-        HtmlResponse response = server.get(s);
+        HttpResponse response = server.get(s);
         if (response.getStatus() == 500) {
             throw new ServerError(response.getBody());
         }
@@ -100,7 +101,7 @@ public class ServiceApiDriver implements ServiceApi {
         final String s = getFullHostUrl() + "/transactions/oauth_authorize.xml?" + urlParams;
 //        System.out.println("Actual: " + s);
 
-        HtmlResponse response = server.get(s);
+        HttpResponse response = server.get(s);
         if (response.getStatus() == 500) {
             throw new ServerError(response.getBody());
         }
@@ -118,7 +119,7 @@ public class ServiceApiDriver implements ServiceApi {
     }
 
 
-    private AuthorizeResponse convertXmlToAuthorizeResponse(HtmlResponse res) throws ServerError {
+    private AuthorizeResponse convertXmlToAuthorizeResponse(HttpResponse res) throws ServerError {
         return new AuthorizeResponse(res.getStatus(), res.getBody());
     }
 

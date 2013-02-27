@@ -6,8 +6,7 @@ import threescale.v3.api.*;
 import static org.junit.Assert.assertEquals;
 
 /**
- * User: geoffd
- * Date: 25/02/2013
+ * This performs real accesses against the server.
  */
 public class ServerAccessorDriverTest {
     @Test

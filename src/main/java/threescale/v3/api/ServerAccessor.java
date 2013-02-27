@@ -12,7 +12,7 @@ public interface ServerAccessor {
      * @return Status and content as a HtmlResponse
      * @throws ServerError If there are problems connection tp the server.
      */
-    public HtmlResponse get(String url) throws ServerError;
+    public HttpResponse get(String url) throws ServerError;
 
     /**
      * Perform and HTML POST with the provided URL and form data
@@ -22,5 +22,5 @@ public interface ServerAccessor {
      * @return Status and content as a HtmlResponse
      * @throws ServerError If there are problems connection tp the server.
      */
-    public HtmlResponse post(String url, String data) throws ServerError;
+    public HttpResponse post(String url, String data) throws ServerError;
 }

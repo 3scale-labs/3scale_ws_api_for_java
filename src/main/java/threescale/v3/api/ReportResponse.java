@@ -3,7 +3,6 @@ package threescale.v3.api;
 import nu.xom.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * The response information from a Report operations.
@@ -21,7 +20,7 @@ public class ReportResponse {
      * @param response
      * @throws ServerError
      */
-    public ReportResponse(HtmlResponse response) throws ServerError {
+    public ReportResponse(HttpResponse response) throws ServerError {
         if (response.getStatus() == 200) {
             status = true;
         } else {
@@ -30,7 +29,7 @@ public class ReportResponse {
         }
     }
 
-    private void parseResponse(HtmlResponse response) throws ServerError {
+    private void parseResponse(HttpResponse response) throws ServerError {
         try {
             Builder parser = new Builder();
             Document doc = parser.build(response.getBody(), null);

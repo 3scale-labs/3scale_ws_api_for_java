@@ -1,7 +1,7 @@
 package threescale.v3.api.impl;
 
+import threescale.v3.api.HttpResponse;
 import threescale.v3.api.ServerAccessor;
-import threescale.v3.api.HtmlResponse;
 import threescale.v3.api.ServerError;
 
 import java.io.*;
@@ -11,15 +11,20 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 /**
- * User: geoffd
- * Date: 21/02/2013
+ * Performs GET's and POST's against the live 3Scale Server
  */
 public class ServerAccessorDriver implements ServerAccessor {
 
     public ServerAccessorDriver() {
     }
 
-    public HtmlResponse get(String urlParams) throws ServerError {
+    /**
+     * @param urlParams url + parameter string
+     * @return Http Response
+     * @throws ServerError
+     * @see ServerAccessor
+     */
+    public HttpResponse get(String urlParams) throws ServerError {
         HttpURLConnection connection = null;
         URL url;
 
@@ -39,11 +44,11 @@ public class ServerAccessorDriver implements ServerAccessor {
             connection.connect();
 
 
-            return new HtmlResponse(connection.getResponseCode(), getBody(connection.getInputStream()));
+            return new HttpResponse(connection.getResponseCode(), getBody(connection.getInputStream()));
 
         } catch (IOException ex) {
             try {
-                return new HtmlResponse(connection.getResponseCode(), getBody(connection.getErrorStream()));
+                return new HttpResponse(connection.getResponseCode(), getBody(connection.getErrorStream()));
             } catch (IOException e) {
                 throw new ServerError(e.getMessage());
             }
@@ -67,7 +72,14 @@ public class ServerAccessorDriver implements ServerAccessor {
         return sb.toString();
     }
 
-    public HtmlResponse post(String urlParams, String data) throws ServerError {
+    /**
+     * @param urlParams url to access
+     * @param data      The data to be sent
+     * @return Response from the server
+     * @throws ServerError
+     * @see ServerAccessor
+     */
+    public HttpResponse post(String urlParams, String data) throws ServerError {
         HttpURLConnection connection = null;
         OutputStreamWriter wr;
         URL url;
@@ -91,10 +103,10 @@ public class ServerAccessorDriver implements ServerAccessor {
             wr.write(URLEncoder.encode(data, "UTF-8"));
             wr.flush();
 
-            return new HtmlResponse(connection.getResponseCode(), getBody(connection.getInputStream()));
+            return new HttpResponse(connection.getResponseCode(), getBody(connection.getInputStream()));
         } catch (IOException ex) {
             try {
-                return new HtmlResponse(connection.getResponseCode(),
+                return new HttpResponse(connection.getResponseCode(),
                         (connection.getErrorStream() == null) ? getBody(connection.getInputStream()) : getBody(connection.getErrorStream()));
             } catch (IOException e) {
                 throw new ServerError(e.getMessage());

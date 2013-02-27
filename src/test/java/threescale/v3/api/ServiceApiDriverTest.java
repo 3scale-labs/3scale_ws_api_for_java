@@ -15,8 +15,7 @@ import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 
 /**
- * User: geoffd
- * Date: 18/02/2013
+ * Test class for the Service Api.
  */
 
 public class ServiceApiDriverTest {
@@ -123,7 +122,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(200, body)));
+            will(returnValue(new HttpResponse(200, body)));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -156,7 +155,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_key=toosecret&app_id=foo");
-            will(returnValue(new HtmlResponse(200, body)));
+            will(returnValue(new HttpResponse(200, body)));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -195,7 +194,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(409, body)));
+            will(returnValue(new HttpResponse(409, body)));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -213,7 +212,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(403, body)));
+            will(returnValue(new HttpResponse(403, body)));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -229,7 +228,7 @@ public class ServiceApiDriverTest {
     public void test_authorize_with_server_error() throws ServerError {
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(500, "OMG! WTF!")));
+            will(returnValue(new HttpResponse(500, "OMG! WTF!")));
         }});
 
         // FakeWeb.register_uri(:get, "http://#{@host}/transactions/authorize.xml?provider_key=1234abcd&app_id=foo", :status => ['500', 'Internal Server Error'], :body => 'OMG! WTF!')
@@ -267,7 +266,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?redirect_url=http://localhost:8080/oauth/oauth_redirect&provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(200, body)));
+            will(returnValue(new HttpResponse(200, body)));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -326,7 +325,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(409, body)));
+            will(returnValue(new HttpResponse(409, body)));
         }});
 
 
@@ -345,7 +344,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(403, body)));
+            will(returnValue(new HttpResponse(403, body)));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -363,7 +362,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo");
-            will(returnValue(new HtmlResponse(500, "OMG! WTF!")));
+            will(returnValue(new HttpResponse(500, "OMG! WTF!")));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -382,7 +381,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
-            will(returnValue(new HtmlResponse(200, "")));
+            will(returnValue(new HttpResponse(200, "")));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -409,7 +408,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post("http://" + host + "/transactions.xml", urlParams);
-            will(returnValue(new HtmlResponse(200, "")));
+            will(returnValue(new HttpResponse(200, "")));
         }});
 
 
@@ -438,7 +437,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
-            will(returnValue(new HtmlResponse(403, error_body)));
+            will(returnValue(new HttpResponse(403, error_body)));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -459,7 +458,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
-            will(returnValue(new HtmlResponse(500, "OMG! WTF!")));
+            will(returnValue(new HttpResponse(500, "OMG! WTF!")));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -481,7 +480,7 @@ public class ServiceApiDriverTest {
 //        System.out.println("Expect: "+ authrep_url);
         context.checking(new Expectations() {{
             oneOf(htmlServer).get(authrep_url);
-            will(returnValue(new HtmlResponse(200, body)));
+            will(returnValue(new HttpResponse(200, body)));
         }});
     }
 }

@@ -3,10 +3,16 @@ package threescale.v3.api.impl;
 import threescale.v3.api.ParameterMap;
 
 /**
- * User: geoffd
- * Date: 26/02/2013
+ * Encodes a ParameterMap as a string suitable for sending as part of an HTML request.
  */
 public class ParameterEncoder {
+
+    /**
+     * Takes the parameter map and returns an encoded string.
+     *
+     * @param params Parameter map to encode
+     * @return Encoded string
+     */
     public String encode(ParameterMap params) {
         StringBuffer result = new StringBuffer();
 

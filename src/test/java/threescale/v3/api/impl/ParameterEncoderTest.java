@@ -12,8 +12,7 @@ import threescale.v3.api.ParameterMap;
 import static org.junit.Assert.assertEquals;
 
 /**
- * User: geoffd
- * Date: 21/02/2013
+ * JUnit Test class
  */
 public class ParameterEncoderTest {
 
