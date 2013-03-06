@@ -54,7 +54,7 @@ public class ServiceApiDriverTest {
 
     @Test
     public void test_authrep_usage_is_encoded() throws ServerError {
-        assertAuthrepUrlWithParams("&[usage][hits]=1&[usage][method]=666");
+        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=1&%5Busage%5D%5Bmethod%5D=666");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -67,7 +67,7 @@ public class ServiceApiDriverTest {
     @Test
     public void test_authrep_usage_values_are_encoded() throws ServerError {
 
-        assertAuthrepUrlWithParams("&[usage][hits]=#0");
+        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=%230");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -80,7 +80,7 @@ public class ServiceApiDriverTest {
     @Test
     public void test_authrep_usage_defaults_to_hits_1() throws ServerError {
 
-        assertAuthrepUrlWithParams("&[usage][hits]=1&app_id=appid");
+        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=1&app_id=appid");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
@@ -90,13 +90,34 @@ public class ServiceApiDriverTest {
 
     @Test
     public void test_authrep_supports_app_id_app_key_auth_mode() throws ServerError {
-        assertAuthrepUrlWithParams("&[usage][hits]=1&app_key=appkey&app_id=appid");
+        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=1&app_key=appkey&app_id=appid");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
         params.add("app_key", "appkey");
         serviceApi.authrep(params);
     }
+
+    @Test
+    public void test_successful_authrep_with_app_keys() throws ServerError {
+        final String body = "<status>" +
+                "<authorized>true</authorized>" +
+                "<plan>Ultimate</plan>" +
+                "</status>";
+
+        context.checking(new Expectations() {{
+            oneOf(htmlServer).get("http://" + host + "/transactions/authrep.xml?provider_key=1234abcd&%5Busage%5D%5Bhits%5D=1&app_key=toosecret&app_id=foo");
+            will(returnValue(new HttpResponse(200, body)));
+        }});
+
+        ParameterMap params = new ParameterMap();
+        params.add("app_id", "foo");
+        params.add("app_key", "toosecret");
+
+        AuthorizeResponse response = serviceApi.authrep(params);
+        assertTrue(response.success());
+    }
+
 
     @Test
     public void test_successful_authorize() throws ServerError {
@@ -265,7 +286,7 @@ public class ServiceApiDriverTest {
                 "</status>";
 
         context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?redirect_url=http://localhost:8080/oauth/oauth_redirect&provider_key=1234abcd&app_id=foo");
+            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?redirect_url=http%3A//localhost%3A8080/oauth/oauth_redirect&provider_key=1234abcd&app_id=foo");
             will(returnValue(new HttpResponse(200, body)));
         }});
 
@@ -373,7 +394,7 @@ public class ServiceApiDriverTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_report_raises_an_exception_if_no_transactions_given() throws ServerError {
-        serviceApi.report(null);
+        serviceApi.report(null, null);
     }
 
     @Test
@@ -381,7 +402,7 @@ public class ServiceApiDriverTest {
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
-            will(returnValue(new HttpResponse(200, "")));
+            will(returnValue(new HttpResponse(202, "")));
         }});
 
         ParameterMap params = new ParameterMap();
@@ -392,7 +413,7 @@ public class ServiceApiDriverTest {
         usage.add("hits", "1");
         params.add("usage", usage);
 
-        ReportResponse response = serviceApi.report(params);
+        ReportResponse response = serviceApi.report(null, params);
 
         assertTrue(response.success());
     }
@@ -402,8 +423,8 @@ public class ServiceApiDriverTest {
     public void test_report_encodes_transactions() throws ServerError {
 
         final String urlParams =
-                "transactions[0][timestamp]=2010-04-27 15:42:17 0200&transactions[0][usage][hits]=1&transactions[0][app_id]=foo&" +
-                        "transactions[1][timestamp]=2010-04-27 15:55:12 0200&transactions[1][usage][hits]=1&transactions[1][app_id]=bar&" +
+                "transactions%5B0%5D%5Btimestamp%5D=2010-04-27%2015%3A42%3A17%200200&transactions%5B0%5D%5Busage%5D%5Bhits%5D=1&transactions%5B0%5D%5Bapp_id%5D=foo&" +
+                        "transactions%5B1%5D%5Btimestamp%5D=2010-04-27%2015%3A55%3A12%200200&transactions%5B1%5D%5Busage%5D%5Bhits%5D=1&transactions%5B1%5D%5Bapp_id%5D=bar&" +
                         "provider_key=1234abcd";
 
         context.checking(new Expectations() {{
@@ -428,7 +449,7 @@ public class ServiceApiDriverTest {
         usage2.add("hits", "1");
         app2.add("usage", usage2);
 
-        serviceApi.report(app1, app2);
+        serviceApi.report(null, app1, app2);
     }
 
     @Test
@@ -446,7 +467,7 @@ public class ServiceApiDriverTest {
         usage.add("hits", "1");
         params.add("usage", usage);
 
-        ReportResponse response = serviceApi.report(params);
+        ReportResponse response = serviceApi.report(null, params);
 
         assertFalse(response.success());
         assertEquals("provider_key_invalid", response.getErrorCode());
@@ -466,7 +487,7 @@ public class ServiceApiDriverTest {
         ParameterMap usage = new ParameterMap();
         usage.add("hits", "1");
         params.add("usage", usage);
-        serviceApi.report(params);
+        serviceApi.report(null, params);
     }
 
 

@@ -52,7 +52,7 @@ public class ParameterEncoderTest {
         usage.add("hits", "111");
         param.add("usage", usage);
 
-        assertEquals("provider_key=123abc&[usage][hits]=111&app_id=3456aaa", encoder.encode(param));
+        assertEquals("provider_key=123abc&%5Busage%5D%5Bhits%5D=111&app_id=3456aaa", encoder.encode(param));
     }
 
     @Test
@@ -68,15 +68,15 @@ public class ParameterEncoderTest {
 
 
         assertEquals(
-                "provider_key=123abc&[usage][timestamp]=2010-04-27 15:00:00 +0000&[usage][hits]=111&app_id=3456aaa",
+                "provider_key=123abc&%5Busage%5D%5Btimestamp%5D=2010-04-27%2015%3A00%3A00%20+0000&%5Busage%5D%5Bhits%5D=111&app_id=3456aaa",
                 encoder.encode(param));
     }
 
     @Test
     public void testEncodingAnArray() throws Exception {
         final String expected =
-                "transactions[0][timestamp]=2010-04-27 15:42:17 0200&transactions[0][usage][hits]=1&transactions[0][app_id]=foo&" +
-                        "transactions[1][timestamp]=2010-04-27 15:55:12 0200&transactions[1][usage][hits]=1&transactions[1][app_id]=bar&" +
+                "transactions%5B0%5D%5Btimestamp%5D=2010-04-27%2015%3A42%3A17%200200&transactions%5B0%5D%5Busage%5D%5Bhits%5D=1&transactions%5B0%5D%5Bapp_id%5D=foo&" +
+                        "transactions%5B1%5D%5Btimestamp%5D=2010-04-27%2015%3A55%3A12%200200&transactions%5B1%5D%5Busage%5D%5Bhits%5D=1&transactions%5B1%5D%5Bapp_id%5D=bar&" +
                         "provider_key=1234abcd";
 
         ParameterMap app1 = new ParameterMap();

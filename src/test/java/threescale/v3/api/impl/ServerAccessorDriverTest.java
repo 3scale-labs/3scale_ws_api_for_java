@@ -36,7 +36,7 @@ public class ServerAccessorDriverTest {
         params.add("app_id", "30709826");
         try {
 
-            ReportResponse response = serviceApi.report(params);
+            ReportResponse response = serviceApi.report(null, params);
             assertEquals("application_not_found", response.getErrorCode());
             assertEquals("application with id=\"30709826\" was not found", response.getErrorMessage());
 

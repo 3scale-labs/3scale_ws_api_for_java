@@ -21,7 +21,7 @@ public class ReportResponse {
      * @throws ServerError
      */
     public ReportResponse(HttpResponse response) throws ServerError {
-        if (response.getStatus() == 200) {
+        if (response.getStatus() == 200 || response.getStatus() == 202) {
             status = true;
         } else {
             status = false;

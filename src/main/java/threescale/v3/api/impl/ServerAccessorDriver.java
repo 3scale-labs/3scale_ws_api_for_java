@@ -94,13 +94,14 @@ public class ServerAccessorDriver implements ServerAccessor {
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setReadTimeout(10000);
+            connection.setRequestProperty("Accept", "*/*");
             connection.setRequestProperty("Accept-Charset", "UTF-8");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + "UTF-8");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 
             connection.connect();
             wr = new OutputStreamWriter(connection.getOutputStream());
-            wr.write(URLEncoder.encode(data, "UTF-8"));
+            wr.write(data);
             wr.flush();
 
             return new HttpResponse(connection.getResponseCode(), getBody(connection.getInputStream()));

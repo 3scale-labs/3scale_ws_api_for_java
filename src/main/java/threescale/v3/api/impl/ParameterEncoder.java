@@ -33,7 +33,7 @@ public class ParameterEncoder {
             index++;
         }
 
-        return result.toString();
+        return substitueCharacters(result.toString());
     }
 
     private String emitNormalArray(String mapKey, ParameterMap[] mapValue) {
@@ -104,5 +104,9 @@ public class ParameterEncoder {
         StringBuffer b = new StringBuffer();
         b.append(key).append("=").append(value);
         return b.toString();
+    }
+
+    private String substitueCharacters(String input) {
+        return input.replace(" ", "%20").replace("[", "%5B").replace("]", "%5D").replace("#", "%23").replace(":", "%3A");
     }
 }

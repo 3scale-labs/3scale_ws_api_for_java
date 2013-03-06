@@ -55,12 +55,15 @@ public class ServiceApiDriver implements ServiceApi {
         return convertXmlToAuthorizeResponse(response);
     }
 
-    public ReportResponse report(ParameterMap... transactions) throws ServerError {
+    public ReportResponse report(String service_id, ParameterMap... transactions) throws ServerError {
         if (transactions == null || transactions.length == 0)
             throw new IllegalArgumentException("No transactions provided");
 
         ParameterMap params = new ParameterMap();
         params.add("provider_key", provider_key);
+        if (service_id != null) {
+            params.add("service_id", service_id);
+        }
         ParameterMap trans = new ParameterMap();
         params.add("transactions", transactions);
 

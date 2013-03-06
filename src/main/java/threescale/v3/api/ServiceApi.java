@@ -36,11 +36,12 @@ public interface ServiceApi {
     /**
      * Report a set of metrics.
      *
+     * @param service_id
      * @param transactions The metrics to be reported
      * @return Information about the success/failure of the operation
      * @throws ServerError Thrown if there is an error communicating with the 3Scale server
      */
-    public ReportResponse report(ParameterMap... transactions) throws ServerError;
+    public ReportResponse report(String service_id, ParameterMap... transactions) throws ServerError;
 
     /**
      * Get the URL of the 3scale server

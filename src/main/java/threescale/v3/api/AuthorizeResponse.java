@@ -140,12 +140,13 @@ public class AuthorizeResponse {
         final Element currentValue = usageEl.getFirstChildElement("current_value");
         final Element maxValue = usageEl.getFirstChildElement("max_value");
 
-        reports.add(new UsageReport(metricEl.getValue(), periodEl.getValue(),
-                periodStartEl.getValue(), periodEndEl.getValue(),
-                currentValue.getValue(), maxValue.getValue(),
+        reports.add(new UsageReport(getValueOrBlank(metricEl), getValueOrBlank(periodEl),
+                getValueOrBlank(periodStartEl), getValueOrBlank(periodEndEl),
+                getValueOrBlank(currentValue), getValueOrBlank(maxValue),
                 (exceededEl == null) ? "false" : exceededEl.getValue()
         ));
     }
+
 
     /**
      * Get the name of the Plan
@@ -242,5 +243,22 @@ public class AuthorizeResponse {
     private void setRedirectUrl(String url) {
         this.redirectUrl = url;
     }
+
+    private String getValueOrBlank(Attribute attr) {
+        if (attr == null) {
+            return "";
+        } else {
+            return attr.getValue();
+        }
+    }
+
+    private String getValueOrBlank(Element element) {
+        if (element == null) {
+            return "";
+        } else {
+            return element.getValue();
+        }
+    }
+
 
 }
