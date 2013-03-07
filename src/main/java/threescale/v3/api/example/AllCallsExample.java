@@ -17,7 +17,7 @@ public class AllCallsExample implements TestKeys {
 
         runUserKey();
         runAppId();
-        //runOAuth();
+        runOAuth();
     }
 
     /**
@@ -159,54 +159,46 @@ public class AllCallsExample implements TestKeys {
     private static void runOAuth() {
         ServiceApi serviceApi = new ServiceApiDriver(my_provider_key);    // Create the API object
 
-        ParameterMap params = new ParameterMap();                         // Add keys
-        params.add("app_id", oa_app_id);
-        params.add("client_id", client_id);
-        params.add("secret", secret);
-        params.add("service_id", oa_service_id);
+        ParameterMap params = new ParameterMap();
+        params.add("app_id", oauth_app_id);
+        params.add("service_id", oauth_service_id);
 
+        // for OAuth only the '2 steps way' is available
         try {
             AuthorizeResponse response = serviceApi.oauth_authorize(params);  // Perform OAuth authorize
-            System.out.println("Success: " + response.success());
+            System.out.println("Authorize on OAuth Success: " + response.success());
             if (response.success() == false) {
                 System.out.println("Error: " + response.getErrorCode());
                 System.out.println("Reason: " + response.getReason());
+            } else {
+
+              // you check the client's secret returned
+              System.out.println("OAuth Client Secret: " + response.getClientSecret());
+
+              // the API call got authorized, let's do a report
+              ParameterMap transaction = new ParameterMap();
+              transaction.add("app_id", oauth_app_id);
+
+              ParameterMap transaction_usage = new ParameterMap();
+              transaction_usage.add("hits", "1");
+              transaction.add("usage", transaction_usage);
+
+              try {
+                  final ReportResponse report_response = serviceApi.report(oauth_service_id, transaction);
+
+                  if (report_response.success()) {
+                      System.out.println("Report on OAuth was successful");
+                  } else {
+                      System.out.println("Report on OAuth failed");
+                  }
+              } catch (ServerError serverError) {
+                  serverError.printStackTrace();
+              }
+
             }
             System.out.println("Plan: " + response.getPlan());
         } catch (ServerError serverError) {
             serverError.printStackTrace();
         }
     }
-
-
-    /**
-     * Example code for a Report call
-     */
-    private static void runReport() {
-        ServiceApi serviceApi = new ServiceApiDriver(my_provider_key);    // Create the API object
-
-        ParameterMap tr1 = new ParameterMap();
-        tr1.add("app_id", app_id);                                        // Set the Users App Id
-
-        ParameterMap usage = new ParameterMap();                          // Create 1st Level PM for usage
-        usage.add("hits", "3");                                           // Add number of hits metric
-        tr1.add("usage", usage);
-
-        tr1.add("timestamp", "2012-03-01 12:15:31 +01:00");               // Add a time stamp
-
-        try {
-
-            final ReportResponse response = serviceApi.report(service_id, tr1);
-
-            if (response.success()) {                                       // Check if the Report succeeded
-                System.out.println("Report was successful");
-            } else {
-                System.out.println("Report failed");
-            }
-        } catch (ServerError serverError) {
-            serverError.printStackTrace();
-        }
-    }
-
-
 }
