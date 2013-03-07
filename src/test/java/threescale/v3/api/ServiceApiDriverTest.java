@@ -297,7 +297,7 @@ public class ServiceApiDriverTest {
         AuthorizeResponse response = serviceApi.oauth_authorize(params);
         assertTrue(response.success());
 
-        assertEquals("883bdb8dbc3b6b77dbcf26845560fdbb", response.getAppKey());
+        assertEquals("883bdb8dbc3b6b77dbcf26845560fdbb", response.getClientSecret());
         assertEquals("http://localhost:8080/oauth/oauth_redirect", response.getRedirectUrl());
 
         assertEquals("Ultimate", response.getPlan());

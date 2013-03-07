@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * the Status (true = success false = exceeded/failed)
  * the Reason if failed.
  * the Plan
- * the AppKey
+ * the ClientSecret
  * the redirect URL
  * the Usage reports
  * <p/>
@@ -24,7 +24,7 @@ public class AuthorizeResponse {
 
     private boolean status = false;
     private String plan = "";
-    private String appKey = "";
+    private String clientSecret = "";
     private UsageReport[] usageReports = new UsageReport[0];
     private String reason = "";
     private String errorCode = "";
@@ -97,7 +97,7 @@ public class AuthorizeResponse {
             if (applicationEl != null) {
                 Element keyEl = applicationEl.getFirstChildElement("key");
                 if (keyEl != null) {
-                    setAppKey(keyEl.getValue());
+                    setClientSecret(keyEl.getValue());
                 }
 
                 Element redirectUrlEl = applicationEl.getFirstChildElement("redirect_url");
@@ -105,7 +105,7 @@ public class AuthorizeResponse {
                     setRedirectUrl(redirectUrlEl.getValue());
                 }
             } else {
-                appKey = "";
+                clientSecret = "";
                 redirectUrl = "";
             }
             ArrayList<UsageReport> reports = new ArrayList<UsageReport>();
@@ -162,16 +162,16 @@ public class AuthorizeResponse {
     }
 
     /**
-     * Get the AppKey
+     * Get the ClientSecret
      *
      * @return app key
      */
-    public String getAppKey() {
-        return appKey;
+    public String getClientSecret() {
+        return clientSecret;
     }
 
-    private void setAppKey(String appKey) {
-        this.appKey = appKey;
+    private void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 
     /**
