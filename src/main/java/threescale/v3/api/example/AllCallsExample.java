@@ -16,7 +16,7 @@ public class AllCallsExample implements TestKeys {
     public static void main(String[] args) {
 
         runUserKey();
-        //runAppId();
+        runAppId();
         //runOAuth();
     }
 
@@ -27,7 +27,7 @@ public class AllCallsExample implements TestKeys {
         ServiceApi serviceApi = new ServiceApiDriver(my_provider_key);    // Create the API object
 
         ParameterMap params = new ParameterMap();
-        params.add("user_key", user_key);                                 // Add keys for authrep o authorize
+        params.add("user_key", user_key);                                 // Add keys for authrep or authorize
         params.add("service_id", user_key_service_id);
 
         ParameterMap usage = new ParameterMap();                          // Add a metric
@@ -87,29 +87,67 @@ public class AllCallsExample implements TestKeys {
     }
 
     /**
-     * Example code for an AuthRep on app id mode
+     * Example code for calls on App Id mode
      */
     private static void runAppId() {
         ServiceApi serviceApi = new ServiceApiDriver(my_provider_key);    // Create the API object
 
-        ParameterMap params = new ParameterMap();                         // Add keys for the autorize
-        params.add("app_id", app_id);
+        ParameterMap params = new ParameterMap();
+        params.add("app_id", app_id);                                     // Add app_id for authrep or authorize
+        params.add("app_key", app_key);                                   // Add key for authrep or authorize
         params.add("service_id", app_id_service_id);
 
-        ParameterMap usage = new ParameterMap();                          // Add a hit metric
+        ParameterMap usage = new ParameterMap();                          // Add a metric
         usage.add("hits", "1");
 
         params.add("usage", usage);
 
         AuthorizeResponse response = null;
+        // the 'preferred way': authrep
         try {
-            response = serviceApi.authrep(params);                        // Perform authRep
-            System.out.println("Success: " + response.success());
+            response = serviceApi.authrep(params);
+            System.out.println("AuthRep on App Id Success: " + response.success());
             if (response.success() == false) {
                 System.out.println("Error: " + response.getErrorCode());
                 System.out.println("Reason: " + response.getReason());
             }
             System.out.println("Plan: " + response.getPlan());
+        } catch (ServerError serverError) {
+            serverError.printStackTrace();
+        }
+
+        // the '2 steps way': authorize + report
+        try {
+            response = serviceApi.authorize(params);
+            System.out.println("Authorize on App Id Success: " + response.success());
+            if (response.success() == false) {
+                System.out.println("Error: " + response.getErrorCode());
+                System.out.println("Reason: " + response.getReason());
+            } else {
+
+              // the API call got authorized, let's do a report
+              ParameterMap transaction = new ParameterMap();
+              transaction.add("app_id", app_id);
+
+              ParameterMap transaction_usage = new ParameterMap();
+              transaction_usage.add("hits", "1");
+              transaction.add("usage", transaction_usage);
+
+              try {
+                  final ReportResponse report_response = serviceApi.report(app_id_service_id, transaction);
+
+                  if (report_response.success()) {
+                      System.out.println("Report on App Id was successful");
+                  } else {
+                      System.out.println("Report on App Id failed");
+                  }
+              } catch (ServerError serverError) {
+                  serverError.printStackTrace();
+              }
+
+            }
+            System.out.println("Plan: " + response.getPlan());
+
         } catch (ServerError serverError) {
             serverError.printStackTrace();
         }
