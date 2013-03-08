@@ -12,23 +12,23 @@ Synopsis
 
 This plugin supports the 3 main calls to the 3scale backend:
 
-- @authrep@ grants access to your API and reports the traffic on it in one call.
-- @authorize@ grants access to your API.
-- @report@ reports traffic on your API.
+- *authrep* grants access to your API and reports the traffic on it in one call.
+- *authorize* grants access to your API.
+- *report* reports traffic on your API.
 
-3scale supports 3 authentication modes: App Id, User Key and OAuth. The first two are similar on their calls to the backend, they support @authrep@. OAuth differs in its usage two calls are required: first @authorize@ then @report@.
+3scale supports 3 authentication modes: App Id, User Key and OAuth. The first two are similar on their calls to the backend, they support *authrep*. OAuth differs in its usage two calls are required: first *authorize* then *report*.
 
 Install
 =======
 
-This is a [Maven]:(http://maven.apache.org/) project, download it and install it the typical way.
+This is a [Maven](http://maven.apache.org/) project, download it and install it the typical way.
 
 Usage on App Id auth mode
 =========================
 
-On App Id mode you call @authrep@ to: grant access to your API, and also report the traffic on it at the same time.
+On App Id mode you call *authrep* to: grant access to your API, and also report the traffic on it at the same time.
 
-```
+```java
 // import the 3scale library into your code
 import threescale.v3.api.*;
 import threescale.v3.api.impl.*;
@@ -68,9 +68,9 @@ try {
 Usage on API Key auth mode
 ==========================
 
-On API Key mode you call @authrep@ to: grant access to your API, and also report the traffic on it at the same time.
+On API Key mode you call *authrep* to: grant access to your API, and also report the traffic on it at the same time.
 
-```
+```java
 // import the 3scale library into your code
 import threescale.v3.api.*;
 import threescale.v3.api.impl.*;
@@ -109,9 +109,9 @@ try {
 Usage on OAuth auth mode
 ==========================
 
-On OAuth you have to make two calls, first @authorize@ to grant access to your API and then @report@ the traffic on it.
+On OAuth you have to make two calls, first *authorize* to grant access to your API and then *report* the traffic on it.
 
-```
+```java
 // import the 3scale library into your code
 import threescale.v3.api.*;
 import threescale.v3.api.impl.*;
