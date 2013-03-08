@@ -1,9 +1,9 @@
 package threescale.v3.api.example;
 
 /**
- * Copy this interface to TestKeys and edit it replacing the values with your live values.
+ * Edit this interface and replace the values with your live values to test the calls to the backend.
  */
-public interface TestKeysExample {
+public interface TestKeys {
     static String my_provider_key = "<provider key>";
 
     //App Id

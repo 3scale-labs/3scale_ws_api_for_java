@@ -173,6 +173,5 @@ To test
 =======
 
 To test the plugin with your real data:
-- copy the interface [TestKeysExample](https://github.com/3scale/3scale_ws_api_for_java/blob/master/src/main/java/threescale/v3/api/example/TestKeysExample.java) into TestKey
-- put in there your provider key as well as service ids and apps auth fields
-- run [AllCallsExample](https://github.com/3scale/3scale_ws_api_for_java/blob/master/src/main/java/threescale/v3/api/example/TestKeysExample.java) class
+- edit the interface [TestKeys](https://github.com/3scale/3scale_ws_api_for_java/blob/master/src/main/java/threescale/v3/api/example/TestKeys.java) and put in there your provider key as well as service ids and apps auth fields
+- run [AllCallsExample](https://github.com/3scale/3scale_ws_api_for_java/blob/master/src/main/java/threescale/v3/api/example/AllCallsExample.java) class

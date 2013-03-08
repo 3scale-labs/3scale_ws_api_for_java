@@ -12,7 +12,6 @@ import java.net.URLEncoder;
  */
 public class AllCallsExample implements TestKeys {
 
-
     public static void main(String[] args) {
 
         runUserKey();
