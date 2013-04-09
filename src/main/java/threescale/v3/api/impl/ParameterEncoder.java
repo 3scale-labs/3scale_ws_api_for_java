@@ -58,15 +58,16 @@ public class ParameterEncoder {
                     if (index != 0) b.append("&");
                     b.append(mapKey).append("[").append(arrayIndex).append("]");
                     b.append("[").append(key).append("]=").append(arrayMap.getStringValue(key));
+                    index++;
                     break;
                 case MAP:
-                    if (index != 0) b.append("&");
                     ParameterMap map = arrayMap.getMapValue(key);
                     for (String itemKey : map.getKeys()) {
+                        if (index != 0) b.append("&");
                         b.append(emitArrayValue(mapKey, key, itemKey, map.getStringValue(itemKey), arrayIndex));
+                        index++;
                     }
             }
-            index++;
         }
         return b.toString();
     }

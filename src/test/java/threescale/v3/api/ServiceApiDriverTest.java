@@ -418,14 +418,18 @@ public class ServiceApiDriverTest {
         assertTrue(response.success());
     }
 
-
     @Test
     public void test_report_encodes_transactions() throws ServerError {
 
         final String urlParams =
-                "transactions%5B0%5D%5Btimestamp%5D=2010-04-27%2015%3A42%3A17%200200&transactions%5B0%5D%5Busage%5D%5Bhits%5D=1&transactions%5B0%5D%5Bapp_id%5D=foo&" +
-                        "transactions%5B1%5D%5Btimestamp%5D=2010-04-27%2015%3A55%3A12%200200&transactions%5B1%5D%5Busage%5D%5Bhits%5D=1&transactions%5B1%5D%5Bapp_id%5D=bar&" +
-                        "provider_key=1234abcd";
+                "transactions%5B0%5D%5Btimestamp%5D=2010-04-27%2015%3A42%3A17%200200" +
+                "&transactions%5B0%5D%5Busage%5D%5Bmetric2%5D=2" +
+                "&transactions%5B0%5D%5Busage%5D%5Bhits%5D=1" +
+                "&transactions%5B0%5D%5Bapp_id%5D=foo" +
+                "&transactions%5B1%5D%5Btimestamp%5D=2010-04-27%2015%3A55%3A12%200200" +
+                "&transactions%5B1%5D%5Busage%5D%5Bhits%5D=1" +
+                "&transactions%5B1%5D%5Bapp_id%5D=bar" +
+                "&provider_key=1234abcd";
 
         context.checking(new Expectations() {{
             oneOf(htmlServer).post("http://" + host + "/transactions.xml", urlParams);
@@ -439,6 +443,7 @@ public class ServiceApiDriverTest {
 
         ParameterMap usage1 = new ParameterMap();
         usage1.add("hits", "1");
+        usage1.add("metric2", "2");
         app1.add("usage", usage1);
 
         ParameterMap app2 = new ParameterMap();
