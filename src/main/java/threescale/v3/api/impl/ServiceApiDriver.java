@@ -11,6 +11,7 @@ public class ServiceApiDriver implements ServiceApi {
 
     private String provider_key = null;
     private String host = DEFAULT_HOST;
+    private boolean useHttps = false;
     private String redirect_url = "http://localhost:8080/oauth/oauth_redirect";
 
     private ServerAccessor server = null;
@@ -24,10 +25,23 @@ public class ServiceApiDriver implements ServiceApi {
         this.provider_key = provider_key;
         this.server = new ServerAccessorDriver();
     }
+    
+    public ServiceApiDriver(String provider_key, boolean useHttps) {
+        this.provider_key = provider_key;
+        this.useHttps = useHttps;
+        this.server = new ServerAccessorDriver();
+    }
 
     public ServiceApiDriver(String provider_key, String host) {
         this.provider_key = provider_key;
         this.host = host;
+        this.server = new ServerAccessorDriver();
+    }
+    
+    public ServiceApiDriver(String provider_key, String host, boolean useHttps) {
+        this.provider_key = provider_key;
+        this.host = host;
+        this.useHttps = useHttps;
         this.server = new ServerAccessorDriver();
     }
 
@@ -112,7 +126,8 @@ public class ServiceApiDriver implements ServiceApi {
     }
 
     private String getFullHostUrl() {
-        return "http://" + getHost();
+        
+        return useHttps ? "https://" + getHost() : "http://" + getHost();
     }
 
 
