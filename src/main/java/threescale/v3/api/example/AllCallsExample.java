@@ -3,9 +3,6 @@ package threescale.v3.api.example;
 import threescale.v3.api.*;
 import threescale.v3.api.impl.*;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 
 /**
  * Simple Example of using the API

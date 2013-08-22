@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 
 /**
  * Performs GET's and POST's against the live 3Scale Server
@@ -24,7 +23,7 @@ public class ServerAccessorDriver implements ServerAccessor {
      * @throws ServerError
      * @see ServerAccessor
      */
-    public HttpResponse get(String urlParams) throws ServerError {
+    public HttpResponse get(final String urlParams) throws ServerError {
         HttpURLConnection connection = null;
         URL url;
 
@@ -79,7 +78,7 @@ public class ServerAccessorDriver implements ServerAccessor {
      * @throws ServerError
      * @see ServerAccessor
      */
-    public HttpResponse post(String urlParams, String data) throws ServerError {
+    public HttpResponse post(final String urlParams,final String data) throws ServerError {
         HttpURLConnection connection = null;
         OutputStreamWriter wr;
         URL url;
