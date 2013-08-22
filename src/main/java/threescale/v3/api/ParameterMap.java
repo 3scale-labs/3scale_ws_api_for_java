@@ -1,6 +1,5 @@
 package threescale.v3.api;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -92,7 +91,7 @@ public class ParameterMap {
      * @return STRING, MAP, ARRAY
      */
     public ParameterMapType getType(String key) {
-        Class clazz = data.get(key).getClass();
+        Class<?> clazz = data.get(key).getClass();
         if (clazz == String.class) {
             return ParameterMapType.STRING;
         }

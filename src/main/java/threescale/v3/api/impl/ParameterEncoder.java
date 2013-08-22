@@ -24,7 +24,7 @@ public class ParameterEncoder {
                     result.append(emitNormalValue(mapKey, params.getStringValue(mapKey)));
                     break;
                 case MAP:
-                    result.append((emitNormalMap(mapKey, params.getMapValue(mapKey))));
+                    result.append(emitNormalMap(mapKey, params.getMapValue(mapKey)));
                     break;
                 case ARRAY:
                     result.append(emitNormalArray(mapKey, params.getArrayValue(mapKey)));
@@ -41,7 +41,7 @@ public class ParameterEncoder {
         int index = 0;
 
         for (ParameterMap arrayMap : mapValue) {
-            if (index != 0) b.append(("&"));
+            if (index != 0) b.append("&");
             b.append(emitArray(mapKey, arrayMap, index));
             index++;
         }
