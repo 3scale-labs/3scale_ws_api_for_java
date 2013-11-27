@@ -6,7 +6,7 @@
 	<artifactId>threescale-api</artifactId>
 	<name>3scale Java API</name>
 	<url>http://http://www.3scale.net/</url>
-	<version>3.0.1</version>
+	<version>3.0.2-SNAPSHOT</version>
 	<description>This API is used to encapsulate the communication with the 3scale backend server for validating and
         reporting transactions between the user and the provider of a service
     </description>
@@ -106,6 +106,6 @@
 	<scm>
 		<url>https://github.com/3scale/3scale_ws_api_for_java</url>
 		<connection>scm:git:git@github.com:3scale/3scale_ws_api_for_java.git</connection>
-	  <tag>v3.0.1</tag>
+	  <tag>HEAD</tag>
   </scm>
 </project>
