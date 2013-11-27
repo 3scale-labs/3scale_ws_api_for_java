@@ -104,4 +104,8 @@
 		<plugins>
 		</plugins>
 	</reporting>
+	<scm>
+		<url>https://github.com/3scale/3scale_ws_api_for_java</url>
+		<connection>scm:git:git@github.com:3scale/3scale_ws_api_for_java.git</connection>
+	</scm>
 </project>
