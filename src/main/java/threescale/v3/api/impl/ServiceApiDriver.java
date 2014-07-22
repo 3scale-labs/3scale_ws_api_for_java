@@ -44,13 +44,13 @@ public class ServiceApiDriver implements ServiceApi {
         this.useHttps = useHttps;
         this.server = new ServerAccessorDriver();
     }
-
+    
     public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError {
         metrics.add("provider_key", provider_key);
 
         ParameterMap usage = metrics.getMapValue("usage");
 
-        if (usage == null || usage.getStringValue("hits") == null) {
+        if (usage == null || usage.size()==0) {
             if (usage == null) {
                 usage = new ParameterMap();
                 metrics.add("usage", usage);
