@@ -13,9 +13,9 @@ import threescale.v3.api.impl.ServiceApiDriver;
  * the authrep method and assumes your service uses a user_key
  * Assumes your API has 2 methods getHello and getGoodbye, with getHello 
  * mapped under Hits
- * Set url 3 data items (TestKeys.my_provider_key, TestKeys.user_key_service_id,
+ * Set your 3 data items (TestKeys.my_provider_key, TestKeys.user_key_service_id,
  *  TestKeys.user_key) before running
- * Optional: rename the methods below to your own
+ * Optional: rename the methods below to your own (necessary if your methods are named/configured differently)
  * Run each test individually and examine the Metrics before and after on your 
  * Services overview page in the admin site
    
@@ -43,6 +43,17 @@ public class ServiceApiDriverIntegrationTest {
 		params.add("user_key", TestKeys.user_key);
 
 	}
+
+	// @Test 
+	// URL Pattern: [usage][hits]=1
+	// Expected: OK results in Hits incrementing by 1
+	public void testAuthrepNullUsageAndUserKey() throws ServerError {
+
+		AuthorizeResponse auresp = serviceApi.authrep(params);
+		reportResult(auresp);		
+	}
+
+
 
 	// @Test 
 	// URL Pattern: [usage][hits]=1
