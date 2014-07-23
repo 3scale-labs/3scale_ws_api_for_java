@@ -129,7 +129,20 @@ public class ServiceApiDriverIntegrationTest {
 
         assertTrue(response.success());
     }
-	//*******************************************************************
+    
+
+	//@Test 
+	// Expected: success
+    public void testAuthorizeWithEternityPeriod() throws ServerError {
+
+        AuthorizeResponse response = serviceApi.authorize(params);
+
+        assertTrue(response.success());
+        
+    }
+
+    
+    //*******************************************************************
 	private void reportResult(AuthorizeResponse auresp){
 		boolean success = auresp.success(); 
 		if (success){

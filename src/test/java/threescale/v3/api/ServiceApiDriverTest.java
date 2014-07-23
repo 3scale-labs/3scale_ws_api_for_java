@@ -1,5 +1,12 @@
 package threescale.v3.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -7,12 +14,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
 import threescale.v3.api.impl.ServiceApiDriver;
-
-import static org.junit.Assert.*;
-
-import org.jmock.Expectations;
-import org.jmock.integration.junit4.JUnitRuleMockery;
 
 /**
  * Test class for the Service Api.
@@ -54,7 +57,7 @@ public class ServiceApiDriverTest {
 
     @Test
     public void test_authrep_usage_is_encoded() throws ServerError {
-        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=1&%5Busage%5D%5Bmethod%5D=666");
+    	assertAuthrepUrlWithParams("&%5Busage%5D%5Bmethod%5D=666");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -244,6 +247,43 @@ public class ServiceApiDriverTest {
         assertTrue("application_not_found".equals(response.getErrorCode()));
         assertTrue("application with id=\"foo\" was not found".equals(response.getReason()));
     }
+
+
+    @Test
+    public void test_authorize_metric_period_eternity() throws ServerError {
+        final String body = "<status>" +
+                "<authorized>true</authorized>" + 
+		        "  <plan>Per hit</plan>" + 
+		        "  <usage_reports>" + 
+		        "    <usage_report metric=\"getGoodbye\" period=\"eternity\">" + 
+		        "      <max_value>0</max_value>" + 
+		        "      <current_value>0</current_value>" + 
+		        "    </usage_report>" + 
+		        "  </usage_reports>" + 
+		        "</status>";
+
+
+        context.checking(new Expectations() {{
+            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+            will(returnValue(new HttpResponse(200, body)));
+        }});
+
+        ParameterMap params = new ParameterMap();
+        params.add("app_id", "foo");
+        AuthorizeResponse response = serviceApi.authorize(params);
+
+        assertTrue(response.success());
+        
+        assertEquals("Per hit", response.getPlan());
+        assertEquals(1, response.getUsageReports().length);
+
+        assertEquals("0", response.getUsageReports()[0].getCurrentValue());
+        assertEquals("0", response.getUsageReports()[0].getMaxValue());
+
+        assertEquals("", response.getUsageReports()[0].getPeriodStart());
+        assertEquals("", response.getUsageReports()[0].getPeriodEnd());
+
+     }
 
     @Test(expected = ServerError.class)
     public void test_authorize_with_server_error() throws ServerError {
@@ -503,7 +543,7 @@ public class ServiceApiDriverTest {
                 "<authorized>true</authorized>" +
                 "<plan>Ultimate</plan>" +
                 "</status>";
-//        System.out.println("Expect: "+ authrep_url);
+        //System.out.println("Expect: "+ authrep_url);
         context.checking(new Expectations() {{
             oneOf(htmlServer).get(authrep_url);
             will(returnValue(new HttpResponse(200, body)));
