@@ -1,5 +1,9 @@
 package threescale.v3.api;
 
+import static org.junit.Assert.assertTrue;
+
+import org.jmock.Expectations;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
@@ -10,7 +14,7 @@ import threescale.v3.api.impl.ServiceApiDriver;
 
 /**
  * Integration Test class for the ServiceApiDriver. Currently only tests 
- * the authrep method and assumes your service uses a user_key
+ * the authrep and report methods and assumes your service uses a user_key
  * Assumes your API has 2 methods getHello and getGoodbye, with getHello 
  * mapped under Hits
  * Set your 3 data items (TestKeys.my_provider_key, TestKeys.user_key_service_id,
@@ -111,6 +115,20 @@ public class ServiceApiDriverIntegrationTest {
 		
 	}
 
+	//@Test 
+	// URL Pattern: [usage][hits]=1
+	// Expected: OK results in Hits incrementing by 1
+    public void test_successful_report() throws ServerError {
+
+
+        ParameterMap usage = new ParameterMap();
+        usage.add("hits", "1");
+        params.add("usage", usage);
+
+        ReportResponse response = serviceApi.report(TestKeys.user_key_service_id, params);
+
+        assertTrue(response.success());
+    }
 	//*******************************************************************
 	private void reportResult(AuthorizeResponse auresp){
 		boolean success = auresp.success(); 
