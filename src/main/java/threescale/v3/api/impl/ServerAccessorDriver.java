@@ -9,12 +9,35 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.util.Properties;
 /**
  * Performs GET's and POST's against the live 3Scale Server
  */
 public class ServerAccessorDriver implements ServerAccessor {
-
+	
+	private Properties props;
+	private String pluginHeaderValue;
+	private String defaultVersion = "3.1";
     public ServerAccessorDriver() {
+
+        
+    	props = new Properties();
+        try {
+        	InputStream in = ServerAccessorDriver.class.getClassLoader().getResourceAsStream("props.properties");
+        	if (in == null) {
+        		System.out.println("props.properties not found");
+        	}
+        	else{
+        		props.load(in);
+        		defaultVersion = props.getProperty(MAVEN_PROJECT_VERSION);
+        	}
+        	
+            
+        } catch (Exception e) {
+        	System.out.println(e);
+        }   	
+		pluginHeaderValue = X_3SCALE_USER_CLIENT_HEADER_JAVA_PLUGIN+defaultVersion;
+
     }
 
     /**
@@ -39,7 +62,7 @@ public class ServerAccessorDriver implements ServerAccessor {
             connection.setDoOutput(true);
             connection.setReadTimeout(10000);
             connection.setRequestProperty("Accept-Charset", "UTF-8");
-            connection.setRequestProperty(X_3SCALE_USER_CLIENT_HEADER, X_3SCALE_USER_CLIENT_HEADER_JAVA_PLUGIN); 
+            connection.setRequestProperty(X_3SCALE_USER_CLIENT_HEADER, pluginHeaderValue); 
             
             connection.connect();
 
@@ -60,7 +83,7 @@ public class ServerAccessorDriver implements ServerAccessor {
     }
 
     private String getBody(InputStream content) throws IOException {
-        BufferedReader rd;
+    	BufferedReader rd;
         StringBuilder sb;
         String line;
         rd = new BufferedReader(new InputStreamReader(content));
@@ -119,4 +142,8 @@ public class ServerAccessorDriver implements ServerAccessor {
             }
         }
     }
+
+	public String getPluginHeaderValue() {
+		return pluginHeaderValue;
+	}
 }
