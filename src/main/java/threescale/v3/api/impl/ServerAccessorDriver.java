@@ -120,7 +120,7 @@ public class ServerAccessorDriver implements ServerAccessor {
             connection.setRequestProperty("Accept", "*/*");
             connection.setRequestProperty("Accept-Charset", "UTF-8");
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestProperty(X_3SCALE_USER_CLIENT_HEADER, X_3SCALE_USER_CLIENT_HEADER_JAVA_PLUGIN); 
+            connection.setRequestProperty(X_3SCALE_USER_CLIENT_HEADER, pluginHeaderValue); 
 
 
             connection.connect();

@@ -2,12 +2,12 @@ package threescale.v3.api.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Properties;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import threescale.v3.api.HttpResponse;
 import threescale.v3.api.ServerAccessor;
+import threescale.v3.api.ServerError;
 
 /**
  * Unit Test class for the Service Api.
@@ -31,5 +31,21 @@ public class ServiceAccessorDriverTest {
     	assertEquals(actualClientHeader, expectedHedaer);
     }
 
+    //@Test
+    public void testGet() throws ServerError {
+    	String testUrl = "http://requestb.in/1k27m9c1"; //inspect the headers at http://requestb.in/1k27m9c1?inspect
+    	
+    	HttpResponse response = underTest.get(testUrl);
+    	int status = response.getStatus();
+    	assertEquals(status, 200);
+    }
 
+    //@Test
+    public void testPost() throws ServerError {		
+    	String testUrl = "http://requestb.in/1k27m9c1"; //inspect the headers at http://requestb.in/1k27m9c1?inspect
+    	
+    	HttpResponse response = underTest.post(testUrl, "");
+    	int status = response.getStatus();
+    	assertEquals(status, 200);
+    }
 }
