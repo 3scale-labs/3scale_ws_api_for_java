@@ -4,8 +4,10 @@ package threescale.v3.api;
  * Interface to HTML operation between this client and the 3Scale Server
  */
 public interface ServerAccessor {
-	String X_3SCALE_USER_CLIENT_HEADER = "X-3scale-user-client";
-	String X_3SCALE_USER_CLIENT_HEADER_JAVA_PLUGIN = "plugin-java";
+	String X_3SCALE_USER_CLIENT_HEADER = "X-3scale-User-Agent";
+	String MAVEN_PROJECT_VERSION = "MAVEN_PROJECT_VERSION";
+	String X_3SCALE_USER_CLIENT_HEADER_JAVA_PLUGIN = "plugin-java-v";
+	
     /**
      * Perform and HTML GET with the provided URL
      *

@@ -48,7 +48,7 @@ public class ServiceApiDriverIntegrationTest {
 
 	}
 
-	// @Test 
+	//@Test 
 	// URL Pattern: [usage][hits]=1
 	// Expected: OK results in Hits incrementing by 1
 	public void testAuthrepNullUsageAndUserKey() throws ServerError {
@@ -59,7 +59,7 @@ public class ServiceApiDriverIntegrationTest {
 
 
 
-	// @Test 
+	//@Test 
 	// URL Pattern: [usage][hits]=1
 	// Expected: OK results in Hits incrementing by 1
 	public void testAuthrepEmptyUsageAndUserKey() throws ServerError {
@@ -72,7 +72,7 @@ public class ServiceApiDriverIntegrationTest {
 	}
 
 
-	// @Test 
+	//@Test 
 	// URL Pattern: [usage][getHello]=2
 	// EXPECTED: Success; hits +2
 	public void testAuthrepUsageWithNestedMethodAndUserKey() throws ServerError {
@@ -85,7 +85,7 @@ public class ServiceApiDriverIntegrationTest {
 		
 	}
 	
-	 //@Test 
+	//@Test 
 	// URL Pattern: [usage][hits]=3&[usage][getHello]=2
 	// EXPECTED: Success; hits +5
 	public void testAuthrepUsageWithNestedMethodAndHitsAndUserKey() throws ServerError {
@@ -140,6 +140,37 @@ public class ServiceApiDriverIntegrationTest {
         assertTrue(response.success());
         
     }
+
+
+	//@Test 
+	// URL http://requestb.in/1k27m9c1
+	// In order to visually examine the request headers in a POST
+    // 
+	public void testPostToRequestBin() throws ServerError {
+
+		AuthorizeResponse auresp = serviceApi.authrep(params);
+		reportResult(auresp);		
+	}
+
+
+
+	//@Test 
+	// URL http://requestb.in/1k27m9c1
+	// In order to visually examine the request headers in a GET
+    // 
+	public void testGetToRequestBin() throws ServerError {
+		//String url = "http://requestb.in/1k27m9c1;
+		
+		ServiceApiDriver localServiceApiDriver = new ServiceApiDriver("provider_key", "http://requestb.in");
+		
+		localServiceApiDriver.authorize(new ParameterMap());
+		
+		//reportResult(auresp);		
+	}
+
+
+	
+	
 
     
     //*******************************************************************
