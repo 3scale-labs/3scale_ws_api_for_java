@@ -21,7 +21,11 @@ This plugin supports the 3 main calls to the 3scale backend:
 Install
 =======
 
-This is a [Maven](http://maven.apache.org/) project, download it and install it the typical way.
+This is a [Maven](http://maven.apache.org/) project, download it and install it as follows
+- add a dependency to this artifact inside your pom.xml by opening the pom.xml insdie the 3scale artifact and retrieving the groupId, artifactid and version from lines 5,6 and 9 of 3scale's pom.
+- install the artifact to your repository as described here:
+http://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
+
 
 Usage on App Id auth mode
 =========================
