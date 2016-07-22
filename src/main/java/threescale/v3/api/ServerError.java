@@ -5,6 +5,8 @@ package threescale.v3.api;
  */
 public class ServerError extends Exception {
 
+    private static final long serialVersionUID = -5900004126517852322L;
+
     public ServerError(String reason) {
         super(reason);
     }

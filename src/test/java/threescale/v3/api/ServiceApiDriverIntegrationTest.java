@@ -2,12 +2,9 @@ package threescale.v3.api;
 
 import static org.junit.Assert.assertTrue;
 
-import org.jmock.Expectations;
-import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
-import org.junit.Test;
 
 import threescale.v3.api.example.TestKeys;
 import threescale.v3.api.impl.ServiceApiDriver;
@@ -31,7 +28,7 @@ public class ServiceApiDriverIntegrationTest {
 	private final String provider_key = TestKeys.my_provider_key;
 
 	private ServiceApi serviceApi;
-	private ServerAccessor htmlServer;
+//	private ServerAccessor htmlServer;
 
 	DateTimeFormatter fmt;
 	ParameterMap params;

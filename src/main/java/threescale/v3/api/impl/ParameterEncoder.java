@@ -14,7 +14,7 @@ public class ParameterEncoder {
      * @return Encoded string
      */
     public String encode(ParameterMap params) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         int index = 0;
         for (String mapKey : params.getKeys()) {
@@ -37,7 +37,7 @@ public class ParameterEncoder {
     }
 
     private String emitNormalArray(String mapKey, ParameterMap[] mapValue) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         int index = 0;
 
         for (ParameterMap arrayMap : mapValue) {
@@ -49,7 +49,7 @@ public class ParameterEncoder {
     }
 
     private String emitArray(String mapKey, ParameterMap arrayMap, int arrayIndex) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         int index = 0;
 
         for (String key : arrayMap.getKeys()) {
@@ -67,13 +67,17 @@ public class ParameterEncoder {
                         b.append(emitArrayValue(mapKey, key, itemKey, map.getStringValue(itemKey), arrayIndex));
                         index++;
                     }
+                    break;
+                case ARRAY:
+                    // TODO does ARRAY need to be handled?
+                    break;
             }
         }
         return b.toString();
     }
 
     private String emitArrayValue(String mapKey, String key, String itemKey, String stringValue, int index) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(mapKey).append("[").append(index).append("]");
         b.append("[").append(key).append("]");
         b.append("[").append(itemKey).append("]=").append(stringValue);
@@ -81,13 +85,19 @@ public class ParameterEncoder {
     }
 
     private String emitNormalMap(String mapKey, ParameterMap mapValue) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         int index = 0;
         for (String key : mapValue.getKeys()) {
             if (index != 0) b.append("&");
             switch (mapValue.getType(key)) {
                 case STRING:
                     b.append(emitMapValue(mapKey, key, mapValue.getStringValue(key)));
+                    break;
+                case MAP:
+                    // TODO does MAP need to be handled?
+                    break;
+                case ARRAY:
+                    // TODO does ARRAY need to be handled?
                     break;
             }
             index++;
@@ -96,13 +106,13 @@ public class ParameterEncoder {
     }
 
     private String emitMapValue(String mapKey, String key, String stringValue) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append("[").append(mapKey).append("][").append(key).append("]=").append(stringValue);
         return b.toString();
     }
 
     private String emitNormalValue(String key, String value) {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(key).append("=").append(value);
         return b.toString();
     }
