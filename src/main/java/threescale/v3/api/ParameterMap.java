@@ -1,6 +1,7 @@
 package threescale.v3.api;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -8,30 +9,28 @@ import java.util.Set;
  * <p/>
  * Each item consists of a name/value pair, where the value can be a String, An Array of ParameterMaps or another Parameter Map.
  * <p/>
+ * <p>
  * E.g.  For an AuthRep:
+ * </p>
  * <code>
- * ParameterMap params = new ParameterMap();
- * params.add("app_id", "app_1234");
- * <p/>
- * ParameterMap usage = new ParameterMap();
- * usage.add("hits", "3");
- * <p/>
- * params.add("usage", usage);
- * <p/>
- * AuthorizeResponse response = serviceApi.authrep(params);
+ * ParameterMap params = new ParameterMap();<br/>
+ * params.add("app_id", "app_1234");<br/>
+ * ParameterMap usage = new ParameterMap();<br/>
+ * usage.add("hits", "3");<br/>
+ * params.add("usage", usage);<br/>
+ * AuthorizeResponse response = serviceApi.authrep(params);<br/>
  * </code>
- * <p/>
+ * <p>
  * An example for a report might be:
+ * <p/>
  * <code>
- * ParameterMap params = new ParameterMap();
- * params.add("app_id", "foo");
- * params.add("timestamp", fmt.print(new DateTime(2010, 4, 27, 15, 0)));
- * <p/>
- * ParameterMap usage = new ParameterMap();
- * usage.add("hits", "1");
- * params.add("usage", usage);
- * <p/>
- * ReportResponse response = serviceApi.report(params);
+ * ParameterMap params = new ParameterMap();<br/>
+ * params.add("app_id", "foo");<br/>
+ * params.add("timestamp", fmt.print(new DateTime(2010, 4, 27, 15, 0)));<br/>
+ * ParameterMap usage = new ParameterMap();<br/>
+ * usage.add("hits", "1");<br/>
+ * params.add("usage", usage);<br/>
+ * ReportResponse response = serviceApi.report(params);<br/>
  * </code>
  */
 public class ParameterMap {
@@ -42,7 +41,8 @@ public class ParameterMap {
      * Construct and empty ParameterMap
      */
     public ParameterMap() {
-        data = new HashMap<String, Object>();
+        // Note: use a linked hash map for more predictable serialization of the parameters (mostly for testing)
+        data = new LinkedHashMap<String, Object>();
     }
 
     /**

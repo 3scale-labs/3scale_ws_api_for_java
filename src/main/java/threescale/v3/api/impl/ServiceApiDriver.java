@@ -12,13 +12,12 @@ public class ServiceApiDriver implements ServiceApi {
     private String provider_key = null;
     private String host = DEFAULT_HOST;
     private boolean useHttps = false;
-    private String redirect_url = "http://localhost:8080/oauth/oauth_redirect";
+//    private String redirect_url = "http://localhost:8080/oauth/oauth_redirect";
 
     private ServerAccessor server = null;
 
     public ServiceApiDriver() {
         this.server = new ServerAccessorDriver();
-
     }
 
     public ServiceApiDriver(String provider_key) {
@@ -78,14 +77,7 @@ public class ServiceApiDriver implements ServiceApi {
         if (service_id != null) {
             params.add("service_id", service_id);
         }
-        ParameterMap trans = new ParameterMap();
         params.add("transactions", transactions);
-
-        int index = 0;
-        for (ParameterMap transaction : transactions) {
-            trans.add("" + index, transaction);
-            index++;
-        }
 
         HttpResponse response = server.post(getFullHostUrl() + "/transactions.xml", encodeAsString(params));
         if (response.getStatus() == 500) {

@@ -2,9 +2,13 @@ package threescale.v3.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.joda.time.DateTime;
@@ -22,6 +26,7 @@ import threescale.v3.api.impl.ServiceApiDriver;
  */
 
 public class ServiceApiDriverTest {
+    
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
 
@@ -57,7 +62,7 @@ public class ServiceApiDriverTest {
 
     @Test
     public void test_authrep_usage_is_encoded() throws ServerError {
-    	assertAuthrepUrlWithParams("&%5Busage%5D%5Bmethod%5D=666");
+    	assertAuthrepUrlWithParams("%5Busage%5D%5Bmethod%5D=666");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -70,7 +75,7 @@ public class ServiceApiDriverTest {
     @Test
     public void test_authrep_usage_values_are_encoded() throws ServerError {
 
-        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=%230");
+        assertAuthrepUrlWithParams("%5Busage%5D%5Bhits%5D=%230");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -83,7 +88,7 @@ public class ServiceApiDriverTest {
     @Test
     public void test_authrep_usage_defaults_to_hits_1() throws ServerError {
 
-        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=1&app_id=appid");
+        assertAuthrepUrlWithParams("%5Busage%5D%5Bhits%5D=1&app_id=appid");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
@@ -93,7 +98,7 @@ public class ServiceApiDriverTest {
 
     @Test
     public void test_authrep_supports_app_id_app_key_auth_mode() throws ServerError {
-        assertAuthrepUrlWithParams("&%5Busage%5D%5Bhits%5D=1&app_key=appkey&app_id=appid");
+        assertAuthrepUrlWithParams("%5Busage%5D%5Bhits%5D=1&app_key=appkey&app_id=appid");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
@@ -108,8 +113,8 @@ public class ServiceApiDriverTest {
                 "<plan>Ultimate</plan>" +
                 "</status>";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authrep.xml?provider_key=1234abcd&%5Busage%5D%5Bhits%5D=1&app_key=toosecret&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authrep.xml?provider_key=1234abcd&%5Busage%5D%5Bhits%5D=1&app_key=toosecret&app_id=foo"));
             will(returnValue(new HttpResponse(200, body)));
         }});
 
@@ -144,8 +149,8 @@ public class ServiceApiDriverTest {
                 "  </usage_reports>" +
                 "</status>";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(200, body)));
         }});
 
@@ -177,8 +182,8 @@ public class ServiceApiDriverTest {
                 "<plan>Ultimate</plan>" +
                 "</status>";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_key=toosecret&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_key=toosecret&app_id=foo"));
             will(returnValue(new HttpResponse(200, body)));
         }});
 
@@ -216,8 +221,8 @@ public class ServiceApiDriverTest {
                 "</status>";
 
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(409, body)));
         }});
 
@@ -234,8 +239,8 @@ public class ServiceApiDriverTest {
     public void test_authorize_with_invalid_app_id() throws ServerError {
         final String body = "<error code=\"application_not_found\">application with id=\"foo\" was not found</error>";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(403, body)));
         }});
 
@@ -263,8 +268,8 @@ public class ServiceApiDriverTest {
 		        "</status>";
 
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(200, body)));
         }});
 
@@ -287,8 +292,8 @@ public class ServiceApiDriverTest {
 
     @Test(expected = ServerError.class)
     public void test_authorize_with_server_error() throws ServerError {
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(500, "OMG! WTF!")));
         }});
 
@@ -325,8 +330,8 @@ public class ServiceApiDriverTest {
                 "</usage_reports>" +
                 "</status>";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?redirect_url=http%3A//localhost%3A8080/oauth/oauth_redirect&provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/oauth_authorize.xml?redirect_url=http%3A//localhost%3A8080/oauth/oauth_redirect&provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(200, body)));
         }});
 
@@ -384,8 +389,8 @@ public class ServiceApiDriverTest {
                 "</usage_reports>" +
                 "</status>";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(409, body)));
         }});
 
@@ -403,8 +408,8 @@ public class ServiceApiDriverTest {
     public void test_oauth_authorize_with_invalid_app_id() throws ServerError {
         final String body = "<error code=\"application_not_found\">application with id=\"foo\" was not found</error>";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(403, body)));
         }});
 
@@ -421,8 +426,8 @@ public class ServiceApiDriverTest {
     @Test(expected = ServerError.class)
     public void test_oath_authorize_with_server_error() throws ServerError {
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo");
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/oauth_authorize.xml?provider_key=1234abcd&app_id=foo"));
             will(returnValue(new HttpResponse(500, "OMG! WTF!")));
         }});
 
@@ -434,13 +439,13 @@ public class ServiceApiDriverTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_report_raises_an_exception_if_no_transactions_given() throws ServerError {
-        serviceApi.report(null, null);
+        serviceApi.report(null);
     }
 
     @Test
     public void test_successful_report() throws ServerError {
 
-        context.checking(new Expectations() {{
+        context.checking(new UrlWithParamsExpectations() {{
             oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
             will(returnValue(new HttpResponse(202, "")));
         }});
@@ -471,8 +476,8 @@ public class ServiceApiDriverTest {
                 "&transactions%5B1%5D%5Bapp_id%5D=bar" +
                 "&provider_key=1234abcd";
 
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).post("http://" + host + "/transactions.xml", urlParams);
+        context.checking(new UrlWithParamsExpectations() {{
+            oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), withParams(urlParams));
             will(returnValue(new HttpResponse(200, "")));
         }});
 
@@ -501,7 +506,7 @@ public class ServiceApiDriverTest {
     public void test_failed_report() throws ServerError {
         final String error_body = "<error code=\"provider_key_invalid\">provider key \"foo\" is invalid</error>";
 
-        context.checking(new Expectations() {{
+        context.checking(new UrlWithParamsExpectations() {{
             oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
             will(returnValue(new HttpResponse(403, error_body)));
         }});
@@ -522,7 +527,7 @@ public class ServiceApiDriverTest {
     @Test(expected = ServerError.class)
     public void test_report_with_server_error() throws ServerError {
 
-        context.checking(new Expectations() {{
+        context.checking(new UrlWithParamsExpectations() {{
             oneOf(htmlServer).post(with("http://" + host + "/transactions.xml"), with(any(String.class)));
             will(returnValue(new HttpResponse(500, "OMG! WTF!")));
         }});
@@ -537,16 +542,94 @@ public class ServiceApiDriverTest {
 
 
     private void assertAuthrepUrlWithParams(final String params) throws ServerError {
-        final String authrep_url = "http://" + host + "/transactions/authrep.xml?provider_key=" + provider_key + params;
+        final String authrep_url = "http://" + host + "/transactions/authrep.xml?" + params + "&provider_key=" + provider_key;
 
         final String body = "<status>" +
                 "<authorized>true</authorized>" +
                 "<plan>Ultimate</plan>" +
                 "</status>";
         //System.out.println("Expect: "+ authrep_url);
-        context.checking(new Expectations() {{
-            oneOf(htmlServer).get(authrep_url);
-            will(returnValue(new HttpResponse(200, body)));
-        }});
+        context.checking(new UrlWithParamsExpectations() {
+            {
+                oneOf(htmlServer).get(withUrl(authrep_url));
+                will(returnValue(new HttpResponse(200, body)));
+            }
+        });
     }
+    
+    private static class UrlWithParamsExpectations extends Expectations {
+
+        protected String withUrl(String url) {
+            currentBuilder().addParameterMatcher(new UrlWithParamsMatcher(url));
+            return url;
+        }
+        
+        protected String withParams(String params) {
+            currentBuilder().addParameterMatcher(new ParamsMatcher(params));
+            return params;
+        }
+        
+    }
+    
+    private static class UrlWithParamsMatcher extends TypeSafeMatcher<String> {
+        
+        private final String expectedUrl;
+
+        public UrlWithParamsMatcher(String expectedUrl) {
+            this.expectedUrl = expectedUrl;
+        }
+
+        @Override
+        public boolean matchesSafely(String actualUrl) {
+            // Match the first part of the URL (scheme, host, port, etc)
+            String expectedUrlHead = expectedUrl.substring(0, expectedUrl.indexOf("?"));
+            String actualUrlHead = actualUrl.substring(0, actualUrl.indexOf("?"));
+            
+            // Match the params (order then compare)
+            String expectedParams = expectedUrl.substring(expectedUrl.indexOf("?") + 1);
+            String[] expectedParamsSplit = expectedParams.split("&");
+            Arrays.sort(expectedParamsSplit);
+            String actualParams = actualUrl.substring(actualUrl.indexOf("?") + 1);
+            String[] actualParamsSplit = actualParams.split("&");
+            Arrays.sort(actualParamsSplit);
+            
+            List<String> expected = Arrays.asList(expectedParamsSplit);
+            List<String> actual = Arrays.asList(actualParamsSplit);
+            
+            return expected.equals(actual) && expectedUrlHead.equals(actualUrlHead);
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("a url matching '" + this.expectedUrl + "'");
+        }
+    }
+
+    private static class ParamsMatcher extends TypeSafeMatcher<String> {
+        
+        private final String expectedParams;
+
+        public ParamsMatcher(String expectedParams) {
+            this.expectedParams = expectedParams;
+        }
+
+        @Override
+        public boolean matchesSafely(String actualParams) {
+            String[] expectedParamsSplit = expectedParams.split("&");
+            Arrays.sort(expectedParamsSplit);
+            String[] actualParamsSplit = actualParams.split("&");
+            Arrays.sort(actualParamsSplit);
+            
+            List<String> expected = Arrays.asList(expectedParamsSplit);
+            List<String> actual = Arrays.asList(actualParamsSplit);
+            
+            return expected.equals(actual);
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("params matching '" + this.expectedParams + "'");
+        }
+    }
+
 }
