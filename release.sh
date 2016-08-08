@@ -55,7 +55,7 @@ mvn clean install
 git tag -a -m "Tagging release $RELEASE_VERSION" v$RELEASE_VERSION
 git push origin v$RELEASE_VERSION
 
-mvn clean deploy -Dgpg.passphrase=$GPG_PASSPHRASE
+mvn clean deploy -Prelease -Dgpg.passphrase=$GPG_PASSPHRASE
 
 mvn versions:set -DnewVersion=$DEV_VERSION
 find . -name '*.versionsBackup' -exec rm -f {} \;
