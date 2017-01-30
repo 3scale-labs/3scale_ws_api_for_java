@@ -62,7 +62,7 @@ public class ServiceApiDriverTest {
 
     @Test
     public void test_authrep_usage_is_encoded() throws ServerError {
-    	assertAuthrepUrlWithParams("%5Busage%5D%5Bmethod%5D=666");
+    	assertAuthrepUrlWithParams("usage%5Bmethod%5D=666");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -75,7 +75,7 @@ public class ServiceApiDriverTest {
     @Test
     public void test_authrep_usage_values_are_encoded() throws ServerError {
 
-        assertAuthrepUrlWithParams("%5Busage%5D%5Bhits%5D=%230");
+        assertAuthrepUrlWithParams("usage%5Bhits%5D=%230");
 
         ParameterMap params = new ParameterMap();
         ParameterMap usage = new ParameterMap();
@@ -88,7 +88,7 @@ public class ServiceApiDriverTest {
     @Test
     public void test_authrep_usage_defaults_to_hits_1() throws ServerError {
 
-        assertAuthrepUrlWithParams("%5Busage%5D%5Bhits%5D=1&app_id=appid");
+        assertAuthrepUrlWithParams("usage%5Bhits%5D=1&app_id=appid");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
@@ -98,7 +98,7 @@ public class ServiceApiDriverTest {
 
     @Test
     public void test_authrep_supports_app_id_app_key_auth_mode() throws ServerError {
-        assertAuthrepUrlWithParams("%5Busage%5D%5Bhits%5D=1&app_key=appkey&app_id=appid");
+        assertAuthrepUrlWithParams("usage%5Bhits%5D=1&app_key=appkey&app_id=appid");
 
         ParameterMap params = new ParameterMap();
         params.add("app_id", "appid");
@@ -114,7 +114,7 @@ public class ServiceApiDriverTest {
                 "</status>";
 
         context.checking(new UrlWithParamsExpectations() {{
-            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authrep.xml?provider_key=1234abcd&%5Busage%5D%5Bhits%5D=1&app_key=toosecret&app_id=foo"));
+            oneOf(htmlServer).get(withUrl("http://" + host + "/transactions/authrep.xml?provider_key=1234abcd&usage%5Bhits%5D=1&app_key=toosecret&app_id=foo"));
             will(returnValue(new HttpResponse(200, body)));
         }});
 
