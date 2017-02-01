@@ -14,6 +14,8 @@ public interface ServiceApi {
      * @throws ServerError Thrown if there is an error communicating with the 3Scale server
      */
     public AuthorizeResponse authrep(ParameterMap metrics) throws ServerError;
+	public AuthorizeResponse authrep(String serviceToken, String serviceId, ParameterMap metrics) 
+			throws ServerError;
 
     /**
      * Performs an Authorize
@@ -23,6 +25,8 @@ public interface ServiceApi {
      * @throws ServerError Thrown if there is an error communicating with the 3Scale server
      */
     public AuthorizeResponse authorize(ParameterMap parameters) throws ServerError;
+    public AuthorizeResponse authorize(String serviceToken, String serviceId, ParameterMap parameters) 
+    		throws ServerError;
 
     /**
      * Perform an Authorize using OAuth.
@@ -32,16 +36,21 @@ public interface ServiceApi {
      * @throws ServerError Thrown if there is an error communicating with the 3Scale server
      */
     public AuthorizeResponse oauth_authorize(ParameterMap params) throws ServerError;
+    public AuthorizeResponse oauth_authorize(String serviceToken, String serviceId, ParameterMap params) 
+    		throws ServerError;
 
     /**
-     * Report a set of metrics.
+     * Report a set of metrics.  Note: report differs from the rest of these methods in that a serviceId is 
+     * an argument.  The reason for this is that it does not accept a root level ParameterMap argument, which is
+     * normally how the serviceId would be passed.  Instead, the root level ParameterMap is created by the 
+     * implementation, and so the serviceId cannot be included in it. 
      *
-     * @param service_id
      * @param transactions The metrics to be reported
      * @return Information about the success/failure of the operation
      * @throws ServerError Thrown if there is an error communicating with the 3Scale server
      */
-    public ReportResponse report(String service_id, ParameterMap... transactions) throws ServerError;
+    public ReportResponse report(String serviceId, ParameterMap... transactions) throws ServerError;
+    public ReportResponse report(String serviceToken, String serviceId, ParameterMap... transactions) throws ServerError;
 
     /**
      * Get the URL of the 3scale server

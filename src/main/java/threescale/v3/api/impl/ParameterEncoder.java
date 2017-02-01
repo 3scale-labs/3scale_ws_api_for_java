@@ -29,11 +29,16 @@ public class ParameterEncoder {
                 case ARRAY:
                     result.append(emitNormalArray(mapKey, params.getArrayValue(mapKey)));
                     break;
+                case LONG:
+                    result.append(emitNormalValue(mapKey, Long.toString(params.getLongValue(mapKey))));
+                    break;
+                default:
+                    break;
             }
             index++;
         }
 
-        return substitueCharacters(result.toString());
+        return substituteCharacters(result.toString());
     }
 
     private String emitNormalArray(String mapKey, ParameterMap[] mapValue) {
@@ -71,6 +76,10 @@ public class ParameterEncoder {
                 case ARRAY:
                     // TODO does ARRAY need to be handled?
                     break;
+                case LONG:
+                    break;
+                default:
+                    break;
             }
         }
         return b.toString();
@@ -90,6 +99,9 @@ public class ParameterEncoder {
         for (String key : mapValue.getKeys()) {
             if (index != 0) b.append("&");
             switch (mapValue.getType(key)) {
+                case LONG:
+                    b.append(emitMapValue(mapKey, key, Long.toString(mapValue.getLongValue(key))));
+                    break;      
                 case STRING:
                     b.append(emitMapValue(mapKey, key, mapValue.getStringValue(key)));
                     break;
@@ -107,7 +119,7 @@ public class ParameterEncoder {
 
     private String emitMapValue(String mapKey, String key, String stringValue) {
         StringBuilder b = new StringBuilder();
-        b.append("[").append(mapKey).append("][").append(key).append("]=").append(stringValue);
+        b.append(mapKey).append("[").append(key).append("]=").append(stringValue);
         return b.toString();
     }
 
@@ -117,7 +129,7 @@ public class ParameterEncoder {
         return b.toString();
     }
 
-    private String substitueCharacters(String input) {
+    private String substituteCharacters(String input) {
         return input.replace(" ", "%20").replace("[", "%5B").replace("]", "%5D").replace("#", "%23").replace(":", "%3A");
     }
 }

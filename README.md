@@ -22,7 +22,7 @@ Install
 =======
 
 This is a [Maven](http://maven.apache.org/) project, download it and install it as follows
-- add a dependency to this artifact inside your pom.xml by opening the pom.xml insdie the 3scale artifact and retrieving the groupId, artifactid and version from lines 5,6 and 9 of 3scale's pom.
+- add a dependency to this artifact inside your pom.xml by opening the pom.xml inside the 3scale artifact and retrieving the groupId, artifactid and version from lines 5,6 and 9 of 3scale's pom.
 - install the artifact to your repository as described here:
 http://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
 
@@ -40,12 +40,14 @@ import threescale.v3.api.impl.*;
 //  ... somewhere inside your code
 
 // Create the API object
-ServiceApi serviceApi = new ServiceApiDriver("your provider_key");
+ServiceApi serviceApi = ServiceApiDriver.createApi();
 
 ParameterMap params = new ParameterMap();      // the parameters of your call
 params.add("app_id", "your_app_id");           // Add app_id of your application for authorization
 params.add("app_key", "your_app_key");         // Add app_key of your application for authorization
-params.add("service_id", "app_id_service_id"); // Add the service id of your application
+
+String serviceToken = ...;                     // Your 3scale service token
+String serviceId = ...;                        // The service id of your application
 
 ParameterMap usage = new ParameterMap(); // Add a metric to the call
 usage.add("hits", "1");
@@ -54,7 +56,7 @@ params.add("usage", usage);              // metrics belong inside the usage para
 AuthorizeResponse response = null;
 // the 'preferred way' of calling the backend: authrep
 try {
-  response = serviceApi.authrep(params);
+  response = serviceApi.authrep(serviceToken, serviceId, params);
   System.out.println("AuthRep on App Id Success: " + response.success());
   if (response.success() == true) {
     // your api access got authorized and the  traffic added to 3scale backend
@@ -82,11 +84,13 @@ import threescale.v3.api.impl.*;
 //  ... somewhere inside your code
 
 // Create the API object
-ServiceApi serviceApi = new ServiceApiDriver("your provider_key");
+ServiceApi serviceApi = ServiceApiDriver.createApi();
 
 ParameterMap params = new ParameterMap();              // the parameters of your call
 params.add("user_key", "your_user_key");               // Add the user key of your application for authorization
-params.add("service_id", "your_user_key_service_id");  // Add the service id of your application
+
+String serviceToken = ...;                             // Your 3scale service token
+String serviceId = ...;                                // The service id for your user key
 
 ParameterMap usage = new ParameterMap(); // Add a metric to the call
 usage.add("hits", "1");
@@ -95,7 +99,7 @@ params.add("usage", usage);              // metrics belong inside the usage para
 AuthorizeResponse response = null;
 // the 'preferred way' of calling the backend: authrep
 try {
-  response = serviceApi.authrep(params);
+  response = serviceApi.authrep(serviceToken, serviceId, params);
   System.out.println("AuthRep on User Key Success: " + response.success());
   if (response.success() == true) {
     // your api access got authorized and the  traffic added to 3scale backend
@@ -123,11 +127,13 @@ import threescale.v3.api.impl.*;
 //  ... somewhere inside your code
 
 // Create the API object
-ServiceApi serviceApi = new ServiceApiDriver("your provider_key");
+ServiceApi serviceApi = ServiceApiDriver.createApi();
 
 ParameterMap params = new ParameterMap();          // the parameters of your call
 params.add("app_id",     "your_oauth_app_id");     // Add the app_id of your application for authorization
-params.add("service_id", "your_oauth_service_id"); // Add the service id of your application
+
+String serviceToken = ...;                         // Your 3scale service token
+String serviceId = ...;                            // The service id of your application
 
 ParameterMap usage = new ParameterMap(); // Add a metric to the call
 usage.add("hits", "1");
@@ -135,7 +141,7 @@ params.add("usage", usage);              // metrics belong inside the usage para
 
 // for OAuth only the '2 steps way' (authorize + report) is available
 try {
-    AuthorizeResponse response = serviceApi.oauth_authorize(params);         // Perform OAuth authorize
+    AuthorizeResponse response = serviceApi.oauth_authorize(serviceToken, serviceId, params);         // Perform OAuth authorize
     System.out.println("Authorize on OAuth Success: " + response.success());
     if (response.success() == true) {
 

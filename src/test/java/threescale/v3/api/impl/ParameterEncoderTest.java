@@ -52,7 +52,7 @@ public class ParameterEncoderTest {
         usage.add("hits", "111");
         param.add("usage", usage);
 
-        assertEquals("provider_key=123abc&app_id=3456aaa&%5Busage%5D%5Bhits%5D=111", encoder.encode(param));
+        assertEquals("provider_key=123abc&app_id=3456aaa&usage%5Bhits%5D=111", encoder.encode(param));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ParameterEncoderTest {
 
 
         assertEquals(
-                "provider_key=123abc&app_id=3456aaa&%5Busage%5D%5Bhits%5D=111&%5Busage%5D%5Btimestamp%5D=2010-04-27%2015%3A00%3A00%20+0000",
+                "provider_key=123abc&app_id=3456aaa&usage%5Bhits%5D=111&usage%5Btimestamp%5D=2010-04-27%2015%3A00%3A00%20+0000",
                 encoder.encode(param));
     }
 
