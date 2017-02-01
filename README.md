@@ -39,8 +39,12 @@ import threescale.v3.api.impl.*;
 
 //  ... somewhere inside your code
 
-// Create the API object
+// Create the API object with default settings. This will communicate with the 3scale platform SaaS default server.
 ServiceApi serviceApi = ServiceApiDriver.createApi();
+
+// When connecting to an on-premise instance of the 3scale platform, create the API object for a given host and port:
+// ServiceApi serviceApi = ServiceApiDriver.createApi("backend.example.com", 80, true);
+
 
 ParameterMap params = new ParameterMap();      // the parameters of your call
 params.add("app_id", "your_app_id");           // Add app_id of your application for authorization
@@ -83,8 +87,11 @@ import threescale.v3.api.impl.*;
 
 //  ... somewhere inside your code
 
-// Create the API object
+// Create the API object with default settings. This will communicate with the 3scale platform SaaS default server.
 ServiceApi serviceApi = ServiceApiDriver.createApi();
+
+// When connecting to an on-premise instance of the 3scale platform, create the API object for a given host and port:
+//ServiceApi serviceApi = ServiceApiDriver.createApi("backend.example.com", 80, true);
 
 ParameterMap params = new ParameterMap();              // the parameters of your call
 params.add("user_key", "your_user_key");               // Add the user key of your application for authorization
@@ -126,8 +133,11 @@ import threescale.v3.api.impl.*;
 
 //  ... somewhere inside your code
 
-// Create the API object
+// Create the API object with default settings. This will communicate with the 3scale platform SaaS default server.
 ServiceApi serviceApi = ServiceApiDriver.createApi();
+
+// When connecting to an on-premise instance of the 3scale platform, create the API object for a given host and port:
+//ServiceApi serviceApi = ServiceApiDriver.createApi("backend.example.com", 80, true);
 
 ParameterMap params = new ParameterMap();          // the parameters of your call
 params.add("app_id",     "your_oauth_app_id");     // Add the app_id of your application for authorization
