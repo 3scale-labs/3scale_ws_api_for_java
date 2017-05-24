@@ -74,6 +74,8 @@ public class ServerAccessorDriver implements ServerAccessor {
                 return new HttpResponse(connection.getResponseCode(), getBody(connection.getErrorStream()));
             } catch (IOException e) {
                 throw new ServerError(e.getMessage());
+            } catch (NullPointerException npe) {
+                throw new ServerError("NullPointerException thrown ServerAccessorDriver::get, urlParams were "+urlParams);
             }
         } catch (NullPointerException npe) {
         	throw new ServerError("NullPointerException thrown ServerAccessorDriver::get, urlParams were "+urlParams);
@@ -137,6 +139,8 @@ public class ServerAccessorDriver implements ServerAccessor {
                         (connection.getErrorStream() == null) ? getBody(connection.getInputStream()) : getBody(connection.getErrorStream()));
             } catch (IOException e) {
                 throw new ServerError(e.getMessage());
+            } catch (NullPointerException npe) {
+                throw new ServerError("NullPointerException thrown ServerAccessorDriver::post, urlParams were "+urlParams+", data was "+data);
             }
         }  catch (NullPointerException npe) {
         	throw new ServerError("NullPointerException thrown ServerAccessorDriver::post, urlParams were "+urlParams+", data was "+data);
