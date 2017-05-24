@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.3scale</groupId>
   <artifactId>3scale-api</artifactId>
-  <version>3.0.4</version>
+  <version>3.0.5-SNAPSHOT</version>
 
   <name>3scale Java API</name>
   <description>
