@@ -22,7 +22,7 @@ Install
 =======
 
 This is a [Maven](http://maven.apache.org/) project, download it and install it as follows
-- add a dependency to this artifact inside your pom.xml by opening the pom.xml inside the 3scale artifact and retrieving the groupId, artifactid and version from lines 5,6 and 9 of 3scale's pom.
+- add a dependency to this artifact inside your pom.xml by opening the pom.xml inside the 3scale artifact and retrieving the groupId, artifactid and version from 3scale's pom.xml.
 - install the artifact to your repository as described here:
 http://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
 
