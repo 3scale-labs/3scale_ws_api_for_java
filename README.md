@@ -21,20 +21,18 @@ This plugin supports the 3 main calls to the 3scale backend:
 Install
 =======
 
-This is a [Maven](http://maven.apache.org/) project, download it and install it as follows
-- add a dependency to this artifact inside your pom.xml like below: 
-```
-<dependencies>
+This is a [Maven](http://maven.apache.org/) project, to add it to your project you can use one of the following options:
+- add a dependency to this artifact inside your `pom.xml` like below (specify the version you need):
+    ```
     <dependency>
-      <groupId>net.3scale</groupId>
-      <artifactId>3scale-api</artifactId>
-      <version>3.0.4</version>
+        <groupId>net.3scale</groupId>
+        <artifactId>3scale-api</artifactId>
+        <version>3.0.4</version>
     </dependency>
-</dependencies>
-```
+    ```
+     and run `mvn install` inside your project.
 
-- install the artifact to your repository as described here:
-http://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
+- download the [JAR file](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22net.3scale%22%20AND%20a%3A%223scale-api%22) for the version you want to use and install it to your repository using the instructions described here: http://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
 
 
 Usage on App Id auth mode
