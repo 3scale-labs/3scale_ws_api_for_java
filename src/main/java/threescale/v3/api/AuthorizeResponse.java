@@ -83,6 +83,7 @@ public class AuthorizeResponse {
 
             Element authorizedEl = root.getFirstChildElement("authorized");
             setStatus(authorizedEl.getValue());
+            // FIXME: Avoid unnecessary comparisons in boolean expressions, they serve no purpose and impacts readability.
             if (success() == false) {
                 Element reasonEl = root.getFirstChildElement("reason");
                 if (reasonEl != null) {
