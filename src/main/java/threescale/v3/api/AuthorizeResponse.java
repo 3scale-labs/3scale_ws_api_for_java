@@ -230,6 +230,8 @@ public class AuthorizeResponse {
     }
 
     private void setStatus(String status) {
+    	// FIXME: UnnecessaryCaseChange
+    	// Using equalsIgnoreCase() is faster than using toUpperCase/toLowerCase().equals()
         if (status.toLowerCase().equals("true")) {
             this.status = true;
         } else {
