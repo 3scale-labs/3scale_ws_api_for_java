@@ -23,6 +23,7 @@ public class ServerAccessorDriver implements ServerAccessor {
         
     	props = new Properties();
         try {
+        	// FIXME: CloseResource - Ensure that resources like this are closed after use
         	InputStream in = ServerAccessorDriver.class.getClassLoader().getResourceAsStream("props.properties");
         	if (in == null) {
         		System.out.println("props.properties not found");
