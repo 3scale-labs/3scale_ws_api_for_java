@@ -14,6 +14,7 @@ public class HttpResponse {
      * @param status Http Status
      * @param body   Http Body
      */
+    //FIXME: MethodArgumentCouldBeFinal
     public HttpResponse(int status, String body) {
         this.status = status;
         this.body = body;
