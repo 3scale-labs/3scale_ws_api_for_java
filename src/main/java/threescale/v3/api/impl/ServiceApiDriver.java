@@ -126,9 +126,9 @@ public class ServiceApiDriver implements ServiceApi {
      */
     public ReportResponse report(String serviceToken, String serviceId, ParameterMap... transactions)
     		throws ServerError {
-    	//FIXME: ControlStatementBraces Add braces for if statements
-        if (transactions == null || transactions.length == 0)
+        if (transactions == null || transactions.length == 0){
             throw new IllegalArgumentException("No transactions provided");
+        }
 
         ParameterMap params = new ParameterMap();
         if (this.provider_key != null) {
