@@ -93,14 +93,13 @@ public class ServerAccessorDriver implements ServerAccessor {
     }
 
     private String getBody(InputStream content) throws IOException {
-    	// FIXME: ShortVariable: Fields, local variables, or parameter names that are very short are not helpful to the reader.
-    	BufferedReader rd;
+    	BufferedReader reader;
         StringBuilder sb;
         String line;
-        rd = new BufferedReader(new InputStreamReader(content));
+        reader = new BufferedReader(new InputStreamReader(content));
         sb = new StringBuilder();
 
-        while ((line = rd.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             sb.append(line + '\n');
         }
         return sb.toString();
