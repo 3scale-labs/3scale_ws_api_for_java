@@ -194,8 +194,7 @@ public class ServiceApiDriver implements ServiceApi {
     	if (this.provider_key != null) {
             params.add("provider_key", provider_key);
     	}
-    	//FIXME: LocalVariableCouldBeFinal (A local variable assigned only once can be declared final.)
-        String urlParams = encodeAsString(params);
+        final String urlParams = encodeAsString(params);
 
         final String s = getFullHostUrl() + "/transactions/oauth_authorize.xml?" + urlParams;
 //        System.out.println("Actual: " + s);
