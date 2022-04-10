@@ -255,12 +255,10 @@ public class AuthorizeResponse {
     }
 
     private String getValueOrBlank(Element element) {
-    	// FIXME: OnlyOneReturn
         if (element == null) {
             return "";
-        } else {
-            return element.getValue();
-        }
+        } 
+        return element.getValue();
     }
 
 
