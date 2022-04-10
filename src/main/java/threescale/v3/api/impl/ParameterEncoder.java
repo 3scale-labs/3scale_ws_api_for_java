@@ -87,10 +87,9 @@ public class ParameterEncoder {
 
     private String emitArrayValue(String mapKey, String key, String itemKey, String stringValue, int index) {
         StringBuilder b = new StringBuilder();
-        // FIXME: ConsecutiveLiteralAppends
-        b.append(mapKey).append("[").append(index).append("]");
-        b.append("[").append(key).append("]");
-        b.append("[").append(itemKey).append("]=").append(stringValue);
+        b.append(mapKey).append("[").append(index).append("]")
+        .append("[").append(key).append("]").append("[")
+        .append(itemKey).append("]=").append(stringValue);
         return b.toString();
     }
 
