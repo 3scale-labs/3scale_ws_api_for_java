@@ -115,8 +115,6 @@ public class ServerAccessorDriver implements ServerAccessor {
      */
     public HttpResponse post(final String urlParams,final String data) throws ServerError {
         HttpURLConnection connection = null;
-        // FIXME: PrematureDeclaration - Avoid declaring a variable if it is unreferenced before a possible exit point.
-        OutputStreamWriter wr;
         URL url;
 
         try {
@@ -125,6 +123,7 @@ public class ServerAccessorDriver implements ServerAccessor {
             throw new RuntimeException(ex);
         }
         try {
+            OutputStreamWriter wr;
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
